@@ -1,0 +1,14 @@
+{
+    "name": "exasync",
+    "url": "https://github.com/DenkiYagi/haxe-exasync",
+    "license": "Apache",
+    "tags": ["haxe"],
+    "description": "",
+    "version": "0.0.1",
+    "classPath": "src/",
+    "releasenote": "0.0.1",
+    "contributors": ["denkiyagi"],
+    "dependencies": {
+        "extype": ""
+    }
+}
