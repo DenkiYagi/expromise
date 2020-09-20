@@ -1,6 +1,6 @@
 .base-test.hxml
 -L hxnodejs
 --js .out/test.js
+--cmd node --enable-source-maps .out/test.js
 # --debug
 # -D source-map-content
---cmd node --enable-source-maps .out/test.js
