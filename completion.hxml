@@ -1,0 +1,7 @@
+.base-test.hxml
+-L hxnodejs
+--macro include("exasync", true)
+--no-output
+-D no-opt
+#-js dummy.js
+--interp

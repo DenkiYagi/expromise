@@ -1,0 +1,4 @@
+-p src
+-L extype
+-L extools:git:git@github.com:DenkiYagi/haxe-extools.git
+
