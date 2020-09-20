@@ -18,8 +18,8 @@ class AbortablePromise<T> implements IPromise<T> {
     #if js
     static function __init__() {
         // Make this class compatible with js.lib.Promise
-        var prototype = js.lib.Object.create(untyped js.lib.Promise.prototype);
-        var orignal = untyped AbortablePromise.prototype;
+        final prototype = js.lib.Object.create(untyped js.lib.Promise.prototype);
+        final orignal = untyped AbortablePromise.prototype;
         for (k in js.lib.Object.getOwnPropertyNames(orignal)) {
             Reflect.setField(prototype, k, Reflect.field(orignal, k));
         }
@@ -72,13 +72,13 @@ class AbortablePromise<T> implements IPromise<T> {
     public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
             ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):AbortablePromise<TOut> {
         return new AbortablePromise<TOut>(function(_fulfill, _reject) {
-            var handleFulfilled = if (fulfilled != null) {
+            final handleFulfilled = if (fulfilled != null) {
                 function chain(value:T) {
                     try {
-                        var next = (fulfilled : T->Dynamic)(value);
+                        final next = (fulfilled : T->Dynamic)(value);
                         if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
-                            var nextPromise:Promise<TOut> = cast next;
-                            nextPromise.then(_fulfill, _reject);
+                            final p:Promise<TOut> = cast next;
+                            p.then(_fulfill, _reject);
                         } else {
                             _fulfill(next);
                         }
@@ -97,8 +97,8 @@ class AbortablePromise<T> implements IPromise<T> {
                     try {
                         var next = (rejected : Dynamic->Dynamic)(error);
                         if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
-                            var nextPromise:Promise<TOut> = cast next;
-                            nextPromise.then(_fulfill, _reject);
+                            final p:Promise<TOut> = cast next;
+                            p.then(_fulfill, _reject);
                         } else {
                             _fulfill(next);
                         }
@@ -136,10 +136,10 @@ class AbortablePromise<T> implements IPromise<T> {
     }
 
     public function finally(onFinally:Void->Void):AbortablePromise<T> {
-        return then(function(x) {
+        return then(x -> {
             onFinally();
             return x;
-        }, function(e) {
+        }, e -> {
             onFinally();
             return reject(e);
         });
@@ -151,7 +151,7 @@ class AbortablePromise<T> implements IPromise<T> {
     public function abort():Void {
         if (result.isEmpty()) {
             if (abortCallback.nonEmpty()) {
-                var fn = abortCallback.get();
+                final fn = abortCallback.get();
                 abortCallback = Maybe.empty();
                 fn();
             }

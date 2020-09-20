@@ -9,10 +9,10 @@ using extools.EqualsTools;
 
 class DelayedPromise<T> implements IPromise<T> {
     var result:Maybe<Result<T>>;
-    var onFulfilledHanlders:Delegate<T>;
-    var onRejectedHanlders:Delegate<Dynamic>;
+    final onFulfilledHanlders:Delegate<T>;
+    final onRejectedHanlders:Delegate<Dynamic>;
 
-    public function new(executor:(fulfill:?T -> Void, reject:?Dynamic -> Void) -> Void) {
+    public function new(executor:(fulfill:?T->Void, reject:?Dynamic->Void)->Void) {
         result = Maybe.empty();
         onFulfilledHanlders = new Delegate();
         onRejectedHanlders = new Delegate();
@@ -51,7 +51,7 @@ class DelayedPromise<T> implements IPromise<T> {
             final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
                     try {
-                        final next = (fulfilled : T -> Dynamic)(value);
+                        final next = (fulfilled : T->Dynamic)(value);
                         if (Std.is(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
@@ -71,7 +71,7 @@ class DelayedPromise<T> implements IPromise<T> {
             final handleRejected = if (rejected != null) {
                 function transformError(error:Dynamic) {
                     try {
-                        final next = (rejected : Dynamic -> Dynamic)(error);
+                        final next = (rejected : Dynamic->Dynamic)(error);
                         if (Std.is(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);

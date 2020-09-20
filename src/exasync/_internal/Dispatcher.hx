@@ -8,7 +8,7 @@ class Dispatcher {
     static final promise:Promise<Unit> = Promise.resolve(new Unit());
     #end
 
-    public static function dispatch(fn:Void -> Void): Void {
+    public static function dispatch(fn:Void->Void):Void {
         #if js
         promise.then(_ -> fn());
         #else
