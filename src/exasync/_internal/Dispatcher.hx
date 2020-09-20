@@ -1,6 +1,5 @@
 package exasync._internal;
 
-import haxe.MainLoop;
 import extype.Unit;
 
 class Dispatcher {
