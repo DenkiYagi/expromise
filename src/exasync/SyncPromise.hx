@@ -62,10 +62,10 @@ class SyncPromise<T> implements IPromise<T> {
 
     public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):SyncPromise<TOut> {
         return new SyncPromise<TOut>(function(_fulfill, _reject) {
-            var handleFulfilled = if (fulfilled != null) {
+            final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
                     try {
-                        var next = (fulfilled : T->Dynamic)(value);
+                        final next = (fulfilled : T->Dynamic)(value);
                         if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
@@ -92,7 +92,7 @@ class SyncPromise<T> implements IPromise<T> {
                         } else {
                             _fulfill(next);
                         }
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         _reject(e);
                     }
                 }
@@ -127,10 +127,10 @@ class SyncPromise<T> implements IPromise<T> {
     public function finally(onFinally:Void->Void):SyncPromise<T> {
         return then(x -> {
             onFinally();
-            return x;
+            x;
         }, e -> {
             onFinally();
-            return reject(e);
+            reject(e);
         });
     }
 

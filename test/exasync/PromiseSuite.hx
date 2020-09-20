@@ -1,5 +1,6 @@
 package exasync;
 
+import haxe.Exception;
 import buddy.BuddySuite;
 import extype.Unit;
 import TestTools.wait;
@@ -133,7 +134,7 @@ class PromiseSuite extends BuddySuite {
                     }).then(function(_) {
                         fail();
                     }, function(e) {
-                        (e : String).should.be("error");
+                        (e : Exception).message.should.be("error");
                         done();
                     });
                 });
@@ -256,7 +257,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.resolve(1).then(function(x) {
                             return Promise.reject("error");
                         }).then(null, function(e) {
-                            EqualsTools.deepEqual(e, "error").should.be(true);
+                            (e : String).should.be("error");
                             done();
                         });
                     });
@@ -303,7 +304,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.resolve(1).then(function(x):Unit {
                             throw "error";
                         }).then(null, function(e) {
-                            (e : String).should.be("error");
+                            (e : haxe.Exception).message.should.be("error");
                             done();
                         });
                     });
@@ -344,7 +345,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").then(null, function(x) {
                             return Promise.reject("error");
                         }).then(null, function(e) {
-                            EqualsTools.deepEqual(e, "error").should.be(true);
+                            (e : String).should.be("error");
                             done();
                         });
                     });
@@ -362,7 +363,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").then(null, function(x) {
                             return SyncPromise.reject("rewrited error");
                         }).then(null, function(e) {
-                            EqualsTools.deepEqual(e, "rewrited error").should.be(true);
+                            (e : String).should.be("rewrited error");
                             done();
                         });
                     });
@@ -409,7 +410,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").then(null, function(x):Unit {
                             throw "rewrited error";
                         }).then(null, function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });
@@ -539,7 +540,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").catchError(function(e):Unit {
                             throw "rewrited error";
                         }).then(null, function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });
@@ -579,7 +580,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.resolve(1).finally(function() {
                             throw "error";
                         }).catchError(function(e) {
-                            (e : String).should.be("error");
+                            (e : Exception).message.should.be("error");
                             done();
                         });
                     });
@@ -597,7 +598,7 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").finally(function() {
                             throw "rewrited error";
                         }).catchError(function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });

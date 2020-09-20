@@ -1,5 +1,6 @@
 package exasync;
 
+import haxe.Exception;
 import buddy.BuddySuite;
 import TestTools.wait;
 
@@ -183,7 +184,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         }).then(function(_) {
                             fail();
                         }, function(e) {
-                            (e : String).should.be("error");
+                            (e : Exception).message.should.be("error");
                             done();
                         });
                     });
@@ -472,7 +473,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         AbortablePromise.resolve(1).then(function(x) {
                             throw "error";
                         }).then(null, function(e) {
-                            (e : String).should.be("error");
+                            (e : Exception).message.should.be("error");
                             done();
                         });
                     });
@@ -578,7 +579,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         AbortablePromise.reject("error").then(null, function(x) {
                             throw "rewrited error";
                         }).then(null, function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });
@@ -741,7 +742,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         AbortablePromise.reject("error").catchError(function(e) {
                             throw "rewrited error";
                         }).then(null, function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });
@@ -809,7 +810,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         AbortablePromise.resolve(1).finally(function() {
                             throw "error";
                         }).catchError(function(e) {
-                            (e : String).should.be("error");
+                            (e : Exception).message.should.be("error");
                             done();
                         });
                     });
@@ -827,7 +828,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         AbortablePromise.reject("error").finally(function() {
                             throw "rewrited error";
                         }).catchError(function(e) {
-                            (e : String).should.be("rewrited error");
+                            (e : Exception).message.should.be("rewrited error");
                             done();
                         });
                     });

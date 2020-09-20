@@ -6,74 +6,29 @@ import exasync._internal.IPromise;
 import exasync._internal.DelayedPromise;
 #end
 
-using extools.EqualsTools;
-
 abstract Promise<T>(IPromise<T>) from IPromise<T> {
-    public inline function new(executor:(?T->Void)->(?Dynamic->Void)->Void) {
+    public inline extern function new(executor:(?T->Void)->(?Dynamic->Void)->Void) {
         #if js
-        // workaround for js__$Boot_HaxeError
-        this = js.Syntax.code("new Promise({0})", (fulfill, reject) -> {
-            try {
-                executor(fulfill, reject);
-            } catch (e:Dynamic) {
-                reject(e);
-            }
-        });
+        this = cast new js.lib.Promise(cast executor);
         #else
         this = new DelayedPromise(executor);
         #end
     }
 
-    #if js
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
-        // workaround for js__$Boot_HaxeError
-        return if (Std.is(this, js.lib.Promise)) {
-            this.then((fulfilled != null) ? onFulfilled.bind(fulfilled) : null, (rejected != null) ? onRejected.bind(cast rejected) : null);
-        } else {
-            this.then(fulfilled, rejected);
-        }
-    }
-    #else
-    public inline function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
+    public inline extern function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
             ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
         return this.then(fulfilled, rejected);
     }
-    #end
 
-    #if js
-    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
-        // workaround for js__$Boot_HaxeError
-        return if (rejected != null && Std.is(this, js.lib.Promise)) {
-            this.then(null, onRejected.bind(cast rejected));
-        } else {
-            this.catchError(rejected);
-        }
-    }
-    #else
-    public inline function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
+    public inline extern function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
+        #if js
+        return js.Syntax.code("{0}.catch({1})", this, rejected);
+        #else
         return this.catchError(rejected);
-    }
-    #end
-
-    #if js
-    static function onFulfilled<T, TOut>(fulfilled:T->Dynamic, value:T):Promise<TOut> {
-        try {
-            return fulfilled(value);
-        } catch (e:Dynamic) {
-            return cast SyncPromise.reject(e);
-        }
+        #end
     }
 
-    static function onRejected<TOut>(rejected:Dynamic->Dynamic, error:Dynamic):Promise<TOut> {
-        try {
-            return rejected(error);
-        } catch (e:Dynamic) {
-            return SyncPromise.reject(e);
-        }
-    }
-    #end
-
-    public inline function finally(onFinally:Void->Void):Promise<T> {
+    public inline extern function finally(onFinally:Void->Void):Promise<T> {
         #if js
         return then(x -> {
             onFinally();
@@ -146,13 +101,13 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
     #end
 
     #if js
-    @:from @:extern
-    public static inline function fromJsPromise<T>(promise:js.lib.Promise<T>):Promise<T> {
+    @:from
+    public static inline extern function fromJsPromise<T>(promise:js.lib.Promise<T>):Promise<T> {
         return cast promise;
     }
 
-    @:to @:extern
-    public inline function toJsPromise():js.lib.Promise<T> {
+    @:to
+    public inline extern function toJsPromise():js.lib.Promise<T> {
         return cast this;
     }
     #end

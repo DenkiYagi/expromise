@@ -35,14 +35,10 @@ class AbortablePromise<T> implements IPromise<T> {
         onRejectedHanlders = new Delegate();
         abortCallback = Maybe.empty();
 
-        execute(executor);
-    }
-
-    function execute(executor:(?T->Void)->(?Dynamic->Void)->(Void->Void)):Void {
         if (result.isEmpty()) {
             try {
                 abortCallback = Maybe.of(executor(onFulfilled, onRejected));
-            } catch (e:Dynamic) {
+            } catch (e) {
                 onRejected(e);
             }
         }
@@ -82,7 +78,7 @@ class AbortablePromise<T> implements IPromise<T> {
                         } else {
                             _fulfill(next);
                         }
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         _reject(e);
                     }
                 }
@@ -102,7 +98,7 @@ class AbortablePromise<T> implements IPromise<T> {
                         } else {
                             _fulfill(next);
                         }
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         _reject(e);
                     }
                 }
@@ -110,7 +106,7 @@ class AbortablePromise<T> implements IPromise<T> {
                 function passError(error:Dynamic) {
                     try {
                         _reject(error);
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         trace(e);
                     }
                 }
@@ -138,10 +134,10 @@ class AbortablePromise<T> implements IPromise<T> {
     public function finally(onFinally:Void->Void):AbortablePromise<T> {
         return then(x -> {
             onFinally();
-            return x;
+            x;
         }, e -> {
             onFinally();
-            return reject(e);
+            reject(e);
         });
     }
 
@@ -160,16 +156,16 @@ class AbortablePromise<T> implements IPromise<T> {
     }
 
     public static function resolve<T>(?value:T):AbortablePromise<T> {
-        return new AbortablePromise(function(f, _) {
+        return new AbortablePromise((f, _) -> {
             f(value);
-            return null;
+            null;
         });
     }
 
     public static function reject<T>(error:Dynamic):AbortablePromise<T> {
-        return new AbortablePromise(function(_, r) {
+        return new AbortablePromise((_, r) -> {
             r(error);
-            return null;
+            null;
         });
     }
 }

@@ -1,5 +1,6 @@
 package exasync;
 
+import haxe.Exception;
 import buddy.BuddySuite;
 import TestTools.wait;
 using extools.EqualsTools;
@@ -117,7 +118,7 @@ class SyncPromiseSuite extends BuddySuite {
                     }).then(
                         function (_) { fail(); },
                         function (e) {
-                            (e: String).should.be("error");
+                            (e: Exception).message.should.be("error");
                             done();
                         }
                     );
@@ -290,7 +291,7 @@ class SyncPromiseSuite extends BuddySuite {
                         .then(function (x) {
                             throw "error";
                         }).then(null, function (e) {
-                            (e: String).should.be("error");
+                            (e: Exception).message.should.be("error");
                             done();
                         });
                     });

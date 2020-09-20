@@ -19,7 +19,7 @@ class DelayedPromise<T> implements IPromise<T> {
 
         try {
             executor(onFulfilled, onRejected);
-        } catch (e:Dynamic) {
+        } catch (e) {
             onRejected(e);
         }
     }
@@ -58,7 +58,7 @@ class DelayedPromise<T> implements IPromise<T> {
                         } else {
                             _fulfill(next);
                         }
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         _reject(e);
                     }
                 }
@@ -78,7 +78,7 @@ class DelayedPromise<T> implements IPromise<T> {
                         } else {
                             _fulfill(next);
                         }
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         _reject(e);
                     }
                 }
@@ -86,7 +86,7 @@ class DelayedPromise<T> implements IPromise<T> {
                 function passError(error:Dynamic) {
                     try {
                         _reject(error);
-                    } catch (e:Dynamic) {
+                    } catch (e) {
                         trace(e);
                     }
                 }
