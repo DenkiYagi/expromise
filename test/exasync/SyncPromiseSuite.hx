@@ -298,330 +298,330 @@ class SyncPromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    // it("should chain using value", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (e) {
-                    //         return 1;
-                    //     }).then(function (x) {
-                    //         return x + 100;
-                    //     }).then(function (x) {
-                    //         x.should.be(101);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using value", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (e) {
+                            return 1;
+                        }).then(function (x) {
+                            return x + 100;
+                        }).then(function (x) {
+                            x.should.be(101);
+                            done();
+                        });
+                    });
 
-                    // it("should not call 1st-then()", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(function (x) {
-                    //         fail();
-                    //         return -1;
-                    //     }).then(null, function (e) {
-                    //         (e: String).should.be("error");
-                    //         done();
-                    //     });
-                    // });
+                    it("should not call 1st-then()", function (done) {
+                        SyncPromise.reject("error")
+                        .then(function (x) {
+                            fail();
+                            return -1;
+                        }).then(null, function (e) {
+                            (e: String).should.be("error");
+                            done();
+                        });
+                    });
 
-                    // it("should chain using resolved Promise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return Promise.resolve(1);
-                    //     }).then(function (x) {
-                    //         x.should.be(1);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using resolved Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return Promise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-                    // it("should chain using rejected Promise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return Promise.reject("error");
-                    //     }).then(null, function (e) {
-                    //         EqualsTools.deepEqual(e, "error").should.be(true);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using rejected Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return Promise.reject("error");
+                        }).then(null, function (e) {
+                            EqualsTools.deepEqual(e, "error").should.be(true);
+                            done();
+                        });
+                    });
 
-                    // it("should chain using resolved SyncPromise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return SyncPromise.resolve(1);
-                    //     }).then(function (x) {
-                    //         x.should.be(1);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using resolved SyncPromise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return SyncPromise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-                    // it("should chain using rejected SyncPromise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return SyncPromise.reject("rewrited error");
-                    //     }).then(null, function (e) {
-                    //         EqualsTools.deepEqual(e, "rewrited error").should.be(true);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using rejected SyncPromise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return SyncPromise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            EqualsTools.deepEqual(e, "rewrited error").should.be(true);
+                            done();
+                        });
+                    });
 
-                    // it("should chain using resolved AbortablePromise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return AbortablePromise.resolve(1);
-                    //     }).then(function (x) {
-                    //         x.should.be(1);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using resolved AbortablePromise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return AbortablePromise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-                    // it("should chain using rejected AbortablePromise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return AbortablePromise.reject("rewrited error");
-                    //     }).then(null, function (e) {
-                    //         EqualsTools.deepEqual(e, "rewrited error").should.be(true);
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using rejected AbortablePromise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return AbortablePromise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            EqualsTools.deepEqual(e, "rewrited error").should.be(true);
+                            done();
+                        });
+                    });
 
-                    // #if js
-                    // it("should chain using resolved js.lib.Promise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return js.lib.Promise.resolve("hello");
-                    //     }).then(function (x) {
-                    //         x.should.be("hello");
-                    //         done();
-                    //     });
-                    // });
+                    #if js
+                    it("should chain using resolved js.lib.Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return js.lib.Promise.resolve("hello");
+                        }).then(function (x) {
+                            x.should.be("hello");
+                            done();
+                        });
+                    });
 
-                    // it("should chain using rejected js.lib.Promise", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         return js.lib.Promise.reject("rewrited error");
-                    //     }).then(null, function (e) {
-                    //         (e: String).should.be("rewrited error");
-                    //         done();
-                    //     });
-                    // });
-                    // #end
+                    it("should chain using rejected js.lib.Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            return js.lib.Promise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            (e: String).should.be("rewrited error");
+                            done();
+                        });
+                    });
+                    #end
 
-                    // it("should chain using exception", function (done) {
-                    //     SyncPromise.reject("error")
-                    //     .then(null, function (x) {
-                    //         throw "rewrited error";
-                    //     }).then(null, function (e) {
-                    //         (e: String).should.be("rewrited error");
-                    //         done();
-                    //     });
-                    // });
+                    it("should chain using exception", function (done) {
+                        SyncPromise.reject("error")
+                        .then(null, function (x) {
+                            throw "rewrited error";
+                        }).then(null, function (e) {
+                            (e: Exception).message.should.be("rewrited error");
+                            done();
+                        });
+                    });
                 });
             });
         });
 
-        // describe("SyncPromise.catchError()", {
-        //     it("should not call", function (done) {
-        //         new SyncPromise(function (fulfill, _) {
-        //             fulfill(100);
-        //         }).catchError(function (_) {
-        //             fail();
-        //         });
-        //         wait(5, done);
-        //     });
+        describe("SyncPromise.catchError()", {
+            it("should not call", function (done) {
+                new SyncPromise(function (fulfill, _) {
+                    fulfill(100);
+                }).catchError(function (_) {
+                    fail();
+                });
+                wait(5, done);
+            });
 
-        //     it("should call", function (done) {
-        //         new SyncPromise(function (_, reject) {
-        //             reject("error");
-        //         }).catchError(function (e) {
-        //             (e: String).should.be("error");
-        //             done();
-        //         });
-        //     });
+            it("should call", function (done) {
+                new SyncPromise(function (_, reject) {
+                    reject("error");
+                }).catchError(function (e) {
+                    (e: String).should.be("error");
+                    done();
+                });
+            });
 
-        //     describe("chain", {
-        //         describe("from resolved", {
-        //             it("should not call catchError()", function (done) {
-        //                 SyncPromise.resolve(1)
-        //                 .catchError(function (e) {
-        //                     fail();
-        //                     return -1;
-        //                 }).then(function (x) {
-        //                     x.should.be(1);
-        //                     done();
-        //                 });
-        //             });
-        //         });
+            describe("chain", {
+                describe("from resolved", {
+                    it("should not call catchError()", function (done) {
+                        SyncPromise.resolve(1)
+                        .catchError(function (e) {
+                            fail();
+                            return -1;
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
+                });
 
-        //         describe("from rejected", {
-        //             it("should chain using value", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return 1;
-        //                 }).then(function (x) {
-        //                     return x + 100;
-        //                 }).then(function (x) {
-        //                     x.should.be(101);
-        //                     done();
-        //                 });
-        //             });
+                describe("from rejected", {
+                    it("should chain using value", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return 1;
+                        }).then(function (x) {
+                            return x + 100;
+                        }).then(function (x) {
+                            x.should.be(101);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using resolved Promise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return Promise.resolve(1);
-        //                 }).then(function (x) {
-        //                     x.should.be(1);
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using resolved Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return Promise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using rejected Promise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return Promise.reject("rewrited error");
-        //                 }).catchError(function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using rejected Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return Promise.reject("rewrited error");
+                        }).catchError(function (e) {
+                            (e: String).should.be("rewrited error");
+                            done();
+                        });
+                    });
 
-        //             it("should chain using resolved SyncPromise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return SyncPromise.resolve(1);
-        //                 }).then(function (x) {
-        //                     x.should.be(1);
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using resolved SyncPromise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return SyncPromise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using rejected SyncPromise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return SyncPromise.reject("rewrited error");
-        //                 }).then(null, function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using rejected SyncPromise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return SyncPromise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            (e: String).should.be("rewrited error");
+                            done();
+                        });
+                    });
 
-        //             it("should chain using resolved AbortablePromise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return AbortablePromise.resolve(1);
-        //                 }).then(function (x) {
-        //                     x.should.be(1);
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using resolved AbortablePromise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return AbortablePromise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using rejected AbortablePromise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return AbortablePromise.reject("rewrited error");
-        //                 }).then(null, function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
+                    it("should chain using rejected AbortablePromise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return AbortablePromise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            (e: String).should.be("rewrited error");
+                            done();
+                        });
+                    });
 
-        //             #if js
-        //             it("should chain using resolved js.lib.Promise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return js.lib.Promise.resolve(1);
-        //                 }).then(function (x) {
-        //                     x.should.be(1);
-        //                     done();
-        //                 });
-        //             });
+                    #if js
+                    it("should chain using resolved js.lib.Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return js.lib.Promise.resolve(1);
+                        }).then(function (x) {
+                            x.should.be(1);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using rejected js.lib.Promise", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     return js.lib.Promise.reject("rewrited error");
-        //                 }).then(null, function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
-        //             #end
+                    it("should chain using rejected js.lib.Promise", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            return js.lib.Promise.reject("rewrited error");
+                        }).then(null, function (e) {
+                            (e: String).should.be("rewrited error");
+                            done();
+                        });
+                    });
+                    #end
 
-        //             it("should chain using exception", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .catchError(function (e) {
-        //                     throw "rewrited error";
-        //                 }).then(null, function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
-        //         });
-        //     });
-        // });
+                    it("should chain using exception", function (done) {
+                        SyncPromise.reject("error")
+                        .catchError(function (e) {
+                            throw "rewrited error";
+                        }).then(null, function (e) {
+                            (e: Exception).message.should.be("rewrited error");
+                            done();
+                        });
+                    });
+                });
+            });
+        });
 
-        // describe("SyncPromise.finally()", {
-        //     it("should call when it is fulfilled", function (done) {
-        //         new SyncPromise(function (fulfill, _) {
-        //             fulfill(100);
-        //         }).finally(function () {
-        //             done();
-        //         });
-        //     });
+        describe("SyncPromise.finally()", {
+            it("should call when it is fulfilled", function (done) {
+                new SyncPromise(function (fulfill, _) {
+                    fulfill(100);
+                }).finally(function () {
+                    done();
+                });
+            });
 
-        //     it("should call when it is rejected", function (done) {
-        //         new SyncPromise(function (_, reject) {
-        //             reject("error");
-        //         }).finally(function () {
-        //             done();
-        //         });
-        //     });
+            it("should call when it is rejected", function (done) {
+                new SyncPromise(function (_, reject) {
+                    reject("error");
+                }).finally(function () {
+                    done();
+                });
+            });
 
-        //     describe("chain", {
-        //         describe("from resolved", {
-        //             it("should chain", function (done) {
-        //                 SyncPromise.resolve(1)
-        //                 .finally(function () {})
-        //                 .then(function (x) {
-        //                     return x + 100;
-        //                 })
-        //                 .then(function (x) {
-        //                     x.should.be(101);
-        //                     done();
-        //                 });
-        //             });
+            describe("chain", {
+                describe("from resolved", {
+                    it("should chain", function (done) {
+                        SyncPromise.resolve(1)
+                        .finally(function () {})
+                        .then(function (x) {
+                            return x + 100;
+                        })
+                        .then(function (x) {
+                            x.should.be(101);
+                            done();
+                        });
+                    });
 
-        //             it("should chain using exception", function (done) {
-        //                 SyncPromise.resolve(1)
-        //                 .finally(function () {
-        //                     throw "error";
-        //                 })
-        //                 .catchError(function (e) {
-        //                     (e: String).should.be("error");
-        //                     done();
-        //                 });
-        //             });
-        //         });
+                    it("should chain using exception", function (done) {
+                        SyncPromise.resolve(1)
+                        .finally(function () {
+                            throw "error";
+                        })
+                        .catchError(function (e) {
+                            (e: Exception).message.should.be("error");
+                            done();
+                        });
+                    });
+                });
 
-        //         describe("from rejected", {
-        //             it("should chain", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .finally(function () {})
-        //                 .catchError(function (e) {
-        //                     (e: String).should.be("error");
-        //                     done();
-        //                 });
-        //             });
+                describe("from rejected", {
+                    it("should chain", function (done) {
+                        SyncPromise.reject("error")
+                        .finally(function () {})
+                        .catchError(function (e) {
+                            (e: String).should.be("error");
+                            done();
+                        });
+                    });
 
-        //             it("should chain using exception", function (done) {
-        //                 SyncPromise.reject("error")
-        //                 .finally(function () {
-        //                     throw "rewrited error";
-        //                 })
-        //                 .catchError(function (e) {
-        //                     (e: String).should.be("rewrited error");
-        //                     done();
-        //                 });
-        //             });
-        //         });
-        //     });
-        // });
+                    it("should chain using exception", function (done) {
+                        SyncPromise.reject("error")
+                        .finally(function () {
+                            throw "rewrited error";
+                        })
+                        .catchError(function (e) {
+                            (e: Exception).message.should.be("rewrited error");
+                            done();
+                        });
+                    });
+                });
+            });
+        });
     }
 }
