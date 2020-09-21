@@ -126,21 +126,6 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         #if js
         } else if (Std.isOfType(e, js.lib.Error)) {
             new Exception((e : js.lib.Error).message, null, e);
-        #elseif java
-        } else if (Std.isOfType(e, java.lang.Throwable)) {
-            new Exception((e : java.lang.Throwable).getMessage(), null, e);
-        #elseif cs
-        } else if (Std.isOfType(e, cs.system.Exception)) {
-            new Exception((e : cs.system.Exception).Message, null, e);
-        #elseif flash
-        } else if (Std.isOfType(e, flash.errors.Error)) {
-            new Exception((e : flash.errors.Error).message, null, e);
-        #elseif php
-        } else if (Std.isOfType(e, php.Throwable)) {
-            new Exception((e : php.Throwable).getMessage(), null, e);
-        #elseif python
-        } else if (Std.isOfType(e, python.BaseException)) {
-            new Exception(Std.string(e), null, e);
         #end
         } else {
             new Exception(Std.string(e));
