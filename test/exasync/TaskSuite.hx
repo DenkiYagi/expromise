@@ -40,7 +40,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken none fulfilled value", done -> {
+                it("should pass when it is taken none value", done -> {
                     new Task((fulfill, _) -> {
                         wait(5, fulfill.bind());
                     })
@@ -53,7 +53,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken some fulfilled value", done -> {
+                it("should pass when it is taken some value", done -> {
                     new Task((fulfill, _) -> {
                         wait(5, fulfill.bind(1));
                     })
@@ -74,7 +74,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken none rejected value", done -> {
+                it("should pass when it is taken none failure value", done -> {
                     new Task((_, reject) -> {
                         wait(5, reject.bind());
                     })
@@ -87,7 +87,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken some rejected value", done -> {
+                it("should pass when it is taken some failure value", done -> {
                     new Task((_, reject) -> {
                         wait(5, reject.bind("error"));
                     })
@@ -130,7 +130,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("Task.success()", {
-                it("should pass when it is taken an emtpty value", done -> {
+                it("should pass when it is taken none value", done -> {
                     Task.success()
                     .onComplete(result -> switch (result) {
                         case Success(value):
@@ -154,7 +154,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("Task.failure()", {
-                it("should pass when it is taken an emtpty rejected value", done -> {
+                it("should pass when it is taken none failure value", done -> {
                     Task.failure()
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
@@ -165,7 +165,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken some rejected value", done -> {
+                it("should pass when it is taken some failure value", done -> {
                     Task.failure("error")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
@@ -725,24 +725,51 @@ class TaskSuite extends BuddySuite {
         });
 
         describe("Task.toPromise()", {
-            it("should convert from an emtpy success value", done -> {
-
+            it("should convert from none success value", done -> {
+                Task.success().toPromise().then(x -> {
+                    switch (x) {
+                        case Right(v): (v:Null<Any>).should.be(null);
+                        case Left(v): fail(v);
+                    }
+                    done();
+                });
             });
 
             it("should convert from some success value", done -> {
-
+                Task.success(100).toPromise().then(x -> {
+                    switch (x) {
+                        case Right(v): v.should.be(100);
+                        case Left(v): fail(v);
+                    }
+                    done();
+                });
             });
 
             it("should convert from none failure value", done -> {
-
+                Task.failure().toPromise().then(x -> {
+                    switch (x) {
+                        case Right(v): fail(v);
+                        case Left(v): (v:Null<Any>).should.be(null);
+                    }
+                    done();
+                });
             });
 
-            it("should convert from some failure value", done -> {
-
+            it("should convert from none failure value", done -> {
+                Task.failure("error").toPromise().then(x -> {
+                    switch (x) {
+                        case Right(v): fail(v);
+                        case Left(v): v.should.be("error");
+                    }
+                    done();
+                });
             });
 
             it("should convert from an exception", done -> {
-
+                Task.exception(new Exception("error")).toPromise().catchError(x -> {
+                    (x : Exception).message.should.be("error");
+                    done();
+                });
             });
         });
     }
