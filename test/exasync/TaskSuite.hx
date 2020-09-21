@@ -1,5 +1,7 @@
 package exasync;
 
+import haxe.ds.Either;
+
 class TaskSuite extends BuddySuite {
     public function new() {
         describe("Task.new()", {
@@ -885,6 +887,118 @@ class TaskSuite extends BuddySuite {
                     done();
                 });
             });
+        });
+
+        describe("Task.fromPromise()", {
+            it("should convert from fulfilled value", done -> {
+                final task:Task<Int, Void> = Promise.resolve(100);
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        value.should.be(100);
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected value", done -> {
+                final task:Task<Int, Void> = Promise.reject("error");
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected value", done -> {
+                final task:Task<Int, Void> = Promise.reject("error");
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected Exception", done -> {
+                final task:Task<Int, Void> = Promise.reject(new Exception("error"));
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            #if js
+            it("should convert from rejected JS Error", done -> {
+                final task:Task<Int, Void> = Promise.reject(new js.lib.Error("error"));
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("Error: error");
+                        (error.native : js.lib.Error).message.should.be("Error: error");
+                        done();
+                    case _: fail();
+                });
+            });
+            #end
+            // TODO other platform test
+        });
+
+        describe("Task.fromEitherPromise()", {
+            it("should convert from fulfilled value", done -> {
+                final task:Task<Int, String> = Promise.resolve(Either.Right(100));
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        value.should.be(100);
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected value", done -> {
+                final task:Task<Int, String> = Promise.resolve(Either.Left("error"));
+                task.onComplete(x -> switch (x) {
+                    case Failure(error):
+                        error.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected value", done -> {
+                final task:Task<Int, String> = (Promise.reject("error") : Promise<Either<String, Int>>);
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            it("should convert from rejected Exception", done -> {
+                final task:Task<Int, String> = (Promise.reject(new Exception("error")) : Promise<Either<String, Int>>);
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("error");
+                        done();
+                    case _: fail();
+                });
+            });
+
+            #if js
+            it("should convert from rejected JS Error", done -> {
+                final task:Task<Int, String> = (Promise.reject(new js.lib.Error("error")) : Promise<Either<String, Int>>);
+                task.onComplete(x -> switch (x) {
+                    case Exception(error):
+                        error.message.should.be("Error: error");
+                        (error.native : js.lib.Error).message.should.be("Error: error");
+                        done();
+                    case _: fail();
+                });
+            });
+            #end
+            // TODO other platform test
         });
     }
 }
