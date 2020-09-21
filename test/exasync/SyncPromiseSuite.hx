@@ -12,8 +12,8 @@ class SyncPromiseSuite extends BuddySuite {
 
         describe("SyncPromise.new()", {
             describe("executor", {
-                it("should call", function (done) {
-                    new SyncPromise(function (_, _) {
+                it("should call", done -> {
+                    new SyncPromise((_, _) -> {
                         done();
                     });
                 });
@@ -21,55 +21,55 @@ class SyncPromiseSuite extends BuddySuite {
 
             describe("pending", {
                 it("should be not completed", {
-                    new SyncPromise(function (_, _) {}).then(
-                        function (_) { fail(); },
-                        function (_) { fail(); }
+                    new SyncPromise((_, _) -> {}).then(
+                        _ -> { fail(); },
+                        _ -> { fail(); }
                     );
                 });
             });
 
             describe("fulfilled", {
                 it("should pass", {
-                    new SyncPromise(function (fulfill, _) {
+                    new SyncPromise((fulfill, _) -> {
                         fulfill();
                     });
                 });
 
                 it("should pass when it's taken no fulfilled value", done -> {
-                    new SyncPromise(function (fulfill, _) {
+                    new SyncPromise((fulfill, _) -> {
                         fulfill();
                     }).then(
-                        function (_) { done(); },
-                        function (_) { fail(); }
+                        _ -> { done(); },
+                        _ -> { fail(); }
                     );
                 });
 
                 it("should pass when it's taken some fulfilled value", done -> {
-                    new SyncPromise(function (fulfill, _) {
+                    new SyncPromise((fulfill, _) -> {
                         fulfill(1);
                     }).then(
-                        function (x) {
+                        x -> {
                             x.should.be(1);
                             done();
                         },
-                        function (_) { fail(); }
+                        _ -> { fail(); }
                     );
                 });
             });
 
             describe("rejected", {
                 it("should pass", {
-                    new SyncPromise(function (_, reject) {
+                    new SyncPromise((_, reject) -> {
                         reject();
                     });
                 });
 
                 it("should pass when it's takens no rejected value", done -> {
-                    new SyncPromise(function (_, reject) {
+                    new SyncPromise((_, reject) -> {
                         reject();
                     }).then(
-                        function (_) { fail(); },
-                        function (e) {
+                        _ -> { fail(); },
+                        e -> {
                             (e == null).should.be(true);
                             done();
                         }
@@ -77,23 +77,23 @@ class SyncPromiseSuite extends BuddySuite {
                 });
 
                 it("should pass when it's takens some rejected value", done -> {
-                    new SyncPromise(function (_, reject) {
+                    new SyncPromise((_, reject) -> {
                         reject("error");
                     }).then(
-                        function (_) { fail(); },
-                        function (e) {
+                        _ -> { fail(); },
+                        e -> {
                             (e: String).should.be("error");
                             done();
                         }
                     );
                 });
 
-                it("should call rejected when it is thrown error", function (done) {
-                    new SyncPromise(function (_, _) {
+                it("should call rejected when it is thrown error", done -> {
+                    new SyncPromise((_, _) -> {
                         throw "error";
                     }).then(
-                        function (_) { fail(); },
-                        function (e) {
+                        _ -> { fail(); },
+                        e -> {
                             (e: Exception).message.should.be("error");
                             done();
                         }
@@ -104,7 +104,7 @@ class SyncPromiseSuite extends BuddySuite {
             #if js
             describe("JavaScript compatibility", {
                 it("should be js.lib.Promise", {
-                    var promise = new SyncPromise(function (_, _) {});
+                    var promise = new SyncPromise((_, _) -> {});
                     promise.should.beType(js.lib.Promise);
                 });
             });
@@ -112,39 +112,39 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.resolve()", {
-            it("should call resolved(_)", function (done) {
+            it("should call resolved(_)", done -> {
                 SyncPromise.resolve().then(
-                    function (_) { done(); },
-                    function (_) { fail(); }
+                    _ -> { done(); },
+                    _ -> { fail(); }
                 );
             });
 
-            it("should call resolved(x)", function (done) {
+            it("should call resolved(x)", done -> {
                 SyncPromise.resolve(1).then(
-                    function (x) {
+                    x -> {
                         x.should.be(1);
                         done();
                     },
-                    function (_) { fail(); }
+                    _ -> { fail(); }
                 );
             });
         });
 
         describe("SyncPromise.reject()", {
-            it("should call rejected(x)", function (done) {
+            it("should call rejected(x)", done -> {
                 SyncPromise.reject("error").then(
-                    function (_) { fail(); },
-                    function (e) {
+                    _ -> { fail(); },
+                    e -> {
                         EqualsTools.deepEqual(e, "error").should.be(true);
                         done();
                     }
                 );
             });
 
-            it("should call rejected(_)", function (done) {
+            it("should call rejected(_)", done -> {
                 SyncPromise.reject("error").then(
-                    function (_) { fail(); },
-                    function (e) {
+                    _ -> { fail(); },
+                    e -> {
                         EqualsTools.deepEqual(e, "error").should.be(true);
                         done();
                     }
@@ -153,23 +153,23 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.then()", {
-            it("should call fulfilled", function (done) {
-                new SyncPromise(function (fulfill, _) {
+            it("should call fulfilled", done -> {
+                new SyncPromise((fulfill, _) -> {
                     fulfill(100);
-                }).then(function (x) {
+                }).then(x -> {
                     x.should.be(100);
                     done();
-                }, function (_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should call rejected", function (done) {
-                new SyncPromise(function (_, reject) {
+            it("should call rejected", done -> {
+                new SyncPromise((_, reject) -> {
                     reject("error");
-                }).then(function (_) {
+                }).then(_ -> {
                     fail();
-                }, function (e) {
+                }, e -> {
                     (e: String).should.be("error");
                     done();
                 });
@@ -177,96 +177,96 @@ class SyncPromiseSuite extends BuddySuite {
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should chain using value", function (done) {
+                    it("should chain using value", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return x + 1;
-                        }).then(function (x) {
-                            return x + 100;
-                        }).then(function (x) {
+                        .then(x -> {
+                            x + 1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(102);
                             done();
                         });
                     });
 
-                    it("should not call 1st-then()", function (done) {
+                    it("should not call 1st-then()", done -> {
                         SyncPromise.resolve(1)
-                        .then(null, function (e) {
+                        .then(null, e -> {
                             fail();
-                            return -1;
-                        }).then(function (x) {
+                            -1;
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function (done) {
+                    it("should chain using resolved Promise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return Promise.resolve("hello");
-                        }).then(function (x) {
+                        .then(x -> {
+                            Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function (done) {
+                    it("should chain using rejected Promise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return Promise.reject("error");
-                        }).then(null, function (e) {
+                        .then(x -> {
+                            Promise.reject("error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "error").should.be(true);
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function (done) {
+                    it("should chain using resolved SyncPromise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return SyncPromise.resolve("hello");
-                        }).then(function (x) {
+                        .then(x -> {
+                            SyncPromise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function (done) {
+                    it("should chain using rejected SyncPromise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return SyncPromise.reject("error");
-                        }).then(null, function (e) {
+                        .then(x -> {
+                            SyncPromise.reject("error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "error").should.be(true);
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function (done) {
+                    it("should chain using resolved js.lib.Promise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return js.lib.Promise.resolve("hello");
-                        }).then(function (x) {
+                        .then(x -> {
+                            js.lib.Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function (done) {
+                    it("should chain using rejected js.lib.Promise", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
-                            return js.lib.Promise.reject("error");
-                        }).then(null, function (e) {
+                        .then(x -> {
+                            js.lib.Promise.reject("error");
+                        }).then(null, e -> {
                             (e: String).should.be("error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function (done) {
+                    it("should chain using exception", done -> {
                         SyncPromise.resolve(1)
-                        .then(function (x) {
+                        .then(x -> {
                             throw "error";
-                        }).then(null, function (e) {
+                        }).then(null, e -> {
                             (e: Exception).message.should.be("error");
                             done();
                         });
@@ -274,116 +274,116 @@ class SyncPromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain using value", function (done) {
+                    it("should chain using value", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (e) {
-                            return 1;
-                        }).then(function (x) {
-                            return x + 100;
-                        }).then(function (x) {
+                        .then(null, e -> {
+                            1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should not call 1st-then()", function (done) {
+                    it("should not call 1st-then()", done -> {
                         SyncPromise.reject("error")
-                        .then(function (x) {
+                        .then(x -> {
                             fail();
-                            return -1;
-                        }).then(null, function (e) {
+                            -1;
+                        }).then(null, e -> {
                             (e: String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function (done) {
+                    it("should chain using resolved Promise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return Promise.resolve(1);
-                        }).then(function (x) {
+                        .then(null, x -> {
+                            Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function (done) {
+                    it("should chain using rejected Promise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return Promise.reject("error");
-                        }).then(null, function (e) {
+                        .then(null, x -> {
+                            Promise.reject("error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "error").should.be(true);
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function (done) {
+                    it("should chain using resolved SyncPromise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return SyncPromise.resolve(1);
-                        }).then(function (x) {
+                        .then(null, x -> {
+                            SyncPromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function (done) {
+                    it("should chain using rejected SyncPromise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return SyncPromise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .then(null, x -> {
+                            SyncPromise.reject("rewrited error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "rewrited error").should.be(true);
                             done();
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", function (done) {
+                    it("should chain using resolved AbortablePromise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return AbortablePromise.resolve(1);
-                        }).then(function (x) {
+                        .then(null, x -> {
+                            AbortablePromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", function (done) {
+                    it("should chain using rejected AbortablePromise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return AbortablePromise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .then(null, x -> {
+                            AbortablePromise.reject("rewrited error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "rewrited error").should.be(true);
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function (done) {
+                    it("should chain using resolved js.lib.Promise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return js.lib.Promise.resolve("hello");
-                        }).then(function (x) {
+                        .then(null, x -> {
+                            js.lib.Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function (done) {
+                    it("should chain using rejected js.lib.Promise", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
-                            return js.lib.Promise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .then(null, x -> {
+                            js.lib.Promise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e: String).should.be("rewrited error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function (done) {
+                    it("should chain using exception", done -> {
                         SyncPromise.reject("error")
-                        .then(null, function (x) {
+                        .then(null, x -> {
                             throw "rewrited error";
-                        }).then(null, function (e) {
+                        }).then(null, e -> {
                             (e: Exception).message.should.be("rewrited error");
                             done();
                         });
@@ -393,19 +393,19 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.catchError()", {
-            it("should not call", function (done) {
-                new SyncPromise(function (fulfill, _) {
+            it("should not call", done -> {
+                new SyncPromise((fulfill, _) -> {
                     fulfill(100);
-                }).catchError(function (_) {
+                }).catchError(_ -> {
                     fail();
                 });
                 wait(5, done);
             });
 
-            it("should call", function (done) {
-                new SyncPromise(function (_, reject) {
+            it("should call", done -> {
+                new SyncPromise((_, reject) -> {
                     reject("error");
-                }).catchError(function (e) {
+                }).catchError(e -> {
                     (e: String).should.be("error");
                     done();
                 });
@@ -413,12 +413,12 @@ class SyncPromiseSuite extends BuddySuite {
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should not call catchError()", function (done) {
+                    it("should not call catchError()", done -> {
                         SyncPromise.resolve(1)
-                        .catchError(function (e) {
+                        .catchError(e -> {
                             fail();
-                            return -1;
-                        }).then(function (x) {
+                            -1;
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
@@ -426,105 +426,105 @@ class SyncPromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain using value", function (done) {
+                    it("should chain using value", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return 1;
-                        }).then(function (x) {
-                            return x + 100;
-                        }).then(function (x) {
+                        .catchError(e -> {
+                            1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function (done) {
+                    it("should chain using resolved Promise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return Promise.resolve(1);
-                        }).then(function (x) {
+                        .catchError(e -> {
+                            Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function (done) {
+                    it("should chain using rejected Promise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return Promise.reject("rewrited error");
-                        }).catchError(function (e) {
+                        .catchError(e -> {
+                            Promise.reject("rewrited error");
+                        }).catchError(e -> {
                             (e: String).should.be("rewrited error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function (done) {
+                    it("should chain using resolved SyncPromise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return SyncPromise.resolve(1);
-                        }).then(function (x) {
+                        .catchError(e -> {
+                            SyncPromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function (done) {
+                    it("should chain using rejected SyncPromise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return SyncPromise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .catchError(e -> {
+                            SyncPromise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e: String).should.be("rewrited error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", function (done) {
+                    it("should chain using resolved AbortablePromise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return AbortablePromise.resolve(1);
-                        }).then(function (x) {
+                        .catchError(e -> {
+                            AbortablePromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", function (done) {
+                    it("should chain using rejected AbortablePromise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return AbortablePromise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .catchError(e -> {
+                            AbortablePromise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e: String).should.be("rewrited error");
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function (done) {
+                    it("should chain using resolved js.lib.Promise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return js.lib.Promise.resolve(1);
-                        }).then(function (x) {
+                        .catchError(e -> {
+                            js.lib.Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function (done) {
+                    it("should chain using rejected js.lib.Promise", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
-                            return js.lib.Promise.reject("rewrited error");
-                        }).then(null, function (e) {
+                        .catchError(e -> {
+                            js.lib.Promise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e: String).should.be("rewrited error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function (done) {
+                    it("should chain using exception", done -> {
                         SyncPromise.reject("error")
-                        .catchError(function (e) {
+                        .catchError(e -> {
                             throw "rewrited error";
-                        }).then(null, function (e) {
+                        }).then(null, e -> {
                             (e: Exception).message.should.be("rewrited error");
                             done();
                         });
@@ -534,42 +534,42 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.finally()", {
-            it("should call when it is fulfilled", function (done) {
-                new SyncPromise(function (fulfill, _) {
+            it("should call when it is fulfilled", done -> {
+                new SyncPromise((fulfill, _) -> {
                     fulfill(100);
-                }).finally(function () {
+                }).finally(() -> {
                     done();
                 });
             });
 
-            it("should call when it is rejected", function (done) {
-                new SyncPromise(function (_, reject) {
+            it("should call when it is rejected", done -> {
+                new SyncPromise((_, reject) -> {
                     reject("error");
-                }).finally(function () {
+                }).finally(() -> {
                     done();
                 });
             });
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should chain", function (done) {
+                    it("should chain", done -> {
                         SyncPromise.resolve(1)
-                        .finally(function () {})
-                        .then(function (x) {
-                            return x + 100;
+                        .finally(() -> {})
+                        .then(x -> {
+                            x + 100;
                         })
-                        .then(function (x) {
+                        .then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should chain using exception", function (done) {
+                    it("should chain using exception", done -> {
                         SyncPromise.resolve(1)
-                        .finally(function () {
+                        .finally(() -> {
                             throw "error";
                         })
-                        .catchError(function (e) {
+                        .catchError(e -> {
                             (e: Exception).message.should.be("error");
                             done();
                         });
@@ -577,21 +577,21 @@ class SyncPromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain", function (done) {
+                    it("should chain", done -> {
                         SyncPromise.reject("error")
-                        .finally(function () {})
-                        .catchError(function (e) {
+                        .finally(() -> {})
+                        .catchError(e -> {
                             (e: String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using exception", function (done) {
+                    it("should chain using exception", done -> {
                         SyncPromise.reject("error")
-                        .finally(function () {
+                        .finally(() -> {
                             throw "rewrited error";
                         })
-                        .catchError(function (e) {
+                        .catchError(e -> {
                             (e: Exception).message.should.be("rewrited error");
                             done();
                         });

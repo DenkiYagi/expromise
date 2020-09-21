@@ -25,18 +25,18 @@ class PromiseSuite extends BuddySuite {
 
         describe("Promise.new()", {
             describe("executor", {
-                it("should call", function(done) {
-                    new Promise(function(_, _) {
+                it("should call", done -> {
+                    new Promise((_, _) -> {
                         done();
                     });
                 });
             });
 
             describe("pending", {
-                it("should be not completed", function(done) {
-                    new Promise(function(_, _) {}).then(function(_) {
+                it("should be not completed", done -> {
+                    new Promise((_, _) -> {}).then(_ -> {
                         fail();
-                    }, function(_) {
+                    }, _ -> {
                         fail();
                     });
                     wait(5, done);
@@ -45,28 +45,28 @@ class PromiseSuite extends BuddySuite {
 
             describe("fulfilled", {
                 it("should pass", {
-                    new Promise(function(fulfill, _) {
+                    new Promise((fulfill, _) -> {
                         fulfill();
                     });
                 });
 
                 it("should pass when it's taken no fulfilled value", done -> {
-                    new Promise(function(fulfill, _) {
+                    new Promise((fulfill, _) -> {
                         fulfill();
-                    }).then(function(_) {
+                    }).then(_ -> {
                         done();
-                    }, function(_) {
+                    }, _ -> {
                         fail();
                     });
                 });
 
-                it("should call fulfilled(x)", function(done) {
-                    new Promise(function(fulfill, _) {
+                it("should call fulfilled(x)", done -> {
+                    new Promise((fulfill, _) -> {
                         fulfill(1);
-                    }).then(function(x) {
+                    }).then(x -> {
                         x.should.be(1);
                         done();
-                    }, function(_) {
+                    }, _ -> {
                         fail();
                     });
                 });
@@ -74,39 +74,39 @@ class PromiseSuite extends BuddySuite {
 
             describe("rejected", {
                 it("should pass", {
-                    new Promise(function(_, reject) {
+                    new Promise((_, reject) -> {
                         reject();
                     });
                 });
 
                 it("should pass when it's taken no rejected value", done -> {
-                    new Promise(function(_, reject) {
+                    new Promise((_, reject) -> {
                         reject();
-                    }).then(function(_) {
+                    }).then(_ -> {
                         fail();
-                    }, function(e) {
+                    }, e -> {
                         (e == null).should.be(true);
                         done();
                     });
                 });
 
-                it("should pass when it's taken some rejected value", function(done) {
-                    new Promise(function(_, reject) {
+                it("should pass when it's taken some rejected value", done -> {
+                    new Promise((_, reject) -> {
                         reject("error");
-                    }).then(function(_) {
+                    }).then(_ -> {
                         fail();
-                    }, function(e) {
+                    }, e -> {
                         (e : String).should.be("error");
                         done();
                     });
                 });
 
-                it("should call rejected when it is thrown error", function(done) {
-                    new Promise(function(_, _) {
+                it("should call rejected when it is thrown error", done -> {
+                    new Promise((_, _) -> {
                         throw "error";
-                    }).then(function(_) {
+                    }).then(_ -> {
                         fail();
-                    }, function(e) {
+                    }, e -> {
                         (e : Exception).message.should.be("error");
                         done();
                     });
@@ -116,7 +116,7 @@ class PromiseSuite extends BuddySuite {
             #if js
             describe("JavaScript compatibility", {
                 it("should be js.lib.Promise", {
-                    var promise = new Promise(function(_, _) {});
+                    var promise = new Promise((_, _) -> {});
                     promise.should.beType(js.lib.Promise);
                 });
             });
@@ -124,38 +124,38 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.resolve()", {
-            it("should call resolved(_)", function(done) {
-                Promise.resolve().then(function(_) {
+            it("should call resolved(_)", done -> {
+                Promise.resolve().then(_ -> {
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should call resolved(x)", function(done) {
-                Promise.resolve(1).then(function(x) {
+            it("should call resolved(x)", done -> {
+                Promise.resolve(1).then(x -> {
                     x.should.be(1);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
         });
 
         describe("Promise.reject()", {
-            it("should call rejected(x)", function(done) {
-                Promise.reject("error").then(function(_) {
+            it("should call rejected(x)", done -> {
+                Promise.reject("error").then(_ -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
                     done();
                 });
             });
 
-            it("should call rejected(_)", function(done) {
-                Promise.reject("error").then(function(_) {
+            it("should call rejected(_)", done -> {
+                Promise.reject("error").then(_ -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
                     done();
                 });
@@ -163,23 +163,23 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.then()", {
-            it("should call fulfilled", function(done) {
-                new Promise(function(fulfill, _) {
+            it("should call fulfilled", done -> {
+                new Promise((fulfill, _) -> {
                     fulfill(100);
-                }).then(function(x) {
+                }).then(x -> {
                     x.should.be(100);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should call rejected", function(done) {
-                new Promise(function(_, reject) {
+            it("should call rejected", done -> {
+                new Promise((_, reject) -> {
                     reject("error");
-                }).then(function(_) {
+                }).then(_ -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     (e : String).should.be("error");
                     done();
                 });
@@ -187,96 +187,96 @@ class PromiseSuite extends BuddySuite {
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should chain using value", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return x + 1;
-                        }).then(function(x) {
-                            return x + 100;
-                        }).then(function(x) {
+                    it("should chain using value", done -> {
+                        Promise.resolve(1).then(x -> {
+                            x + 1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(102);
                             done();
                         });
                     });
 
-                    it("should not call 1st-then()", function(done) {
-                        Promise.resolve(1).then(null, function(e) {
+                    it("should not call 1st-then()", done -> {
+                        Promise.resolve(1).then(null, e -> {
                             fail();
-                            return -1;
-                        }).then(function(x) {
+                            -1;
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using Promise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return new Promise(function(f, _) f("hello"));
-                        }).then(function(x) {
+                    it("should chain using Promise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            new Promise((f, _) -> f("hello"));
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return Promise.resolve("hello");
-                        }).then(function(x) {
+                    it("should chain using resolved Promise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return Promise.reject("error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected Promise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            Promise.reject("error");
+                        }).then(null, e -> {
                             (e : String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return SyncPromise.resolve("hello");
-                        }).then(function(x) {
+                    it("should chain using resolved SyncPromise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            SyncPromise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return SyncPromise.reject("error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected SyncPromise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            SyncPromise.reject("error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "error").should.be(true);
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return js.lib.Promise.resolve("hello");
-                        }).then(function(x) {
+                    it("should chain using resolved js.lib.Promise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            js.lib.Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function(done) {
-                        Promise.resolve(1).then(function(x) {
-                            return js.lib.Promise.reject("error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected js.lib.Promise", done -> {
+                        Promise.resolve(1).then(x -> {
+                            js.lib.Promise.reject("error");
+                        }).then(null, e -> {
                             (e : String).should.be("error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function(done) {
-                        Promise.resolve(1).then(function(x):Unit {
+                    it("should chain using exception", done -> {
+                        Promise.resolve(1).then(x -> {
                             throw "error";
-                        }).then(null, function(e) {
+                        }).then(null, e -> {
                             (e : haxe.Exception).message.should.be("error");
                             done();
                         });
@@ -284,105 +284,105 @@ class PromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain using value", function(done) {
-                        Promise.reject("error").then(null, function(e) {
-                            return 1;
-                        }).then(function(x) {
-                            return x + 100;
-                        }).then(function(x) {
+                    it("should chain using value", done -> {
+                        Promise.reject("error").then(null, e -> {
+                            1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should not call 1st-then()", function(done) {
-                        Promise.reject("error").then(function(x) {
+                    it("should not call 1st-then()", done -> {
+                        Promise.reject("error").then(x -> {
                             fail();
-                            return -1;
-                        }).then(null, function(e) {
+                            -1;
+                        }).then(null, e -> {
                             (e : String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return Promise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved Promise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return Promise.reject("error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected Promise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            Promise.reject("error");
+                        }).then(null, e -> {
                             (e : String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return SyncPromise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved SyncPromise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            SyncPromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return SyncPromise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected SyncPromise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            SyncPromise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return AbortablePromise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved AbortablePromise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            AbortablePromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return AbortablePromise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected AbortablePromise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            AbortablePromise.reject("rewrited error");
+                        }).then(null, e -> {
                             EqualsTools.deepEqual(e, "rewrited error").should.be(true);
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return js.lib.Promise.resolve("hello");
-                        }).then(function(x) {
+                    it("should chain using resolved js.lib.Promise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            js.lib.Promise.resolve("hello");
+                        }).then(x -> {
                             x.should.be("hello");
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function(done) {
-                        Promise.reject("error").then(null, function(x) {
-                            return js.lib.Promise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected js.lib.Promise", done -> {
+                        Promise.reject("error").then(null, x -> {
+                            js.lib.Promise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function(done) {
-                        Promise.reject("error").then(null, function(x):Unit {
+                    it("should chain using exception", done -> {
+                        Promise.reject("error").then(null, x -> {
                             throw "rewrited error";
-                        }).then(null, function(e) {
+                        }).then(null, e -> {
                             (e : Exception).message.should.be("rewrited error");
                             done();
                         });
@@ -392,19 +392,19 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.catchError()", {
-            it("should not call", function(done) {
-                new Promise(function(fulfill, _) {
+            it("should not call", done -> {
+                new Promise((fulfill, _) -> {
                     fulfill(100);
-                }).catchError(function(_) {
+                }).catchError(_ -> {
                     fail();
                 });
                 wait(5, done);
             });
 
-            it("should call", function(done) {
-                new Promise(function(_, reject) {
+            it("should call", done -> {
+                new Promise((_, reject) -> {
                     reject("error");
-                }).catchError(function(e) {
+                }).catchError(e -> {
                     (e : String).should.be("error");
                     done();
                 });
@@ -412,11 +412,11 @@ class PromiseSuite extends BuddySuite {
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should not call catchError()", function(done) {
-                        Promise.resolve(1).catchError(function(e) {
+                    it("should not call catchError()", done -> {
+                        Promise.resolve(1).catchError(e -> {
                             fail();
-                            return -1;
-                        }).then(function(x) {
+                            -1;
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
@@ -424,95 +424,95 @@ class PromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain using value", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return 1;
-                        }).then(function(x) {
-                            return x + 100;
-                        }).then(function(x) {
+                    it("should chain using value", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            1;
+                        }).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should chain using resolved Promise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return Promise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved Promise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected Promise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return Promise.reject("rewrited error");
-                        }).catchError(function(e) {
+                    it("should chain using rejected Promise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            Promise.reject("rewrited error");
+                        }).catchError(e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return SyncPromise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved SyncPromise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            SyncPromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected SyncPromise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return SyncPromise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected SyncPromise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            SyncPromise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return AbortablePromise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved AbortablePromise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            AbortablePromise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return AbortablePromise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected AbortablePromise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            AbortablePromise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
 
                     #if js
-                    it("should chain using resolved js.lib.Promise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return js.lib.Promise.resolve(1);
-                        }).then(function(x) {
+                    it("should chain using resolved js.lib.Promise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            js.lib.Promise.resolve(1);
+                        }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected js.lib.Promise", function(done) {
-                        Promise.reject("error").catchError(function(e) {
-                            return js.lib.Promise.reject("rewrited error");
-                        }).then(null, function(e) {
+                    it("should chain using rejected js.lib.Promise", done -> {
+                        Promise.reject("error").catchError(e -> {
+                            js.lib.Promise.reject("rewrited error");
+                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
                     });
                     #end
 
-                    it("should chain using exception", function(done) {
-                        Promise.reject("error").catchError(function(e):Unit {
+                    it("should chain using exception", done -> {
+                        Promise.reject("error").catchError(e -> {
                             throw "rewrited error";
-                        }).then(null, function(e) {
+                        }).then(null, e -> {
                             (e : Exception).message.should.be("rewrited error");
                             done();
                         });
@@ -522,37 +522,37 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.finally()", {
-            it("should call when it is fulfilled", function(done) {
-                new Promise(function(fulfill, _) {
+            it("should call when it is fulfilled", done -> {
+                new Promise((fulfill, _) -> {
                     fulfill(100);
-                }).finally(function() {
+                }).finally(() -> {
                     done();
                 });
             });
 
-            it("should call when it is rejected", function(done) {
-                new Promise(function(_, reject) {
+            it("should call when it is rejected", done -> {
+                new Promise((_, reject) -> {
                     reject("error");
-                }).finally(function() {
+                }).finally(() -> {
                     done();
                 });
             });
 
             describe("chain", {
                 describe("from resolved", {
-                    it("should chain", function(done) {
-                        Promise.resolve(1).finally(function() {}).then(function(x) {
-                            return x + 100;
-                        }).then(function(x) {
+                    it("should chain", done -> {
+                        Promise.resolve(1).finally(() -> {}).then(x -> {
+                            x + 100;
+                        }).then(x -> {
                             x.should.be(101);
                             done();
                         });
                     });
 
-                    it("should chain using exception", function(done) {
-                        Promise.resolve(1).finally(function() {
+                    it("should chain using exception", done -> {
+                        Promise.resolve(1).finally(() -> {
                             throw "error";
-                        }).catchError(function(e) {
+                        }).catchError(e -> {
                             (e : Exception).message.should.be("error");
                             done();
                         });
@@ -560,17 +560,17 @@ class PromiseSuite extends BuddySuite {
                 });
 
                 describe("from rejected", {
-                    it("should chain", function(done) {
-                        Promise.reject("error").finally(function() {}).catchError(function(e) {
+                    it("should chain", done -> {
+                        Promise.reject("error").finally(() -> {}).catchError(e -> {
                             (e : String).should.be("error");
                             done();
                         });
                     });
 
-                    it("should chain using exception", function(done) {
-                        Promise.reject("error").finally(function() {
+                    it("should chain using exception", done -> {
+                        Promise.reject("error").finally(() -> {
                             throw "rewrited error";
-                        }).catchError(function(e) {
+                        }).catchError(e -> {
                             (e : Exception).message.should.be("rewrited error");
                             done();
                         });
@@ -581,19 +581,19 @@ class PromiseSuite extends BuddySuite {
 
         #if js
         describe("Promise cast", {
-            it("should cast from js.lib.Promise", function(done) {
+            it("should cast from js.lib.Promise", done -> {
                 var jsPromise = js.lib.Promise.resolve(1);
                 var promise:Promise<Int> = jsPromise;
-                promise.then(function(v) {
+                promise.then(v -> {
                     v.should.be(1);
                     done();
                 });
             });
 
-            it("should cast to js.lib.Promise", function(done) {
+            it("should cast to js.lib.Promise", done -> {
                 var promise = Promise.resolve(1);
                 var jsPromise:js.lib.Promise<Int> = promise;
-                jsPromise.then(function(v) {
+                jsPromise.then(v -> {
                     EqualsTools.deepEqual(v, 1).should.be(true);
                     done();
                 });
@@ -602,158 +602,158 @@ class PromiseSuite extends BuddySuite {
         #end
 
         describe("Promise.all()", {
-            it("should resolve empty array", function(done) {
-                Promise.all([]).then(function(values) {
+            it("should resolve empty array", done -> {
+                Promise.all([]).then(values -> {
                     EqualsTools.deepEqual(values, []).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should resolve", function(done) {
-                Promise.all([Promise.resolve(1)]).then(function(values) {
+            it("should resolve", done -> {
+                Promise.all([Promise.resolve(1)]).then(values -> {
                     EqualsTools.deepEqual(values, [1]).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should reject", function(done) {
-                Promise.all([Promise.reject("error")]).then(function(values) {
+            it("should reject", done -> {
+                Promise.all([Promise.reject("error")]).then(values -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
                     done();
                 });
             });
 
-            it("should resolve ordered values", function(done) {
+            it("should resolve ordered values", done -> {
                 Promise.all([
-                    new Promise(function(f, _) {
+                    new Promise((f, _) -> {
                         wait(5, f.bind(1));
                     }),
                     Promise.resolve(2),
                     Promise.resolve(3)
-                ]).then(function(values) {
+                ]).then(values -> {
                     EqualsTools.deepEqual(values, [1, 2, 3]).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should reject by 2nd promise", function(done) {
+            it("should reject by 2nd promise", done -> {
                 Promise.all([
-                    new Promise(function(_, r) {
+                    new Promise((_, r) -> {
                         wait(5, r.bind("error1"));
                     }),
                     Promise.reject("error2"),
-                    new Promise(function(_, r) {
+                    new Promise((_, r) -> {
                         wait(5, r.bind("error3"));
                     })
-                ]).then(function(values) {
+                ]).then(values -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error2").should.be(true);
                     done();
                 });
             });
 
-            it("should reject by 3rd promise", function(done) {
-                Promise.all([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(function(values) {
+            it("should reject by 3rd promise", done -> {
+                Promise.all([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(values -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error3").should.be(true);
                     done();
                 });
             });
 
-            it("should process when it is mixed by Promise and Promise", function(done) {
-                Promise.all([Promise.resolve(1), Promise.resolve(2)]).then(function(values) {
+            it("should process when it is mixed by Promise and Promise", done -> {
+                Promise.all([Promise.resolve(1), Promise.resolve(2)]).then(values -> {
                     EqualsTools.deepEqual(values, [1, 2]).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
         });
 
         describe("Promise.race()", {
-            it("should be pending", function(done) {
-                Promise.race([]).then(function(value) {
+            it("should be pending", done -> {
+                Promise.race([]).then(value -> {
                     fail();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
                 wait(5, done);
             });
 
-            it("should resolve", function(done) {
-                Promise.race([Promise.resolve(1)]).then(function(value) {
+            it("should resolve", done -> {
+                Promise.race([Promise.resolve(1)]).then(value -> {
                     EqualsTools.deepEqual(value, 1).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should reject", function(done) {
-                Promise.race([Promise.reject("error")]).then(function(value) {
+            it("should reject", done -> {
+                Promise.race([Promise.reject("error")]).then(value -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
                     done();
                 });
             });
 
-            it("should resolve by 2nd promise", function(done) {
+            it("should resolve by 2nd promise", done -> {
                 Promise.race([
-                    new Promise(function(f, _) {
+                    new Promise((f, _) -> {
                         wait(5, f.bind(1));
                     }),
                     Promise.resolve(2),
                     Promise.resolve(3)
-                ]).then(function(value) {
+                ]).then(value -> {
                     value.should.be(2);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
 
-            it("should reject by 2nd promise", function(done) {
+            it("should reject by 2nd promise", done -> {
                 Promise.race([
-                    new Promise(function(_, r) {
+                    new Promise((_, r) -> {
                         wait(5, r.bind("error1"));
                     }),
                     Promise.reject("error2"),
-                    new Promise(function(_, r) {
+                    new Promise((_, r) -> {
                         wait(5, r.bind("error3"));
                     })
-                ]).then(function(value) {
+                ]).then(value -> {
                     fail();
-                }, function(e) {
+                }, e -> {
                     EqualsTools.deepEqual(e, "error2").should.be(true);
                     done();
                 });
             });
 
-            it("should resolve by 1st promise", function(done) {
-                Promise.race([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(function(value) {
+            it("should resolve by 1st promise", done -> {
+                Promise.race([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(value -> {
                     EqualsTools.deepEqual(value, 1).should.be(true);
                     done();
-                }, function(e) {
+                }, e -> {
                     fail();
                 });
             });
 
-            it("should process when it is mixed by Promise and Promise", function(done) {
-                Promise.race([Promise.resolve(1), Promise.resolve(2)]).then(function(values) {
+            it("should process when it is mixed by Promise and Promise", done -> {
+                Promise.race([Promise.resolve(1), Promise.resolve(2)]).then(values -> {
                     EqualsTools.deepEqual(values, 1).should.be(true);
                     done();
-                }, function(_) {
+                }, _ -> {
                     fail();
                 });
             });
