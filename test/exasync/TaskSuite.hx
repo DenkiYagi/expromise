@@ -6,13 +6,11 @@ class TaskSuite extends BuddySuite {
             timeoutMs = 100;
 
             #if js
-            function suppress(error:Dynamic) {}
-
             beforeAll({
-                js.Syntax.code("process.on('unhandledRejection', {0})", suppress);
+                js.Syntax.code("process.on('unhandledRejection', {0})", _ -> {});
             });
             afterAll({
-                js.Syntax.code("process.removeListener('unhandledRejection', {0})", suppress);
+                js.Syntax.code("process.removeListener('unhandledRejection', {0})", _ -> {});
             });
             #end
 
@@ -26,16 +24,16 @@ class TaskSuite extends BuddySuite {
 
             describe("pending", {
                 it("should be not completed", done -> {
-                    new Task(function(_, _) {})
-                    .onSuccess(_ -> fail())
-                    .onFailure(_ -> fail())
-                    .onException(_ -> fail())
-                    .onFinally(() -> fail());
+                    new Task(function(_, _) {}).onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
                     wait(5, done);
                 });
             });
 
-            describe("fulfilled", {
+            describe("result: success", {
                 it("should pass", {
                     new Task((fulfill, _) -> {
                         fulfill();
@@ -43,38 +41,33 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should pass when it is taken none fulfilled value", done -> {
-                    var called = false;
                     new Task((fulfill, _) -> {
                         wait(5, fulfill.bind());
                     })
-                    .onSuccess(_ -> called = true)
-                    .onFailure(_ -> fail())
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            (value:Null<Any>).should.be(null);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
                     });
                 });
 
                 it("should pass when it is taken some fulfilled value", done -> {
-                    var called = false;
                     new Task((fulfill, _) -> {
                         wait(5, fulfill.bind(1));
                     })
-                    .onSuccess(x -> {
-                        called = true;
-                        x.should.be(1);
-                    })
-                    .onFailure(_ -> fail())
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(1);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
                     });
                 });
             });
 
-            describe("rejected", {
+            describe("result: failure", {
                 it("should pass", {
                     new Task((_, reject) -> {
                         reject();
@@ -82,162 +75,544 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should pass when it is taken none rejected value", done -> {
-                    var called = false;
                     new Task((_, reject) -> {
                         wait(5, reject.bind());
                     })
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> {
-                        (e:Null<Any>).should.be(null);
-                        called = true;
-                    })
-                    .onException(e -> fail(e))
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            (error:Null<Any>).should.be(null);
+                            done();
+                        case Exception(exception): fail(exception);
                     });
                 });
 
                 it("should pass when it is taken some rejected value", done -> {
-                    var called = false;
                     new Task((_, reject) -> {
                         wait(5, reject.bind("error"));
                     })
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> {
-                        e.should.be("error");
-                        called = true;
-                    })
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
                     });
                 });
 
                 it("should pass when it is taken an Exception", done -> {
-                    var called = false;
                     new Task((_, reject) -> {
                         reject(new Exception("error"));
                     })
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> {
-                        e.message.should.be("error");
-                        called = true;
-                    })
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.message.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
                     });
                 });
+            });
 
+            describe("result: exception", {
                 it("should pass when it is thrown error", done -> {
-                    var called = false;
                     new Task((_, reject) -> {
                         throw "error";
                     })
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> fail(e))
-                    .onException(e -> {
-                        e.message.should.be("error");
-                        called = true;
-                    })
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
                     });
                 });
             });
 
             describe("Task.success()", {
                 it("should pass when it is taken emtpty value", done -> {
-                    var called = false;
-
                     Task.success()
-                    .onSuccess(x -> {
-                        (x:Null<Any>).should.be(null);
-                        called = true;
-                    })
-                    .onFailure(_ -> fail())
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            (value:Null<Any>).should.be(null);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
                     });
                 });
 
                 it("should pass when it is taken some value", done -> {
-                    var called = false;
-
                     Task.success(100)
-                    .onSuccess(x -> {
-                        x.should.be(100);
-                        called = true;
-                    })
-                    .onFailure(_ -> fail())
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
                     });
                 });
             });
 
             describe("Task.failure()", {
                 it("should pass when it is taken emtpty rejected value", done -> {
-                    var called = false;
-
                     Task.failure()
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> {
-                        (e:Null<Any>).should.be(null);
-                        called = true;
-                    })
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            (error:Null<Any>).should.be(null);
+                            done();
+                        case Exception(exception): fail(exception);
                     });
                 });
 
                 it("should pass when it is taken some rejected value", done -> {
-                    var called = false;
-
                     Task.failure("error")
-                    .onSuccess(_ -> fail())
-                    .onFailure(e -> {
-                        (e:String).should.be("error");
-                        called = true;
-                    })
-                    .onException(_ -> fail())
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
                     });
                 });
             });
 
             describe("Task.exception()", {
                 it("should pass", done -> {
-                    var called = false;
-
                     Task.exception(new Exception("error"))
-                    .onSuccess(_ -> fail())
-                    .onFailure(_ -> fail())
-                    .onException(e -> {
-                        e.message.should.be("error");
-                        called = true;
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        // skip: already tested
+        // describe("Task.onComplete()", {});
+
+        describe("Task.map()", {
+            describe("pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).map(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("result: success", {
+                it("should call when it is taken empty value", done -> {
+                    Task.success().map(x -> {
+                        (x:Null<Any>).should.be(null);
+                        "hello";
                     })
-                    .onFinally(() -> {
-                        called.should.be(true);
-                        done();
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be("hello");
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should call when it is taken some value", done -> {
+                    Task.success(100).map(x -> {
+                        x.should.be(100);
+                        x * 2;
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(200);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should be an exeption when it is thrown exception", done -> {
+                    Task.success(100).map(x -> {
+                        throw "error";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
                     });
                 });
             });
 
+            describe("result: failure", {
+                it("should not call when it is taken empty failure value", done -> {
+                    Task.failure().map(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            (error:Null<Any>).should.be(null);
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should not call when it is taken some empty failure value", done -> {
+                    Task.failure("error").map(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
             });
 
+            describe("result: exception", {
+                it("should not call", done -> {
+                    Task.exception(new Exception("error")).map(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail();
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        describe("Task.flatMap()", {
+            describe("pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).flatMap(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("result: success", {
+                it("should call when it is taken empty value", done -> {
+                    Task.success().flatMap(x -> {
+                        (x:Null<Any>).should.be(null);
+                        done();
+                        null;
+                    });
+                });
+
+                it("should call when it is taken some value", done -> {
+                    Task.success(100).flatMap(x -> {
+                        x.should.be(100);
+                        done();
+                        null;
+                    });
+                });
+
+                it("should transform a new success value", done -> {
+                    Task.success(100).flatMap(x -> Task.success(x * 2))
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(200);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should transform a new failure value", done -> {
+                    Task.success(100).flatMap(x -> Task.failure("error"))
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should transform a new exception", done -> {
+                    Task.success(100).flatMap(x -> Task.exception(new Exception("error")))
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+
+                it("should be an exeption when it is thrown exception", done -> {
+                    Task.success(100).flatMap(x -> throw "error")
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+
+            describe("result: failure", {
+                it("should not call when it is taken empty failure value", done -> {
+                    Task.failure().flatMap(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            (error:Null<Any>).should.be(null);
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should not call when it is taken some empty failure value", done -> {
+                    Task.failure("error").flatMap(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+            });
+
+            describe("result: exception", {
+                it("should not call", done -> {
+                    Task.exception(new Exception("error")).flatMap(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        describe("Task.mapFailure()", {
+            describe("pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).mapFailure(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("result: success", {
+                it("should not call when it is taken empty value", done -> {
+                    Task.success().mapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            (value:Null<Any>).should.be(null);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should not call when it is taken some empty value", done -> {
+                    Task.success(100).mapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+            });
+
+            describe("result: failure", {
+                it("should call when it is taken empty failure value", done -> {
+                    Task.failure().mapFailure(x -> {
+                        (x:Null<Any>).should.be(null);
+                        "hello";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("hello");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should call when it is taken some failure value", done -> {
+                    Task.failure("error").mapFailure(x -> {
+                        x.should.be("error");
+                        x + "_mod";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error_mod");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should be an exeption when it is thrown exception", done -> {
+                    Task.failure("error").mapFailure(x -> {
+                        throw "new error";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("new error");
+                            done();
+                    });
+                });
+            });
+
+            describe("result: exception", {
+                it("should not call", done -> {
+                    Task.exception(new Exception("error")).mapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        describe("Task.flatMapFailure()", {
+            describe("pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).flatMapFailure(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("result: success", {
+                it("should not call when it is taken empty failure value", done -> {
+                    Task.success().flatMapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            (value:Null<Any>).should.be(null);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should not call when it is taken some empty failure value", done -> {
+                    Task.success(100).flatMapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+            });
+
+            describe("result: failure", {
+                it("should call when it is taken empty value", done -> {
+                    Task.failure().flatMapFailure(x -> {
+                        (x:Null<Any>).should.be(null);
+                        done();
+                        null;
+                    });
+                });
+
+                it("should call when it is taken some value", done -> {
+                    Task.failure("error").flatMapFailure(x -> {
+                        x.should.be("error");
+                        done();
+                        null;
+                    });
+                });
+
+                it("should transform a new success value", done -> {
+                    Task.failure(100).flatMapFailure(x -> Task.success(x * 2))
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(200);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should transform a new failure value", done -> {
+                    Task.failure(100).flatMapFailure(x -> Task.failure("error"))
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should transform a new exception", done -> {
+                    Task.failure(100).flatMapFailure(x -> Task.exception(new Exception("error")))
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+
+                it("should be an exeption when it is thrown exception", done -> {
+                    Task.failure(100).flatMapFailure(x -> throw "error")
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+
+            describe("result: exception", {
+                it("should not call", done -> {
+                    Task.exception(new Exception("error")).flatMapFailure(x -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        describe("Task.rescue()", {
+
+        });
+
+        describe("Task.toPromise()", {
 
         });
     }
