@@ -35,172 +35,66 @@ class AbortablePromiseSuite extends BuddySuite {
             });
 
             describe("fulfilled", {
-                describe("sync", {
-                    it("should pass", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            fulfill();
-                            () -> {};
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should pass when it's taken no fulfilled value", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            fulfill();
-                            () -> {};
-                        }).then(_ -> {
-                            done();
-                        }, _ -> {
-                            fail();
-                        });
-                    });
-
-                    it("should call fulfilled(x)", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            fulfill(1);
-                            () -> {};
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        }, _ -> {
-                            fail();
-                        });
+                it("should pass", {
+                    new AbortablePromise((fulfill, _) -> {
+                        fulfill();
+                        () -> {};
                     });
                 });
 
-                describe("async", {
-                    it("should pass", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            wait(5, fulfill.bind());
-                            () -> {};
-                        });
-                        wait(5, done);
+                it("should pass when it is taken no fulfilled value", done -> {
+                    new AbortablePromise((fulfill, _) -> {
+                        wait(5, fulfill.bind());
+                        () -> {};
+                    }).then(_ -> {
+                        done();
+                    }, _ -> {
+                        fail();
                     });
+                });
 
-                    it("should pass when it's taken no fulfilled value", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            wait(5, fulfill.bind());
-                            () -> {};
-                        }).then(_ -> {
-                            done();
-                        }, _ -> {
-                            fail();
-                        });
-                    });
-
-                    it("should pass when it's taken some fulfilled value", done -> {
-                        new AbortablePromise((fulfill, _) -> {
-                            wait(5, fulfill.bind(1));
-                            () -> {};
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        }, _ -> {
-                            fail();
-                        });
+                it("should pass when it is taken some fulfilled value", done -> {
+                    new AbortablePromise((fulfill, _) -> {
+                        wait(5, fulfill.bind(1));
+                        () -> {};
+                    }).then(x -> {
+                        x.should.be(1);
+                        done();
+                    }, _ -> {
+                        fail();
                     });
                 });
             });
 
             describe("rejected", {
-                describe("sync", {
-                    it("should pass", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            reject();
-                            () -> {};
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should pass when it's taken no rejected value", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            reject();
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            (e == null).should.be(true);
-                            done();
-                        });
-                    });
-
-                    it("should pass when it's taken some rejected value", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            reject("error");
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            (e : String).should.be("error");
-                            done();
-                        });
-                    });
-
-                    it("should call rejected when it is thrown error", done -> {
-                        new AbortablePromise((_, _) -> {
-                            throw "error";
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            (e : Exception).message.should.be("error");
-                            done();
-                        });
+                it("should pass", {
+                    new AbortablePromise((_, reject) -> {
+                        reject();
+                        () -> {};
                     });
                 });
 
-                describe("async", {
-                    it("should pass", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            wait(5, reject.bind());
-                            () -> {};
-                        });
-                        wait(5, done);
+                it("should pass when it is taken no rejected value", done -> {
+                    new AbortablePromise((_, reject) -> {
+                        wait(5, reject.bind());
+                        () -> {};
+                    }).then(_ -> {
+                        fail();
+                    }, e -> {
+                        (e == null).should.be(true);
+                        done();
                     });
+                });
 
-                    it("should pass when it have no rejected", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            wait(5, reject.bind());
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should call rejected(_)", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            wait(5, reject.bind());
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            (e == null).should.be(true);
-                            done();
-                        });
-                    });
-
-                    it("should call rejected(_)", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            wait(5, reject.bind());
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            (e == null).should.be(true);
-                            done();
-                        });
-                    });
-
-                    it("should call rejected(x)", done -> {
-                        new AbortablePromise((_, reject) -> {
-                            wait(5, reject.bind("error"));
-                            () -> {};
-                        }).then(_ -> {
-                            fail();
-                        }, e -> {
-                            EqualsTools.deepEqual(e, "error").should.be(true);
-                            done();
-                        });
+                it("should pass when it is taken some rejected value", done -> {
+                    new AbortablePromise((_, reject) -> {
+                        wait(5, reject.bind("error"));
+                        () -> {};
+                    }).then(_ -> {
+                        fail();
+                    }, e -> {
+                        EqualsTools.deepEqual(e, "error").should.be(true);
+                        done();
                     });
                 });
             });

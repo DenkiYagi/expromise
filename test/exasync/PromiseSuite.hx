@@ -50,9 +50,9 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's taken no fulfilled value", done -> {
+                it("should pass when it is taken no fulfilled value", done -> {
                     new Promise((fulfill, _) -> {
-                        fulfill();
+                        wait(5, fulfill.bind());
                     }).then(_ -> {
                         done();
                     }, _ -> {
@@ -60,9 +60,9 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should call fulfilled(x)", done -> {
+                it("should pass when it is taken some fulfilled value", done -> {
                     new Promise((fulfill, _) -> {
-                        fulfill(1);
+                        wait(5, fulfill.bind(1));
                     }).then(x -> {
                         x.should.be(1);
                         done();
@@ -79,9 +79,9 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's taken no rejected value", done -> {
+                it("should pass when it is taken no rejected value", done -> {
                     new Promise((_, reject) -> {
-                        reject();
+                        wait(5, reject.bind());
                     }).then(_ -> {
                         fail();
                     }, e -> {
@@ -90,9 +90,9 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's taken some rejected value", done -> {
+                it("should pass when it is taken some rejected value", done -> {
                     new Promise((_, reject) -> {
-                        reject("error");
+                        wait(5, reject.bind("error"));
                     }).then(_ -> {
                         fail();
                     }, e -> {

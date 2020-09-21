@@ -35,18 +35,18 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's taken no fulfilled value", done -> {
+                it("should pass when it is taken no fulfilled value", done -> {
                     new SyncPromise((fulfill, _) -> {
-                        fulfill();
+                        wait(5, fulfill.bind());
                     }).then(
                         _ -> { done(); },
                         _ -> { fail(); }
                     );
                 });
 
-                it("should pass when it's taken some fulfilled value", done -> {
+                it("should pass when it is taken some fulfilled value", done -> {
                     new SyncPromise((fulfill, _) -> {
-                        fulfill(1);
+                        wait(5, fulfill.bind(1));
                     }).then(
                         x -> {
                             x.should.be(1);
@@ -64,9 +64,9 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's takens no rejected value", done -> {
+                it("should pass when it is takens no rejected value", done -> {
                     new SyncPromise((_, reject) -> {
-                        reject();
+                        wait(5, reject.bind());
                     }).then(
                         _ -> { fail(); },
                         e -> {
@@ -76,9 +76,9 @@ class SyncPromiseSuite extends BuddySuite {
                     );
                 });
 
-                it("should pass when it's takens some rejected value", done -> {
+                it("should pass when it is takens some rejected value", done -> {
                     new SyncPromise((_, reject) -> {
-                        reject("error");
+                        wait(5, reject.bind("error"));
                     }).then(
                         _ -> { fail(); },
                         e -> {
