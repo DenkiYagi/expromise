@@ -29,7 +29,7 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken no fulfilled value", done -> {
+                it("should pass when it is taken none fulfilled value", done -> {
                     new SyncPromise((fulfill, _) -> {
                         wait(5, fulfill.bind());
                     }).then(
@@ -58,7 +58,7 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is takens no rejected value", done -> {
+                it("should pass when it is takens none rejected value", done -> {
                     new SyncPromise((_, reject) -> {
                         wait(5, reject.bind());
                     }).then(
@@ -82,7 +82,7 @@ class SyncPromiseSuite extends BuddySuite {
                     );
                 });
 
-                it("should call rejected when it is thrown error", done -> {
+                it("should pass when it is thrown error", done -> {
                     new SyncPromise((_, _) -> {
                         throw "error";
                     }).then(
@@ -106,14 +106,17 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.resolve()", {
-            it("should call resolved(_)", done -> {
+            it("should pass when it is taken empty value", done -> {
                 SyncPromise.resolve().then(
-                    _ -> { done(); },
+                    x -> {
+                        (x:Null<Any>).should.be(null);
+                        done();
+                    },
                     _ -> { fail(); }
                 );
             });
 
-            it("should call resolved(x)", done -> {
+            it("should pass when it is taken some value", done -> {
                 SyncPromise.resolve(1).then(
                     x -> {
                         x.should.be(1);
@@ -125,21 +128,21 @@ class SyncPromiseSuite extends BuddySuite {
         });
 
         describe("SyncPromise.reject()", {
-            it("should call rejected(x)", done -> {
-                SyncPromise.reject("error").then(
+            it("should pass when is taken empty rejected value", done -> {
+                SyncPromise.reject().then(
                     _ -> { fail(); },
                     e -> {
-                        EqualsTools.deepEqual(e, "error").should.be(true);
+                        (e:Null<Any>).should.be(null);
                         done();
                     }
                 );
             });
 
-            it("should call rejected(_)", done -> {
+            it("should call rejected(x)", done -> {
                 SyncPromise.reject("error").then(
                     _ -> { fail(); },
                     e -> {
-                        EqualsTools.deepEqual(e, "error").should.be(true);
+                        (e : String).should.be("error");
                         done();
                     }
                 );

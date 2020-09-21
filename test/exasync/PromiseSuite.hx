@@ -93,7 +93,7 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should call rejected when it is thrown error", done -> {
+                it("should pass when it is thrown error", done -> {
                     new Promise((_, _) -> {
                         throw "error";
                     }).then(_ -> {
@@ -116,15 +116,16 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.resolve()", {
-            it("should call resolved(_)", done -> {
-                Promise.resolve().then(_ -> {
+            it("should pass when it is taken empty value", done -> {
+                Promise.resolve().then(x -> {
+                    (x:Null<Any>).should.be(null);
                     done();
                 }, _ -> {
                     fail();
                 });
             });
 
-            it("should call resolved(x)", done -> {
+            it("should pass when it is taken some value", done -> {
                 Promise.resolve(1).then(x -> {
                     x.should.be(1);
                     done();
@@ -135,20 +136,20 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.reject()", {
-            it("should call rejected(x)", done -> {
-                Promise.reject("error").then(_ -> {
+            it("should pass when is taken empty rejected value", done -> {
+                Promise.reject().then(_ -> {
                     fail();
                 }, e -> {
-                    EqualsTools.deepEqual(e, "error").should.be(true);
+                    (e:Null<Any>).should.be(null);
                     done();
                 });
             });
 
-            it("should call rejected(_)", done -> {
+            it("should pass when is taken some rejected value", done -> {
                 Promise.reject("error").then(_ -> {
                     fail();
                 }, e -> {
-                    EqualsTools.deepEqual(e, "error").should.be(true);
+                    (e : String).should.be("error");
                     done();
                 });
             });

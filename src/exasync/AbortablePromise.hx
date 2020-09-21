@@ -162,7 +162,7 @@ class AbortablePromise<T> implements IPromise<T> {
         });
     }
 
-    public static function reject<T>(error:Dynamic):AbortablePromise<T> {
+    public static function reject<T>(?error:Dynamic):AbortablePromise<T> {
         return new AbortablePromise((_, r) -> {
             r(error);
             null;

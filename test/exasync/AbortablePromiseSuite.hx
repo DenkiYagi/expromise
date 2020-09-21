@@ -35,7 +35,7 @@ class AbortablePromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken no fulfilled value", done -> {
+                it("should pass when it is taken none fulfilled value", done -> {
                     new AbortablePromise((fulfill, _) -> {
                         wait(5, fulfill.bind());
                         () -> {};
@@ -67,7 +67,7 @@ class AbortablePromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken no rejected value", done -> {
+                it("should pass when it is taken none rejected value", done -> {
                     new AbortablePromise((_, reject) -> {
                         wait(5, reject.bind());
                         () -> {};
@@ -105,15 +105,16 @@ class AbortablePromiseSuite extends BuddySuite {
         });
 
         describe("AbortablePromise.resolve()", {
-            it("should call resolved(_)", done -> {
-                AbortablePromise.resolve().then(_ -> {
+            it("should pass when it is taken empty value", done -> {
+                AbortablePromise.resolve().then(x -> {
+                    (x:Null<Any>).should.be(null);
                     done();
                 }, _ -> {
                     fail();
                 });
             });
 
-            it("should call resolved(x)", done -> {
+            it("should pass when it is taken some value", done -> {
                 AbortablePromise.resolve(1).then(x -> {
                     x.should.be(1);
                     done();
@@ -121,46 +122,23 @@ class AbortablePromiseSuite extends BuddySuite {
                     fail();
                 });
             });
-
-            it("should not abort", done -> {
-                var promise = AbortablePromise.resolve(1);
-                promise.abort();
-                promise.then(x -> {
-                    x.should.be(1);
-                    done();
-                }, e -> {
-                    fail();
-                });
-            });
         });
 
         describe("AbortablePromise.reject()", {
+            it("should pass when is taken empty rejected value", done -> {
+                AbortablePromise.reject().then(_ -> {
+                    fail();
+                }, e -> {
+                    (e:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+
             it("should call rejected(x)", done -> {
                 AbortablePromise.reject("error").then(_ -> {
                     fail();
                 }, e -> {
-                    EqualsTools.deepEqual(e, "error").should.be(true);
-                    done();
-                });
-            });
-
-            it("should call rejected(_)", done -> {
-                AbortablePromise.reject("error").then(_ -> {
-                    fail();
-                }, e -> {
-                    EqualsTools.deepEqual(e, "error").should.be(true);
-                    done();
-                });
-            });
-
-            it("should not abort", done -> {
-                var promise = AbortablePromise.reject("hello");
-                promise.abort();
-                promise.then(x -> {
-                    fail();
-                    done();
-                }, e -> {
-                    (e : String).should.be("hello");
+                    (e : String).should.be("error");
                     done();
                 });
             });

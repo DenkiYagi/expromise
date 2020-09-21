@@ -138,7 +138,7 @@ class SyncPromise<T> implements IPromise<T> {
         return new SyncPromise((f, _) -> f(value));
     }
 
-    public static function reject<T>(error:Dynamic):SyncPromise<T> {
+    public static function reject<T>(?error:Dynamic):SyncPromise<T> {
         return new SyncPromise((_, r) -> r(error));
     }
 }
