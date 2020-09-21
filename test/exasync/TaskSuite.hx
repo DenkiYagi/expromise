@@ -191,8 +191,122 @@ class TaskSuite extends BuddySuite {
             });
         });
 
-        // skip: already tested
-        // describe("Task.onComplete()", {});
+        describe("Task.onComplete()", {
+            it("should call all callbacks when it taken none value", done -> {
+                var count = 0;
+                final task = Task.success();
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        (value:Null<Any>).should.be(null);
+                        count++;
+                    case Failure(error): fail(error);
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        (value:Null<Any>).should.be(null);
+                        count++;
+                    case Failure(error): fail(error);
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(_ -> {
+                    count.should.be(2);
+                    done();
+                });
+            });
+
+            it("should call all callbacks when it taken some value", done -> {
+                var count = 0;
+                final task = Task.success(100);
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        value.should.be(100);
+                        count++;
+                    case Failure(error): fail(error);
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(x -> switch (x) {
+                    case Success(value):
+                        value.should.be(100);
+                        count++;
+                    case Failure(error): fail(error);
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(_ -> {
+                    count.should.be(2);
+                    done();
+                });
+            });
+
+            it("should call all callbacks when it taken none failure value", done -> {
+                var count = 0;
+                final task = Task.failure();
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error):
+                        (error:Null<Any>).should.be(null);
+                        count++;
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error):
+                        (error:Null<Any>).should.be(null);
+                        count++;
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(_ -> {
+                    count.should.be(2);
+                    done();
+                });
+            });
+
+            it("should call all callbacks when it taken some failure value", done -> {
+                var count = 0;
+                final task = Task.failure("error");
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error):
+                        error.should.be("error");
+                        count++;
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error):
+                        error.should.be("error");
+                        count++;
+                    case Exception(exception): fail(exception);
+                });
+                task.onComplete(_ -> {
+                    count.should.be(2);
+                    done();
+                });
+            });
+
+            it("should call all callbacks when it taken an exception", done -> {
+                var count = 0;
+                final task = Task.exception(new Exception("error"));
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error): fail(error);
+                    case Exception(exception):
+                        exception.message.should.be("error");
+                        count++;
+                });
+                task.onComplete(x -> switch (x) {
+                    case Success(value): fail(value);
+                    case Failure(error): fail(error);
+                    case Exception(exception):
+                        exception.message.should.be("error");
+                        count++;
+                });
+                task.onComplete(_ -> {
+                    count.should.be(2);
+                    done();
+                });
+            });
+        });
 
         describe("Task.map()", {
             describe("pending", {
