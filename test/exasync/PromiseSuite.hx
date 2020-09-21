@@ -50,15 +50,7 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it have no fulfilled", {
-                    new Promise(function(fulfill, _) {
-                        fulfill();
-                    }).then(null, function(_) {
-                        fail();
-                    });
-                });
-
-                it("should call fulfilled(_)", function(done) {
+                it("should pass when it's taken no fulfilled value", done -> {
                     new Promise(function(fulfill, _) {
                         fulfill();
                     }).then(function(_) {
@@ -87,15 +79,7 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it have no rejected", {
-                    new Promise(function(_, reject) {
-                        reject();
-                    }).then(function(_) {
-                        fail();
-                    });
-                });
-
-                it("should call rejected(_)", function(done) {
+                it("should pass when it's taken no rejected value", done -> {
                     new Promise(function(_, reject) {
                         reject();
                     }).then(function(_) {
@@ -106,18 +90,7 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should call rejected(_)", function(done) {
-                    new Promise(function(_, reject) {
-                        reject();
-                    }).then(function(_) {
-                        fail();
-                    }, function(e) {
-                        (e == null).should.be(true);
-                        done();
-                    });
-                });
-
-                it("should call rejected(x)", function(done) {
+                it("should pass when it's taken some rejected value", function(done) {
                     new Promise(function(_, reject) {
                         reject("error");
                     }).then(function(_) {

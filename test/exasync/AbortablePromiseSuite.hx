@@ -44,17 +44,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         wait(5, done);
                     });
 
-                    it("should pass when it have no fulfilled", function(done) {
-                        new AbortablePromise(function(fulfill, _) {
-                            fulfill();
-                            return function() {};
-                        }).then(null, function(_) {
-                            fail();
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should call fulfilled(_)", function(done) {
+                    it("should pass when it's taken no fulfilled value", function(done) {
                         new AbortablePromise(function(fulfill, _) {
                             fulfill();
                             return function() {};
@@ -87,17 +77,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         wait(5, done);
                     });
 
-                    it("should pass when it have no fulfilled", function(done) {
-                        new AbortablePromise(function(fulfill, _) {
-                            wait(5, fulfill.bind());
-                            return function() {};
-                        }).then(null, function(_) {
-                            fail();
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should call fulfilled(_)", function(done) {
+                    it("should pass when it's taken no fulfilled value", function(done) {
                         new AbortablePromise(function(fulfill, _) {
                             wait(5, fulfill.bind());
                             return function() {};
@@ -108,7 +88,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should call fulfilled(x)", function(done) {
+                    it("should pass when it's taken some fulfilled value", function(done) {
                         new AbortablePromise(function(fulfill, _) {
                             wait(5, fulfill.bind(1));
                             return function() {};
@@ -132,17 +112,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         wait(5, done);
                     });
 
-                    it("should pass when it have no rejected", function(done) {
-                        new AbortablePromise(function(_, reject) {
-                            reject();
-                            return function() {};
-                        }).then(function(_) {
-                            fail();
-                        });
-                        wait(5, done);
-                    });
-
-                    it("should call rejected(_)", function(done) {
+                    it("should pass when it's taken no rejected value", function(done) {
                         new AbortablePromise(function(_, reject) {
                             reject();
                             return function() {};
@@ -154,19 +124,7 @@ class AbortablePromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should call rejected(_)", function(done) {
-                        new AbortablePromise(function(_, reject) {
-                            reject();
-                            return function() {};
-                        }).then(function(_) {
-                            fail();
-                        }, function(e) {
-                            (e == null).should.be(true);
-                            done();
-                        });
-                    });
-
-                    it("should call rejected(x)", function(done) {
+                    it("should pass when it's taken some rejected value", function(done) {
                         new AbortablePromise(function(_, reject) {
                             reject("error");
                             return function() {};

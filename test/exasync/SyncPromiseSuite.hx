@@ -35,13 +35,7 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it have no fulfilled", {
-                    new SyncPromise(function (fulfill, _) {
-                        fulfill();
-                    }).then(null, function (_) { fail(); });
-                });
-
-                it("should call fulfilled(_)", function (done) {
+                it("should pass when it's taken no fulfilled value", done -> {
                     new SyncPromise(function (fulfill, _) {
                         fulfill();
                     }).then(
@@ -50,7 +44,7 @@ class SyncPromiseSuite extends BuddySuite {
                     );
                 });
 
-                it("should call fulfilled(x)", function (done) {
+                it("should pass when it's taken some fulfilled value", done -> {
                     new SyncPromise(function (fulfill, _) {
                         fulfill(1);
                     }).then(
@@ -70,13 +64,7 @@ class SyncPromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it have no rejected", {
-                    new SyncPromise(function (_, reject) {
-                        reject();
-                    }).then(function (_) { fail(); });
-                });
-
-                it("should call rejected(_)", function (done) {
+                it("should pass when it's takens no rejected value", done -> {
                     new SyncPromise(function (_, reject) {
                         reject();
                     }).then(
@@ -88,19 +76,7 @@ class SyncPromiseSuite extends BuddySuite {
                     );
                 });
 
-                it("should call rejected(_)", function (done) {
-                    new SyncPromise(function (_, reject) {
-                        reject();
-                    }).then(
-                        function (_) { fail(); },
-                        function (e) {
-                            (e == null).should.be(true);
-                            done();
-                        }
-                    );
-                });
-
-                it("should call rejected(x)", function (done) {
+                it("should pass when it's takens some rejected value", done -> {
                     new SyncPromise(function (_, reject) {
                         reject("error");
                     }).then(
