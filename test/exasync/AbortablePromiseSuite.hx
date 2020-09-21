@@ -27,7 +27,7 @@ class AbortablePromiseSuite extends BuddySuite {
                 });
             });
 
-            describe("fulfilled", {
+            describe("result: fulfilled", {
                 it("should pass", {
                     new AbortablePromise((fulfill, _) -> {
                         fulfill();
@@ -59,7 +59,7 @@ class AbortablePromiseSuite extends BuddySuite {
                 });
             });
 
-            describe("rejected", {
+            describe("result: rejected", {
                 it("should pass", {
                     new AbortablePromise((_, reject) -> {
                         reject();
@@ -145,71 +145,42 @@ class AbortablePromiseSuite extends BuddySuite {
         });
 
         describe("AbortablePromise.then()", {
-            describe("sync", {
-                it("should call fulfilled", done -> {
-                    var called = false;
-                    new AbortablePromise((fulfill, _) -> {
-                        fulfill(100);
-                        () -> {};
-                    }).then(x -> {
-                        x.should.be(100);
-                        called = true;
-                        wait(5, done);
-                    }, _ -> {
-                        fail();
-                    });
-                    called.should.be(false);
-                });
-
-                it("should call rejected", done -> {
-                    var called = false;
-                    new AbortablePromise((_, reject) -> {
-                        reject("error");
-                        () -> {};
-                    }).then(_ -> {
-                        fail();
-                    }, e -> {
-                        (e : String).should.be("error");
-                        called = true;
-                        wait(5, done);
-                    });
-                    called.should.be(false);
+            describe("from pending", {
+                it("should not call", done -> {
+                    new AbortablePromise((_, _) -> () -> {}).then(_ -> fail(), _ -> fail());
+                    wait(5, done);
                 });
             });
 
-            describe("async", {
-                it("should call fulfilled", done -> {
-                    var called = false;
-                    new AbortablePromise((fulfill, _) -> {
-                        wait(5, () -> {
-                            fulfill(100);
-                        });
-                        () -> {};
-                    }).then(x -> {
-                        x.should.be(100);
-                        called = true;
-                        wait(5, done);
-                    }, _ -> {
-                        fail();
-                    });
-                    called.should.be(false);
+            describe("from fulfilled", {
+                it("should call onFulfilled when it is taken empty value", done -> {
+                    AbortablePromise.resolve().then(x -> {
+                        (x:Null<Any>).should.be(null);
+                        done();
+                    }, _ -> fail());
                 });
 
-                it("should call rejected", done -> {
-                    var called = false;
-                    new AbortablePromise((_, reject) -> {
-                        wait(5, () -> {
-                            reject("error");
-                        });
-                        () -> {};
-                    }).then(_ -> {
-                        fail();
-                    }, e -> {
-                        (e : String).should.be("error");
-                        called = true;
-                        wait(5, done);
+                it("should call onFulfilled when it is taken some value", done -> {
+                    AbortablePromise.resolve(100).then(x -> {
+                        x.should.be(100);
+                        done();
+                    }, _ -> fail());
+                });
+            });
+
+            describe("from rejected", {
+                it("should call onRejected when it is taken empty value", done -> {
+                    AbortablePromise.reject().then(x -> fail(), e -> {
+                        (e:Null<Any>).should.be(null);
+                        done();
                     });
-                    called.should.be(false);
+                });
+
+                it("should call onRejected when it is taken some value", done -> {
+                    AbortablePromise.reject("error").then(x -> fail(), e -> {
+                        (e:String).should.be("error");
+                        done();
+                    });
                 });
             });
 

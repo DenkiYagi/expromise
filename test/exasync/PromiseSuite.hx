@@ -35,7 +35,7 @@ class PromiseSuite extends BuddySuite {
                 });
             });
 
-            describe("fulfilled", {
+            describe("result: fulfilled", {
                 it("should pass", {
                     new Promise((fulfill, _) -> {
                         fulfill();
@@ -64,7 +64,7 @@ class PromiseSuite extends BuddySuite {
                 });
             });
 
-            describe("rejected", {
+            describe("result: rejected", {
                 it("should pass", {
                     new Promise((_, reject) -> {
                         reject();
@@ -156,25 +156,42 @@ class PromiseSuite extends BuddySuite {
         });
 
         describe("Promise.then()", {
-            it("should call fulfilled", done -> {
-                new Promise((fulfill, _) -> {
-                    fulfill(100);
-                }).then(x -> {
-                    x.should.be(100);
-                    done();
-                }, _ -> {
-                    fail();
+            describe("from pending", {
+                it("should not call", done -> {
+                    new Promise((_, _) -> {}).then(_ -> fail(), _ -> fail());
+                    wait(5, done);
                 });
             });
 
-            it("should call rejected", done -> {
-                new Promise((_, reject) -> {
-                    reject("error");
-                }).then(_ -> {
-                    fail();
-                }, e -> {
-                    (e : String).should.be("error");
-                    done();
+            describe("from fulfilled", {
+                it("should call onFulfilled when it is taken empty value", done -> {
+                    Promise.resolve().then(x -> {
+                        (x:Null<Any>).should.be(null);
+                        done();
+                    }, _ -> fail());
+                });
+
+                it("should call onFulfilled when it is taken some value", done -> {
+                    Promise.resolve(100).then(x -> {
+                        x.should.be(100);
+                        done();
+                    }, _ -> fail());
+                });
+            });
+
+            describe("from rejected", {
+                it("should call onRejected when it is taken empty value", done -> {
+                    Promise.reject().then(x -> fail(), e -> {
+                        (e:Null<Any>).should.be(null);
+                        done();
+                    });
+                });
+
+                it("should call onRejected when it is taken some value", done -> {
+                    Promise.reject("error").then(x -> fail(), e -> {
+                        (e:String).should.be("error");
+                        done();
+                    });
                 });
             });
 
