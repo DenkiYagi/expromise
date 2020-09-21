@@ -216,6 +216,25 @@ class TaskSuite extends BuddySuite {
                         done();
                     });
                 });
+            });
+
+            describe("Task.exception()", {
+                it("should pass", done -> {
+                    var called = false;
+
+                    Task.exception(new Exception("error"))
+                    .onSuccess(_ -> fail())
+                    .onFailure(_ -> fail())
+                    .onException(e -> {
+                        e.message.should.be("error");
+                        called = true;
+                    })
+                    .onFinally(() -> {
+                        called.should.be(true);
+                        done();
+                    });
+                });
+            });
 
             });
 
