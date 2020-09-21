@@ -70,9 +70,13 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         return cast this.catchError((e:TaskError<TFailure>) -> {
             switch (e) {
                 case Failure(error):
-                    Task.failure(error);
+                    Promise.reject(TaskError.Failure(error));
                 case Exception(ex):
-                    cast fn(ex);
+                    try {
+                        cast fn(ex);
+                    } catch (ex) {
+                        Promise.reject(TaskError.Exception(ex));
+                    }
             }
         });
     }
@@ -89,53 +93,6 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             }
         });
     }
-
-    // public function onSuccess(fn:TSuccess->Void):Task<TSuccess, TFailure> {
-    //     return cast this.then(value -> {
-    //         try {
-    //             fn(value);
-    //             Promise.resolve(value);
-    //         } catch (ex) {
-    //             Promise.reject(TaskError.Exception(ex));
-    //         }
-    //     });
-    // }
-
-    // public function onFailure(fn:TFailure->Void):Task<TSuccess, TFailure> {
-    //     return cast this.catchError((e:TaskError<TFailure>) -> {
-    //         switch (e) {
-    //             case Failure(error):
-    //                 try {
-    //                     fn(error);
-    //                     Promise.reject(e);
-    //                 } catch (ex) {
-    //                     Promise.reject(TaskError.Exception(ex));
-    //                 }
-    //             case Exception(ex):
-    //                 Promise.reject(e);
-    //         }
-    //     });
-    // }
-
-    // public function onException(fn:Exception->Void):Task<TSuccess, TFailure> {
-    //     return cast this.catchError((e:TaskError<TFailure>) -> {
-    //         switch (e) {
-    //             case Failure(error):
-    //                 Promise.reject(e);
-    //             case Exception(ex):
-    //                 try {
-    //                     fn(ex);
-    //                     Promise.reject(e);
-    //                 } catch (_ex) {
-    //                     Promise.reject(TaskError.Exception(_ex));
-    //                 }
-    //         }
-    //     });
-    // }
-
-    // public function onFinally(fn:Void->Void):Task<TSuccess, TFailure> {
-    //     return cast this.finally(fn);
-    // }
 
     @:to
     public extern inline function toPromise():Promise<Either<TFailure, TSuccess>> {
