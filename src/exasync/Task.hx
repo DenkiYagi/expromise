@@ -65,6 +65,17 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         });
     }
 
+    public function rescue(fn:Exception->Task<TSuccess, TFailure>):Task<TSuccess, TFailure> {
+        return cast this.catchError((e:TaskError<TFailure>) -> {
+            switch (e) {
+                case Failure(error):
+                    Task.failure(error);
+                case Exception(exception):
+                    cast fn(exception);
+            }
+        });
+    }
+
     public function onSuccess(fn:TSuccess->Void):Task<TSuccess, TFailure> {
         return cast this.then(value -> {
             try {
