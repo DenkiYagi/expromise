@@ -3,9 +3,9 @@ package exasync;
 import haxe.Exception;
 
 abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
-    public inline extern function new(executor:(TSuccess->Void)->(TFailure->Void)->Void) {
+    public inline extern function new(executor:(?TSuccess->Void)->(?TFailure->Void)->Void) {
         this = new Promise((fulfill, reject) -> {
-            executor(fulfill, err -> reject(TaskError.Failure(err)));
+            executor(fulfill, (?err) -> reject(TaskError.Failure(err)));
         }).catchError(ex -> {
             if (Std.isOfType(ex, TaskError)) {
                 Promise.reject(cast ex);
@@ -125,11 +125,11 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         );
     }
 
-    public static inline extern function success<TSuccess, TFailure>(value:TSuccess):Task<TSuccess, TFailure> {
+    public static inline extern function success<TSuccess, TFailure>(?value:TSuccess):Task<TSuccess, TFailure> {
         return cast Promise.resolve(value);
     }
 
-    public static inline extern function failure<TSuccess, TFailure>(error:TFailure):Task<TSuccess, TFailure> {
+    public static inline extern function failure<TSuccess, TFailure>(?error:TFailure):Task<TSuccess, TFailure> {
         return cast Promise.reject(TaskError.Failure(error));
     }
 

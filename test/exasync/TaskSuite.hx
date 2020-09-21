@@ -12,7 +12,7 @@ class TaskSuite extends BuddySuite {
             timeoutMs = 100;
 
             describe("executor", {
-                it("should call", function(done) {
+                it("should call", done -> {
                     new Task(function(_, _) {
                         done();
                     });
@@ -20,17 +20,54 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("pending", {
-                it("should be not completed", function(done) {
-                    new Task(function(_, _) {}).toPromise().then(function(_) {
-                        fail();
-                    }, function(_) {
-                        fail();
-                    });
+                it("should be not completed", done -> {
+                    new Task(function(_, _) {})
+                    .onSuccess(_ -> fail())
+                    .onFailure(_ -> fail())
+                    .onException(_ -> fail())
+                    .onFinally(() -> fail());
                     wait(5, done);
                 });
             });
 
+            describe("fulfilled", {
+                it("should pass", {
+                    new Task(function(fulfill, _) {
+                        fulfill();
+                    });
+                });
 
+                it("should pass when it's taken no fulfilled value", done -> {
+                    new Task(function(fulfill, _) {
+                        fulfill();
+                    })
+                    .onSuccess(_ -> done())
+                    .onFailure(_ -> fail())
+                    .onException(_ -> fail())
+                    .onFinally(() -> fail());
+                });
+
+                // it("should call fulfilled(_)",  done -> {
+                //     new Task(function(fulfill, _) {
+                //         fulfill();
+                //     }).then(function(_) {
+                //         done();
+                //     }, function(_) {
+                //         fail();
+                //     });
+                // });
+
+                // it("should call fulfilled(x)",  done -> {
+                //     new Task(function(fulfill, _) {
+                //         fulfill(1);
+                //     }).then(function(x) {
+                //         x.should.be(1);
+                //         done();
+                //     }, function(_) {
+                //         fail();
+                //     });
+                // });
+            });
 
 
         });
