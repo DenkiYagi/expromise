@@ -31,36 +31,36 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it's taken no fulfilled value", done -> {
+                it("should pass when it is taken no fulfilled value", done -> {
+                    var called = false;
                     new Task(function(fulfill, _) {
-                        fulfill();
+                        wait(5, fulfill.bind());
                     })
-                    .onSuccess(_ -> done())
+                    .onSuccess(_ -> called = true)
                     .onFailure(_ -> fail())
                     .onException(_ -> fail())
-                    .onFinally(() -> fail());
+                    .onFinally(() -> {
+                        called.should.be(true);
+                        done();
+                    });
                 });
 
-                // it("should call fulfilled(_)",  done -> {
-                //     new Task(function(fulfill, _) {
-                //         fulfill();
-                //     }).then(function(_) {
-                //         done();
-                //     }, function(_) {
-                //         fail();
-                //     });
-                // });
-
-                // it("should call fulfilled(x)",  done -> {
-                //     new Task(function(fulfill, _) {
-                //         fulfill(1);
-                //     }).then(function(x) {
-                //         x.should.be(1);
-                //         done();
-                //     }, function(_) {
-                //         fail();
-                //     });
-                // });
+                it("should pass when it is taken some fulfilled value", done -> {
+                    var called = false;
+                    new Task(function(fulfill, _) {
+                        wait(5, fulfill.bind(1));
+                    })
+                    .onSuccess(x -> {
+                        called = true;
+                        x.should.be(1);
+                    })
+                    .onFailure(_ -> fail())
+                    .onException(_ -> fail())
+                    .onFinally(() -> {
+                        called.should.be(true);
+                        done();
+                    });
+                });
             });
 
 
