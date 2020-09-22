@@ -35,7 +35,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should pass", {
                     new Task((fulfill, _) -> {
                         fulfill();
@@ -69,7 +69,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should pass", {
                     new Task((_, reject) -> {
                         reject();
@@ -116,7 +116,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should pass when it is thrown error", done -> {
                     new Task((_, reject) -> {
                         throw "error";
@@ -323,7 +323,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should call when it is taken none value", done -> {
                     Task.successful().map(x -> {
                         (x:Null<Any>).should.be(null);
@@ -366,7 +366,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should not call when it is taken none failure value", done -> {
                     Task.failed().map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -390,7 +390,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should not call", done -> {
                     Task.abended(new Exception("error")).map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -417,7 +417,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should call when it is taken none value", done -> {
                     Task.successful().flatMap(x -> {
                         (x:Null<Any>).should.be(null);
@@ -479,7 +479,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should not call when it is taken none failure value", done -> {
                     Task.failed().flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -503,7 +503,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should not call", done -> {
                     Task.abended(new Exception("error")).flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -530,7 +530,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should not call when it is taken none value", done -> {
                     Task.successful().mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -554,7 +554,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should call when it is taken none failure value", done -> {
                     Task.failed().mapFailure(x -> {
                         (x:Null<Any>).should.be(null);
@@ -597,7 +597,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should not call", done -> {
                     Task.abended(new Exception("error")).mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -624,7 +624,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should not call when it is taken none value", done -> {
                     Task.successful().flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -648,7 +648,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should call when it is taken none value", done -> {
                     Task.failed().flatMapFailure(x -> {
                         (x:Null<Any>).should.be(null);
@@ -710,7 +710,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should not call", done -> {
                     Task.abended(new Exception("error")).flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -721,6 +721,232 @@ class TaskSuite extends BuddySuite {
                             done();
                     });
                 });
+            });
+        });
+
+        describe("Task.match()", {
+            describe("from pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).match(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("from successful", {
+                it("should pass `empty successful -> Right`", done -> {
+                    Task.successful().match(x -> switch (x) {
+                        case Right(v): Right(100);
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `empty successful -> Left`", done -> {
+                    Task.successful().match(x -> switch (x) {
+                        case Right(v): Left("error");
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `empty successful -> throw`", done -> {
+                    Task.successful().match(x -> switch (x) {
+                        case Right(v): throw "error";
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+
+                it("should pass `some successful -> Right`", done -> {
+                    Task.successful(100).match(x -> switch (x) {
+                        case Right(v): Right(v * 2);
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(200);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `some successful -> Left`", done -> {
+                    Task.successful(100).match(x -> switch (x) {
+                        case Right(v): Left("error");
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `some successful -> throw`", done -> {
+                    Task.successful(100).match(x -> switch (x) {
+                        case Right(v): throw "error";
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+
+            describe("from failed", {
+                it("should pass `empty failed -> Right`", done -> {
+                    Task.failed().match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Right(100);
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `empty failed -> Left`", done -> {
+                    Task.failed().match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Left("error2");
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error2");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `empty failed -> throw`", done -> {
+                    Task.failed().match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): throw "error2";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error2");
+                            done();
+                    });
+                });
+
+                it("should pass `some failed -> Right`", done -> {
+                    Task.failed(100).match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Right(100);
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `some failed -> Left`", done -> {
+                    Task.failed(100).match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Left("error2");
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error2");
+                            done();
+                        case Exception(exception): fail(exception);
+                    });
+                });
+
+                it("should pass `some failed -> throw`", done -> {
+                    Task.failed(100).match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): throw "error2";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error2");
+                            done();
+                    });
+                });
+            });
+
+            describe("from aborted", {
+                it("should not call", done -> {
+                    Task.abended(new Exception("error")).match(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+            });
+        });
+
+        describe("Task.flatMatch()", {
+            describe("pending", {
+                it("should not call", done -> {
+                    new Task((_, _) -> {}).flatMatch(_ -> { fail(); null; })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Exception(exception): fail(exception);
+                    });
+                    wait(5, done);
+                });
+            });
+
+            describe("result: successful", {
+            });
+
+            describe("rexult: failed", {
+            });
+
+            describe("rexult: aborted", {
+
             });
         });
 
@@ -737,7 +963,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: success", {
+            describe("result: successful", {
                 it("should not call when it is taken none value", done -> {
                     Task.successful().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -761,7 +987,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: failure", {
+            describe("rexult: failed", {
                 it("should not call when it is taken none failure value", done -> {
                     Task.failed().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
@@ -785,7 +1011,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("result: exception", {
+            describe("rexult: aborted", {
                 it("should call", done -> {
                     Task.abended(new Exception("error")).rescue(x -> {
                         x.message.should.be("error");
