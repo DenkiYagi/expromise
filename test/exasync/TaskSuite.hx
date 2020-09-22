@@ -29,7 +29,7 @@ class TaskSuite extends BuddySuite {
                     new Task(function(_, _) {}).onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -51,7 +51,7 @@ class TaskSuite extends BuddySuite {
                             (value:Null<Any>).should.be(null);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -64,7 +64,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(1);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -85,7 +85,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             (error:Null<Any>).should.be(null);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -98,7 +98,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -111,7 +111,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.message.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -124,7 +124,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -139,7 +139,7 @@ class TaskSuite extends BuddySuite {
                             (value:Null<Any>).should.be(null);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -150,7 +150,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -163,7 +163,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             (error:Null<Any>).should.be(null);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -174,18 +174,18 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
 
-            describe("Task.abended()", {
+            describe("Task.aborted()", {
                 it("should pass", done -> {
-                    Task.abended(new Exception("error"))
+                    Task.aborted(new Exception("error"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -202,14 +202,14 @@ class TaskSuite extends BuddySuite {
                         (value:Null<Any>).should.be(null);
                         count++;
                     case Failure(error): fail(error);
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(x -> switch (x) {
                     case Success(value):
                         (value:Null<Any>).should.be(null);
                         count++;
                     case Failure(error): fail(error);
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(_ -> {
                     count.should.be(2);
@@ -225,14 +225,14 @@ class TaskSuite extends BuddySuite {
                         value.should.be(100);
                         count++;
                     case Failure(error): fail(error);
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(x -> switch (x) {
                     case Success(value):
                         value.should.be(100);
                         count++;
                     case Failure(error): fail(error);
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(_ -> {
                     count.should.be(2);
@@ -248,14 +248,14 @@ class TaskSuite extends BuddySuite {
                     case Failure(error):
                         (error:Null<Any>).should.be(null);
                         count++;
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error):
                         (error:Null<Any>).should.be(null);
                         count++;
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(_ -> {
                     count.should.be(2);
@@ -271,14 +271,14 @@ class TaskSuite extends BuddySuite {
                     case Failure(error):
                         error.should.be("error");
                         count++;
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error):
                         error.should.be("error");
                         count++;
-                    case Exception(exception): fail(exception);
+                    case Abend(exception): fail(exception);
                 });
                 task.onComplete(_ -> {
                     count.should.be(2);
@@ -288,18 +288,18 @@ class TaskSuite extends BuddySuite {
 
             it("should call all callbacks when it taken an exception", done -> {
                 var count = 0;
-                final task = Task.abended(new Exception("error"));
+                final task = Task.aborted(new Exception("error"));
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error): fail(error);
-                    case Exception(exception):
+                    case Abend(exception):
                         exception.message.should.be("error");
                         count++;
                 });
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error): fail(error);
-                    case Exception(exception):
+                    case Abend(exception):
                         exception.message.should.be("error");
                         count++;
                 });
@@ -317,7 +317,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -334,7 +334,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be("hello");
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -348,7 +348,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(200);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -359,7 +359,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -374,7 +374,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             (error:Null<Any>).should.be(null);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -385,18 +385,18 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
 
             describe("rexult: aborted", {
                 it("should not call", done -> {
-                    Task.abended(new Exception("error")).map(x -> { fail(); null; })
+                    Task.aborted(new Exception("error")).map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail();
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -411,7 +411,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -441,7 +441,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(200);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -452,16 +452,16 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.successful(100).flatMap(x -> Task.abended(new Exception("error")))
+                    Task.successful(100).flatMap(x -> Task.aborted(new Exception("error")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -472,7 +472,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -487,7 +487,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             (error:Null<Any>).should.be(null);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -498,18 +498,18 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
 
             describe("rexult: aborted", {
                 it("should not call", done -> {
-                    Task.abended(new Exception("error")).flatMap(x -> { fail(); null; })
+                    Task.aborted(new Exception("error")).flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -524,7 +524,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -538,7 +538,7 @@ class TaskSuite extends BuddySuite {
                             (value:Null<Any>).should.be(null);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -549,7 +549,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -565,7 +565,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("hello");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -579,7 +579,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error_mod");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -590,7 +590,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("new error");
                             done();
                     });
@@ -599,11 +599,11 @@ class TaskSuite extends BuddySuite {
 
             describe("rexult: aborted", {
                 it("should not call", done -> {
-                    Task.abended(new Exception("error")).mapFailure(x -> { fail(); null; })
+                    Task.aborted(new Exception("error")).mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -618,7 +618,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -632,7 +632,7 @@ class TaskSuite extends BuddySuite {
                             (value:Null<Any>).should.be(null);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -643,7 +643,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -672,7 +672,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(200);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -683,16 +683,16 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.failed(100).flatMapFailure(x -> Task.abended(new Exception("error")))
+                    Task.failed(100).flatMapFailure(x -> Task.aborted(new Exception("error")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -703,7 +703,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -712,11 +712,11 @@ class TaskSuite extends BuddySuite {
 
             describe("rexult: aborted", {
                 it("should not call", done -> {
-                    Task.abended(new Exception("error")).flatMapFailure(x -> { fail(); null; })
+                    Task.aborted(new Exception("error")).flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -731,7 +731,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -748,7 +748,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -762,7 +762,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -774,7 +774,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -790,7 +790,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(200);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -804,7 +804,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -816,7 +816,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -834,7 +834,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -848,7 +848,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error2");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -860,7 +860,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error2");
                             done();
                     });
@@ -876,7 +876,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -890,7 +890,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be("error2");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -902,7 +902,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error2");
                             done();
                     });
@@ -911,14 +911,14 @@ class TaskSuite extends BuddySuite {
 
             describe("from aborted", {
                 it("should not call", done -> {
-                    Task.abended(new Exception("error")).match(x -> switch (x) {
+                    Task.aborted(new Exception("error")).match(x -> switch (x) {
                         case Right(v): { fail(); null; }
                         case Left(v): { fail(); null; }
                     })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error");
                             done();
                     });
@@ -933,7 +933,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -957,7 +957,7 @@ class TaskSuite extends BuddySuite {
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                     wait(5, done);
                 });
@@ -971,7 +971,7 @@ class TaskSuite extends BuddySuite {
                             (value:Null<Any>).should.be(null);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -982,7 +982,7 @@ class TaskSuite extends BuddySuite {
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
@@ -995,7 +995,7 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             (error:Null<Any>).should.be(null);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
@@ -1006,14 +1006,14 @@ class TaskSuite extends BuddySuite {
                         case Failure(error):
                             error.should.be(100);
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
             });
 
             describe("rexult: aborted", {
                 it("should call", done -> {
-                    Task.abended(new Exception("error")).rescue(x -> {
+                    Task.aborted(new Exception("error")).rescue(x -> {
                         x.message.should.be("error");
                         done();
                         null;
@@ -1021,44 +1021,44 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new success value", done -> {
-                    Task.abended(new Exception("error")).rescue(x -> Task.successful(100))
+                    Task.aborted(new Exception("error")).rescue(x -> Task.successful(100))
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
                             done();
                         case Failure(error): fail(error);
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
                 it("should transform a new failure value", done -> {
-                    Task.abended(new Exception("error")).rescue(x -> Task.failed("error2"))
+                    Task.aborted(new Exception("error")).rescue(x -> Task.failed("error2"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
                             error.should.be("error2");
                             done();
-                        case Exception(exception): fail(exception);
+                        case Abend(exception): fail(exception);
                     });
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.abended(new Exception("error")).rescue(x -> Task.abended(new Exception("error2")))
+                    Task.aborted(new Exception("error")).rescue(x -> Task.aborted(new Exception("error2")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error2");
                             done();
                     });
                 });
 
                 it("should be an exception when it is thrown exception", done -> {
-                    Task.abended(new Exception("error")).rescue(x -> throw "error2")
+                    Task.aborted(new Exception("error")).rescue(x -> throw "error2")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
-                        case Exception(exception):
+                        case Abend(exception):
                             exception.message.should.be("error2");
                             done();
                     });
@@ -1108,7 +1108,7 @@ class TaskSuite extends BuddySuite {
             });
 
             it("should convert from an exception", done -> {
-                Task.abended(new Exception("error")).toPromise().catchError(x -> {
+                Task.aborted(new Exception("error")).toPromise().catchError(x -> {
                     (x : Exception).message.should.be("error");
                     done();
                 });
@@ -1129,7 +1129,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected value", done -> {
                 final task:Task<Int, Void> = Promise.reject("error");
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("error");
                         done();
                     case _: fail();
@@ -1139,7 +1139,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected value", done -> {
                 final task:Task<Int, Void> = Promise.reject("error");
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("error");
                         done();
                     case _: fail();
@@ -1149,7 +1149,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected Exception", done -> {
                 final task:Task<Int, Void> = Promise.reject(new Exception("error"));
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("error");
                         done();
                     case _: fail();
@@ -1160,7 +1160,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected JS Error", done -> {
                 final task:Task<Int, Void> = Promise.reject(new js.lib.Error("error"));
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("Error: error");
                         (error.native : js.lib.Error).message.should.be("Error: error");
                         done();
@@ -1195,7 +1195,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected value", done -> {
                 final task:Task<Int, String> = (Promise.reject("error") : Promise<Either<String, Int>>);
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("error");
                         done();
                     case _: fail();
@@ -1205,7 +1205,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected Exception", done -> {
                 final task:Task<Int, String> = (Promise.reject(new Exception("error")) : Promise<Either<String, Int>>);
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("error");
                         done();
                     case _: fail();
@@ -1216,7 +1216,7 @@ class TaskSuite extends BuddySuite {
             it("should convert from rejected JS Error", done -> {
                 final task:Task<Int, String> = (Promise.reject(new js.lib.Error("error")) : Promise<Either<String, Int>>);
                 task.onComplete(x -> switch (x) {
-                    case Exception(error):
+                    case Abend(error):
                         error.message.should.be("Error: error");
                         (error.native : js.lib.Error).message.should.be("Error: error");
                         done();

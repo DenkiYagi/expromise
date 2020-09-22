@@ -11,7 +11,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             if (Std.isOfType(ex, TaskError)) {
                 Promise.reject(cast ex);
             } else {
-                Promise.reject(TaskError.Exception(ex));
+                Promise.reject(TaskError.Abend(ex));
             }
         });
     }
@@ -21,7 +21,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             try {
                 Promise.resolve(fn(value));
             } catch (ex) {
-                Promise.reject(TaskError.Exception(ex));
+                Promise.reject(TaskError.Abend(ex));
             }
         });
     }
@@ -31,7 +31,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             try {
                 cast fn(value);
             } catch (ex) {
-                Promise.reject(TaskError.Exception(ex));
+                Promise.reject(TaskError.Abend(ex));
             }
         });
     }
@@ -43,10 +43,10 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
                     Promise.reject(try {
                         TaskError.Failure(fn(error));
                     } catch (ex) {
-                        TaskError.Exception(ex);
+                        TaskError.Abend(ex);
                     });
-                case Exception(ex):
-                    Promise.reject(TaskError.Exception(ex));
+                case Abend(ex):
+                    Promise.reject(TaskError.Abend(ex));
             }
         });
     }
@@ -58,10 +58,10 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
                     try {
                         cast fn(error);
                     } catch (ex) {
-                        Promise.reject(TaskError.Exception(ex));
+                        Promise.reject(TaskError.Abend(ex));
                     }
-                case Exception(ex):
-                    Promise.reject(TaskError.Exception(ex));
+                case Abend(ex):
+                    Promise.reject(TaskError.Abend(ex));
             }
         });
     }
@@ -74,7 +74,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
                     case Left(e): Promise.reject(TaskError.Failure(e));
                 }
             } catch (ex) {
-                Promise.reject(TaskError.Exception(ex));
+                Promise.reject(TaskError.Abend(ex));
             }
         }
 
@@ -82,7 +82,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             value -> invoke(Right(value)),
             (e:TaskError<TFailure>) -> switch (e) {
                 case Failure(error): invoke(Left(error));
-                case Exception(ex): Promise.reject(TaskError.Exception(ex));
+                case Abend(ex): Promise.reject(TaskError.Abend(ex));
             }
         );
     }
@@ -92,7 +92,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             value -> fn(Right(value)).toRawPromise(),
             (e:TaskError<TFailure>) -> switch (e) {
                 case Failure(error): fn(Left(error)).toRawPromise();
-                case Exception(ex): Promise.reject(TaskError.Exception(ex));
+                case Abend(ex): Promise.reject(TaskError.Abend(ex));
             }
         );
     }
@@ -102,11 +102,11 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             switch (e) {
                 case Failure(error):
                     Promise.reject(TaskError.Failure(error));
-                case Exception(ex):
+                case Abend(ex):
                     try {
                         cast fn(ex);
                     } catch (ex) {
-                        Promise.reject(TaskError.Exception(ex));
+                        Promise.reject(TaskError.Abend(ex));
                     }
             }
         });
@@ -119,8 +119,8 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             switch (e) {
                 case Failure(error):
                     fn(TaskResult.Failure(error));
-                case Exception(ex):
-                    fn(TaskResult.Exception(ex));
+                case Abend(ex):
+                    fn(TaskResult.Abend(ex));
             }
         });
     }
@@ -132,7 +132,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
             e -> {
                 return switch ((e : TaskError<TFailure>)) {
                     case TaskError.Failure(error): Promise.resolve(Left(error));
-                    case TaskError.Exception(ex): Promise.reject(ex);
+                    case TaskError.Abend(ex): Promise.reject(ex);
                 }
             }
         );
@@ -140,7 +140,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
 
     @:from
     public extern inline static function fromPromise<TSuccess, TFailure>(promise:Promise<TSuccess>):Task<TSuccess, TFailure> {
-        return cast promise.catchError(e -> Promise.reject(TaskError.Exception(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
+        return cast promise.catchError(e -> Promise.reject(TaskError.Abend(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
     }
 
     @:from
@@ -148,7 +148,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         return cast promise.then(x -> switch (x) {
             case Right(v): Promise.resolve(v);
             case Left(v): Promise.reject(TaskError.Failure(v));
-        }, e -> Promise.reject(TaskError.Exception(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
+        }, e -> Promise.reject(TaskError.Abend(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
     }
 
     public static inline function successful<TSuccess, TFailure>(?value:TSuccess):Task<TSuccess, TFailure> {
@@ -159,8 +159,8 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         return cast Promise.reject(TaskError.Failure(error));
     }
 
-    public static inline function abended<TSuccess, TFailure>(exception:Exception):Task<TSuccess, TFailure> {
-        return cast Promise.reject(TaskError.Exception(exception));
+    public static inline function aborted<TSuccess, TFailure>(exception:Exception):Task<TSuccess, TFailure> {
+        return cast Promise.reject(TaskError.Abend(exception));
     }
 
     inline extern function toRawPromise():Promise<TSuccess> {
@@ -183,10 +183,10 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
 enum TaskResult<TSuccess, TFailure> {
     Success(value:TSuccess);
     Failure(error:TFailure);
-    Exception(exception:Exception);
+    Abend(exception:Exception);
 }
 
 private enum TaskError<T> {
     Failure(error:T);
-    Exception(exception:Exception);
+    Abend(exception:Exception);
 }
