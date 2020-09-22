@@ -5,14 +5,13 @@ import haxe.ds.Either;
 class TaskSuite extends BuddySuite {
     public function new() {
         describe("Task.new()", {
-            timeoutMs = 100;
-
             #if js
+            function suppress() {}
             beforeAll({
-                js.Syntax.code("process.on('unhandledRejection', {0})", _ -> {});
+                js.Syntax.code("process.on('unhandledRejection', {0})", suppress);
             });
             afterAll({
-                js.Syntax.code("process.removeListener('unhandledRejection', {0})", _ -> {});
+                js.Syntax.code("process.removeListener('unhandledRejection', {0})", suppress);
             });
             #end
 
@@ -42,7 +41,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken none value", done -> {
+                it("should pass when it is taken empty value", done -> {
                     new Task((fulfill, _) -> {
                         wait(5, fulfill.bind());
                     })
@@ -76,7 +75,7 @@ class TaskSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken none failure value", done -> {
+                it("should pass when it is taken empty failure value", done -> {
                     new Task((_, reject) -> {
                         wait(5, reject.bind());
                     })
@@ -132,7 +131,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("Task.successful()", {
-                it("should pass when it is taken none value", done -> {
+                it("should pass when it is taken empty value", done -> {
                     Task.successful()
                     .onComplete(result -> switch (result) {
                         case Success(value):
@@ -156,7 +155,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("Task.failed()", {
-                it("should pass when it is taken none failure value", done -> {
+                it("should pass when it is taken empty failure value", done -> {
                     Task.failed()
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
@@ -194,7 +193,7 @@ class TaskSuite extends BuddySuite {
         });
 
         describe("Task.onComplete()", {
-            it("should call all callbacks when it taken none value", done -> {
+            it("should call all callbacks when it taken empty value", done -> {
                 var count = 0;
                 final task = Task.successful();
                 task.onComplete(x -> switch (x) {
@@ -240,7 +239,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            it("should call all callbacks when it taken none failure value", done -> {
+            it("should call all callbacks when it taken empty failure value", done -> {
                 var count = 0;
                 final task = Task.failed();
                 task.onComplete(x -> switch (x) {
@@ -1212,7 +1211,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("from successful", {
-                it("should not call when it is taken none value", done -> {
+                it("should not call when it is taken empty value", done -> {
                     Task.successful().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
@@ -1236,7 +1235,7 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("from failed", {
-                it("should not call when it is taken none failure value", done -> {
+                it("should not call when it is taken empty failure value", done -> {
                     Task.failed().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
@@ -1315,7 +1314,7 @@ class TaskSuite extends BuddySuite {
         });
 
         describe("Task.toPromise()", {
-            it("should convert from none success value", done -> {
+            it("should convert from empty success value", done -> {
                 Task.successful().toPromise().then(x -> {
                     switch (x) {
                         case Right(v): (v:Null<Any>).should.be(null);
@@ -1335,7 +1334,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            it("should convert from none failure value", done -> {
+            it("should convert from empty failure value", done -> {
                 Task.failed().toPromise().then(x -> {
                     switch (x) {
                         case Right(v): fail(v);
@@ -1345,7 +1344,7 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            it("should convert from none failure value", done -> {
+            it("should convert from some failure value", done -> {
                 Task.failed("error").toPromise().then(x -> {
                     switch (x) {
                         case Right(v): fail(v);
@@ -1357,6 +1356,43 @@ class TaskSuite extends BuddySuite {
 
             it("should convert from an exception", done -> {
                 Task.aborted(new Exception("error")).toPromise().catchError(x -> {
+                    (x : Exception).message.should.be("error");
+                    done();
+                });
+            });
+        });
+
+        describe("Task.toSuccessPromise()", {
+            it("should convert from empty success value", done -> {
+                Task.successful().toSuccessPromise().then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+
+            it("should convert from some success value", done -> {
+                Task.successful(100).toSuccessPromise().then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should convert from empty failure value", done -> {
+                Task.failed().toSuccessPromise().catchError(e -> {
+                    (e:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+
+            it("should convert from some failure value", done -> {
+                Task.failed("error").toSuccessPromise().catchError(e -> {
+                    (e:String).should.be("error");
+                    done();
+                });
+            });
+
+            it("should convert from an exception", done -> {
+                Task.aborted(new Exception("error")).toSuccessPromise().catchError(x -> {
                     (x : Exception).message.should.be("error");
                     done();
                 });

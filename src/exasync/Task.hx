@@ -146,6 +146,14 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         );
     }
 
+    @:to
+    public extern inline function toSuccessPromise():Promise<TSuccess> {
+        return this.catchError(e -> Promise.reject(switch (e) {
+            case Failure(error): cast error;
+            case Abend(exception): cast exception;
+        }));
+    }
+
     @:from
     public extern inline static function fromPromise<TSuccess, TFailure>(promise:Promise<TSuccess>):Task<TSuccess, TFailure> {
         return cast promise.catchError(e -> Promise.reject(TaskError.Abend(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
