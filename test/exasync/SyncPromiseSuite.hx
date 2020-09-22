@@ -351,20 +351,20 @@ class SyncPromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", done -> {
+                    it("should chain using resolved CancelablePromise", done -> {
                         SyncPromise.reject("error")
                         .then(null, x -> {
-                            AbortablePromise.resolve(1);
+                            CancelablePromise.resolve(1);
                         }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", done -> {
+                    it("should chain using rejected CancelablePromise", done -> {
                         SyncPromise.reject("error")
                         .then(null, x -> {
-                            AbortablePromise.reject("rewrited error");
+                            CancelablePromise.reject("rewrited error");
                         }).then(null, e -> {
                             EqualsTools.deepEqual(e, "rewrited error").should.be(true);
                             done();
@@ -492,20 +492,20 @@ class SyncPromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should chain using resolved AbortablePromise", done -> {
+                    it("should chain using resolved CancelablePromise", done -> {
                         SyncPromise.reject("error")
                         .catchError(e -> {
-                            AbortablePromise.resolve(1);
+                            CancelablePromise.resolve(1);
                         }).then(x -> {
                             x.should.be(1);
                             done();
                         });
                     });
 
-                    it("should chain using rejected AbortablePromise", done -> {
+                    it("should chain using rejected CancelablePromise", done -> {
                         SyncPromise.reject("error")
                         .catchError(e -> {
-                            AbortablePromise.reject("rewrited error");
+                            CancelablePromise.reject("rewrited error");
                         }).then(null, e -> {
                             (e: String).should.be("rewrited error");
                             done();

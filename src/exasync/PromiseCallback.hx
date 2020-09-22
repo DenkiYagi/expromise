@@ -8,7 +8,7 @@ abstract PromiseCallback<T, TOut>(T -> Dynamic)
     from Mixed6<
         T -> js.lib.Promise<TOut>,
         T -> SyncPromise<TOut>,
-        T -> AbortablePromise<TOut>,
+        T -> CancelablePromise<TOut>,
         T -> Promise<TOut>,
         T -> IPromise<TOut>,
         T -> TOut
@@ -16,7 +16,7 @@ abstract PromiseCallback<T, TOut>(T -> Dynamic)
     #else
     from Mixed5<
         T -> SyncPromise<TOut>,
-        T -> AbortablePromise<TOut>,
+        T -> CancelablePromise<TOut>,
         T -> Promise<TOut>,
         T -> IPromise<TOut>,
         T -> TOut

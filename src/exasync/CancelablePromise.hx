@@ -9,23 +9,23 @@ import exasync._internal.Dispatcher;
 
 using extools.EqualsTools;
 
-class AbortablePromise<T> implements IPromise<T> {
+class CancelablePromise<T> implements IPromise<T> {
     var result:Maybe<Result<T>>;
     var onFulfilledHanlders:Delegate<T>;
     var onRejectedHanlders:Delegate<Dynamic>;
-    var abortCallback:Maybe<Void->Void>;
+    var cancelCallback:Maybe<Void->Void>;
 
     #if js
     static function __init__() {
         // Make this class compatible with js.lib.Promise
         final prototype = js.lib.Object.create(untyped js.lib.Promise.prototype);
-        final orignal = untyped AbortablePromise.prototype;
+        final orignal = untyped CancelablePromise.prototype;
         for (k in js.lib.Object.getOwnPropertyNames(orignal)) {
             Reflect.setField(prototype, k, Reflect.field(orignal, k));
         }
-        prototype.constructor = AbortablePromise;
+        prototype.constructor = CancelablePromise;
         Reflect.setField(prototype, "catch", prototype.catchError);
-        untyped AbortablePromise.prototype = prototype;
+        untyped CancelablePromise.prototype = prototype;
     }
     #end
 
@@ -33,11 +33,11 @@ class AbortablePromise<T> implements IPromise<T> {
         result = Maybe.empty();
         onFulfilledHanlders = new Delegate();
         onRejectedHanlders = new Delegate();
-        abortCallback = Maybe.empty();
+        cancelCallback = Maybe.empty();
 
         if (result.isEmpty()) {
             try {
-                abortCallback = Maybe.of(executor(onFulfilled, onRejected));
+                cancelCallback = Maybe.of(executor(onFulfilled, onRejected));
             } catch (e) {
                 onRejected(e);
             }
@@ -66,8 +66,8 @@ class AbortablePromise<T> implements IPromise<T> {
     }
 
     public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
-            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):AbortablePromise<TOut> {
-        return new AbortablePromise<TOut>(function(_fulfill, _reject) {
+            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):CancelablePromise<TOut> {
+        return new CancelablePromise<TOut>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
                 function chain(value:T) {
                     try {
@@ -123,15 +123,15 @@ class AbortablePromise<T> implements IPromise<T> {
                         Dispatcher.dispatch(handleRejected.bind(e));
                 }
             }
-            return abort;
+            return cancel;
         });
     }
 
-    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):AbortablePromise<TOut> {
+    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):CancelablePromise<TOut> {
         return then(null, rejected);
     }
 
-    public function finally(onFinally:Void->Void):AbortablePromise<T> {
+    public function finally(onFinally:Void->Void):CancelablePromise<T> {
         return then(x -> {
             onFinally();
             x;
@@ -144,26 +144,26 @@ class AbortablePromise<T> implements IPromise<T> {
     /**
      * Abort this promise.
      */
-    public function abort():Void {
+    public function cancel():Void {
         if (result.isEmpty()) {
-            if (abortCallback.nonEmpty()) {
-                final fn = abortCallback.get();
-                abortCallback = Maybe.empty();
+            if (cancelCallback.nonEmpty()) {
+                final fn = cancelCallback.get();
+                cancelCallback = Maybe.empty();
                 fn();
             }
-            onRejected(new AbortedError("aborted"));
+            onRejected(new CanceledError("canceled"));
         }
     }
 
-    public static function resolve<T>(?value:T):AbortablePromise<T> {
-        return new AbortablePromise((f, _) -> {
+    public static function resolve<T>(?value:T):CancelablePromise<T> {
+        return new CancelablePromise((f, _) -> {
             f(value);
             null;
         });
     }
 
-    public static function reject<T>(?error:Dynamic):AbortablePromise<T> {
-        return new AbortablePromise((_, r) -> {
+    public static function reject<T>(?error:Dynamic):CancelablePromise<T> {
+        return new CancelablePromise((_, r) -> {
             r(error);
             null;
         });
