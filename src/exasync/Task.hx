@@ -88,10 +88,18 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
     }
 
     public function flatMatch<TNewSuccess, TNewFailure>(fn:Either<TFailure, TSuccess>->Task<TNewSuccess, TNewFailure>):Task<TNewSuccess, TNewFailure> {
+        function invoke(x:Either<TFailure, TSuccess>) {
+            return try {
+                fn(x).toRawPromise();
+            } catch (ex) {
+                Promise.reject(TaskError.Abend(ex));
+            }
+        }
+
         return cast this.then(
-            value -> fn(Right(value)).toRawPromise(),
+            value -> invoke(Right(value)),
             (e:TaskError<TFailure>) -> switch (e) {
-                case Failure(error): fn(Left(error)).toRawPromise();
+                case Failure(error): invoke(Left(error));
                 case Abend(ex): Promise.reject(TaskError.Abend(ex));
             }
         );

@@ -1010,13 +1010,191 @@ class TaskSuite extends BuddySuite {
             });
 
             describe("from successful", {
+                it("should process `empty successful -> Success<U>`", done -> {
+                    Task.successful().flatMatch(x -> switch (x) {
+                        case Right(v): Task.successful(100);
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `empty successful -> Failure<U>`", done -> {
+                    Task.successful().flatMatch(x -> switch (x) {
+                        case Right(v): Task.failed("error");
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `empty successful -> throw`", done -> {
+                    Task.successful().flatMatch(x -> switch (x) {
+                        case Right(v): throw "error";
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Abend(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
+
+                it("should process `some successful -> Success<U>`", done -> {
+                    Task.successful(100).flatMatch(x -> switch (x) {
+                        case Right(v): Task.successful(v * 2);
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(200);
+                            done();
+                        case Failure(error): fail(error);
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `some successful -> Failure<U>`", done -> {
+                    Task.successful(100).flatMatch(x -> switch (x) {
+                        case Right(v): Task.failed("error");
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error");
+                            done();
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `some successful -> throw`", done -> {
+                    Task.successful(100).flatMatch(x -> switch (x) {
+                        case Right(v): throw "error";
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Abend(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
             });
 
             describe("from failed", {
+                it("should process `empty failed -> Success<U>`", done -> {
+                    Task.failed().flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Task.successful(100);
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `empty failed -> Failure<U>`", done -> {
+                    Task.failed().flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Task.failed("error2");
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error2");
+                            done();
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `empty failed -> throw`", done -> {
+                    Task.failed().flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): throw "error2";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Abend(exception):
+                            exception.message.should.be("error2");
+                            done();
+                    });
+                });
+
+                it("should process `some failed -> Success<U>`", done -> {
+                    Task.failed(100).flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Task.successful(100);
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value):
+                            value.should.be(100);
+                            done();
+                        case Failure(error): fail(error);
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `some failed -> Failure<U>`", done -> {
+                    Task.failed(100).flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): Task.failed("error2");
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error):
+                            error.should.be("error2");
+                            done();
+                        case Abend(exception): fail(exception);
+                    });
+                });
+
+                it("should process `some failed -> throw`", done -> {
+                    Task.failed(100).flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): throw "error2";
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Abend(exception):
+                            exception.message.should.be("error2");
+                            done();
+                    });
+                });
             });
 
             describe("from aborted", {
-
+                it("should never call callback", done -> {
+                    Task.aborted(new Exception("error")).flatMatch(x -> switch (x) {
+                        case Right(v): { fail(); null; }
+                        case Left(v): { fail(); null; }
+                    })
+                    .onComplete(result -> switch (result) {
+                        case Success(value): fail(value);
+                        case Failure(error): fail(error);
+                        case Abend(exception):
+                            exception.message.should.be("error");
+                            done();
+                    });
+                });
             });
         });
 
