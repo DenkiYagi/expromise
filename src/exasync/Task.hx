@@ -108,7 +108,7 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
     }
 
     @:from
-    public extern inline static function fromPromise<T>(promise:Promise<T>):Task<T, Void> {
+    public extern inline static function fromPromise<TSuccess, TFailure>(promise:Promise<TSuccess>):Task<TSuccess, TFailure> {
         return cast promise.catchError(e -> Promise.reject(TaskError.Exception(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
     }
 

@@ -100,6 +100,11 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
     }
     #end
 
+    @:to
+    public inline extern function toTask<T, TFailure>():Task<T, TFailure> {
+        return Task.fromPromise(cast this);
+    }
+
     #if js
     @:from
     public static inline extern function fromJsPromise<T>(promise:js.lib.Promise<T>):Promise<T> {
