@@ -131,9 +131,9 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("Task.success()", {
+            describe("Task.successful()", {
                 it("should pass when it is taken none value", done -> {
-                    Task.success()
+                    Task.successful()
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             (value:Null<Any>).should.be(null);
@@ -144,7 +144,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should pass when it is taken some value", done -> {
-                    Task.success(100)
+                    Task.successful(100)
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
@@ -155,9 +155,9 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("Task.failure()", {
+            describe("Task.failed()", {
                 it("should pass when it is taken none failure value", done -> {
-                    Task.failure()
+                    Task.failed()
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -168,7 +168,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should pass when it is taken some failure value", done -> {
-                    Task.failure("error")
+                    Task.failed("error")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -179,9 +179,9 @@ class TaskSuite extends BuddySuite {
                 });
             });
 
-            describe("Task.exception()", {
+            describe("Task.abended()", {
                 it("should pass", done -> {
-                    Task.exception(new Exception("error"))
+                    Task.abended(new Exception("error"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -196,7 +196,7 @@ class TaskSuite extends BuddySuite {
         describe("Task.onComplete()", {
             it("should call all callbacks when it taken none value", done -> {
                 var count = 0;
-                final task = Task.success();
+                final task = Task.successful();
                 task.onComplete(x -> switch (x) {
                     case Success(value):
                         (value:Null<Any>).should.be(null);
@@ -219,7 +219,7 @@ class TaskSuite extends BuddySuite {
 
             it("should call all callbacks when it taken some value", done -> {
                 var count = 0;
-                final task = Task.success(100);
+                final task = Task.successful(100);
                 task.onComplete(x -> switch (x) {
                     case Success(value):
                         value.should.be(100);
@@ -242,7 +242,7 @@ class TaskSuite extends BuddySuite {
 
             it("should call all callbacks when it taken none failure value", done -> {
                 var count = 0;
-                final task = Task.failure();
+                final task = Task.failed();
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error):
@@ -265,7 +265,7 @@ class TaskSuite extends BuddySuite {
 
             it("should call all callbacks when it taken some failure value", done -> {
                 var count = 0;
-                final task = Task.failure("error");
+                final task = Task.failed("error");
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error):
@@ -288,7 +288,7 @@ class TaskSuite extends BuddySuite {
 
             it("should call all callbacks when it taken an exception", done -> {
                 var count = 0;
-                final task = Task.exception(new Exception("error"));
+                final task = Task.abended(new Exception("error"));
                 task.onComplete(x -> switch (x) {
                     case Success(value): fail(value);
                     case Failure(error): fail(error);
@@ -325,7 +325,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: success", {
                 it("should call when it is taken none value", done -> {
-                    Task.success().map(x -> {
+                    Task.successful().map(x -> {
                         (x:Null<Any>).should.be(null);
                         "hello";
                     })
@@ -339,7 +339,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should call when it is taken some value", done -> {
-                    Task.success(100).map(x -> {
+                    Task.successful(100).map(x -> {
                         x.should.be(100);
                         x * 2;
                     })
@@ -353,7 +353,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should be an exception when it is thrown exception", done -> {
-                    Task.success(100).map(x -> {
+                    Task.successful(100).map(x -> {
                         throw "error";
                     })
                     .onComplete(result -> switch (result) {
@@ -368,7 +368,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: failure", {
                 it("should not call when it is taken none failure value", done -> {
-                    Task.failure().map(x -> { fail(); null; })
+                    Task.failed().map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -379,7 +379,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some empty failure value", done -> {
-                    Task.failure("error").map(x -> { fail(); null; })
+                    Task.failed("error").map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -392,7 +392,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: exception", {
                 it("should not call", done -> {
-                    Task.exception(new Exception("error")).map(x -> { fail(); null; })
+                    Task.abended(new Exception("error")).map(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail();
                         case Failure(error): fail(error);
@@ -419,7 +419,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: success", {
                 it("should call when it is taken none value", done -> {
-                    Task.success().flatMap(x -> {
+                    Task.successful().flatMap(x -> {
                         (x:Null<Any>).should.be(null);
                         done();
                         null;
@@ -427,7 +427,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should call when it is taken some value", done -> {
-                    Task.success(100).flatMap(x -> {
+                    Task.successful(100).flatMap(x -> {
                         x.should.be(100);
                         done();
                         null;
@@ -435,7 +435,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new success value", done -> {
-                    Task.success(100).flatMap(x -> Task.success(x * 2))
+                    Task.successful(100).flatMap(x -> Task.successful(x * 2))
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(200);
@@ -446,7 +446,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new failure value", done -> {
-                    Task.success(100).flatMap(x -> Task.failure("error"))
+                    Task.successful(100).flatMap(x -> Task.failed("error"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -457,7 +457,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.success(100).flatMap(x -> Task.exception(new Exception("error")))
+                    Task.successful(100).flatMap(x -> Task.abended(new Exception("error")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -468,7 +468,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should be an exception when it is thrown exception", done -> {
-                    Task.success(100).flatMap(x -> throw "error")
+                    Task.successful(100).flatMap(x -> throw "error")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -481,7 +481,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: failure", {
                 it("should not call when it is taken none failure value", done -> {
-                    Task.failure().flatMap(x -> { fail(); null; })
+                    Task.failed().flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -492,7 +492,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some empty failure value", done -> {
-                    Task.failure("error").flatMap(x -> { fail(); null; })
+                    Task.failed("error").flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -505,7 +505,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: exception", {
                 it("should not call", done -> {
-                    Task.exception(new Exception("error")).flatMap(x -> { fail(); null; })
+                    Task.abended(new Exception("error")).flatMap(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -532,7 +532,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: success", {
                 it("should not call when it is taken none value", done -> {
-                    Task.success().mapFailure(x -> { fail(); null; })
+                    Task.successful().mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             (value:Null<Any>).should.be(null);
@@ -543,7 +543,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some value", done -> {
-                    Task.success(100).mapFailure(x -> { fail(); null; })
+                    Task.successful(100).mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
@@ -556,7 +556,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: failure", {
                 it("should call when it is taken none failure value", done -> {
-                    Task.failure().mapFailure(x -> {
+                    Task.failed().mapFailure(x -> {
                         (x:Null<Any>).should.be(null);
                         "hello";
                     })
@@ -570,7 +570,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should call when it is taken some failure value", done -> {
-                    Task.failure("error").mapFailure(x -> {
+                    Task.failed("error").mapFailure(x -> {
                         x.should.be("error");
                         x + "_mod";
                     })
@@ -584,7 +584,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should be an exception when it is thrown exception", done -> {
-                    Task.failure("error").mapFailure(x -> {
+                    Task.failed("error").mapFailure(x -> {
                         throw "new error";
                     })
                     .onComplete(result -> switch (result) {
@@ -599,7 +599,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: exception", {
                 it("should not call", done -> {
-                    Task.exception(new Exception("error")).mapFailure(x -> { fail(); null; })
+                    Task.abended(new Exception("error")).mapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -626,7 +626,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: success", {
                 it("should not call when it is taken none value", done -> {
-                    Task.success().flatMapFailure(x -> { fail(); null; })
+                    Task.successful().flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             (value:Null<Any>).should.be(null);
@@ -637,7 +637,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some value", done -> {
-                    Task.success(100).flatMapFailure(x -> { fail(); null; })
+                    Task.successful(100).flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
@@ -650,7 +650,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: failure", {
                 it("should call when it is taken none value", done -> {
-                    Task.failure().flatMapFailure(x -> {
+                    Task.failed().flatMapFailure(x -> {
                         (x:Null<Any>).should.be(null);
                         done();
                         null;
@@ -658,7 +658,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should call when it is taken some value", done -> {
-                    Task.failure("error").flatMapFailure(x -> {
+                    Task.failed("error").flatMapFailure(x -> {
                         x.should.be("error");
                         done();
                         null;
@@ -666,7 +666,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new success value", done -> {
-                    Task.failure(100).flatMapFailure(x -> Task.success(x * 2))
+                    Task.failed(100).flatMapFailure(x -> Task.successful(x * 2))
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(200);
@@ -677,7 +677,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new failure value", done -> {
-                    Task.failure(100).flatMapFailure(x -> Task.failure("error"))
+                    Task.failed(100).flatMapFailure(x -> Task.failed("error"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -688,7 +688,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.failure(100).flatMapFailure(x -> Task.exception(new Exception("error")))
+                    Task.failed(100).flatMapFailure(x -> Task.abended(new Exception("error")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -699,7 +699,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should be an exception when it is thrown an exception", done -> {
-                    Task.failure(100).flatMapFailure(x -> throw "error")
+                    Task.failed(100).flatMapFailure(x -> throw "error")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -712,7 +712,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: exception", {
                 it("should not call", done -> {
-                    Task.exception(new Exception("error")).flatMapFailure(x -> { fail(); null; })
+                    Task.abended(new Exception("error")).flatMapFailure(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -739,7 +739,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: success", {
                 it("should not call when it is taken none value", done -> {
-                    Task.success().rescue(x -> { fail(); null; })
+                    Task.successful().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             (value:Null<Any>).should.be(null);
@@ -750,7 +750,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some value", done -> {
-                    Task.success(100).rescue(x -> { fail(); null; })
+                    Task.successful(100).rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
@@ -763,7 +763,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: failure", {
                 it("should not call when it is taken none failure value", done -> {
-                    Task.failure().rescue(x -> { fail(); null; })
+                    Task.failed().rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -774,7 +774,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should not call when it is taken some failure value", done -> {
-                    Task.failure(100).rescue(x -> { fail(); null; })
+                    Task.failed(100).rescue(x -> { fail(); null; })
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -787,7 +787,7 @@ class TaskSuite extends BuddySuite {
 
             describe("result: exception", {
                 it("should call", done -> {
-                    Task.exception(new Exception("error")).rescue(x -> {
+                    Task.abended(new Exception("error")).rescue(x -> {
                         x.message.should.be("error");
                         done();
                         null;
@@ -795,7 +795,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new success value", done -> {
-                    Task.exception(new Exception("error")).rescue(x -> Task.success(100))
+                    Task.abended(new Exception("error")).rescue(x -> Task.successful(100))
                     .onComplete(result -> switch (result) {
                         case Success(value):
                             value.should.be(100);
@@ -806,7 +806,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new failure value", done -> {
-                    Task.exception(new Exception("error")).rescue(x -> Task.failure("error2"))
+                    Task.abended(new Exception("error")).rescue(x -> Task.failed("error2"))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error):
@@ -817,7 +817,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should transform a new exception", done -> {
-                    Task.exception(new Exception("error")).rescue(x -> Task.exception(new Exception("error2")))
+                    Task.abended(new Exception("error")).rescue(x -> Task.abended(new Exception("error2")))
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -828,7 +828,7 @@ class TaskSuite extends BuddySuite {
                 });
 
                 it("should be an exception when it is thrown exception", done -> {
-                    Task.exception(new Exception("error")).rescue(x -> throw "error2")
+                    Task.abended(new Exception("error")).rescue(x -> throw "error2")
                     .onComplete(result -> switch (result) {
                         case Success(value): fail(value);
                         case Failure(error): fail(error);
@@ -842,7 +842,7 @@ class TaskSuite extends BuddySuite {
 
         describe("Task.toPromise()", {
             it("should convert from none success value", done -> {
-                Task.success().toPromise().then(x -> {
+                Task.successful().toPromise().then(x -> {
                     switch (x) {
                         case Right(v): (v:Null<Any>).should.be(null);
                         case Left(v): fail(v);
@@ -852,7 +852,7 @@ class TaskSuite extends BuddySuite {
             });
 
             it("should convert from some success value", done -> {
-                Task.success(100).toPromise().then(x -> {
+                Task.successful(100).toPromise().then(x -> {
                     switch (x) {
                         case Right(v): v.should.be(100);
                         case Left(v): fail(v);
@@ -862,7 +862,7 @@ class TaskSuite extends BuddySuite {
             });
 
             it("should convert from none failure value", done -> {
-                Task.failure().toPromise().then(x -> {
+                Task.failed().toPromise().then(x -> {
                     switch (x) {
                         case Right(v): fail(v);
                         case Left(v): (v:Null<Any>).should.be(null);
@@ -872,7 +872,7 @@ class TaskSuite extends BuddySuite {
             });
 
             it("should convert from none failure value", done -> {
-                Task.failure("error").toPromise().then(x -> {
+                Task.failed("error").toPromise().then(x -> {
                     switch (x) {
                         case Right(v): fail(v);
                         case Left(v): v.should.be("error");
@@ -882,7 +882,7 @@ class TaskSuite extends BuddySuite {
             });
 
             it("should convert from an exception", done -> {
-                Task.exception(new Exception("error")).toPromise().catchError(x -> {
+                Task.abended(new Exception("error")).toPromise().catchError(x -> {
                     (x : Exception).message.should.be("error");
                     done();
                 });

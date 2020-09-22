@@ -120,6 +120,18 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         }, e -> Promise.reject(TaskError.Exception(Std.isOfType(e, Exception) ? e : new Exception(Std.string(e)))));
     }
 
+    public static inline extern function successful<TSuccess, TFailure>(?value:TSuccess):Task<TSuccess, TFailure> {
+        return cast Promise.resolve(value);
+    }
+
+    public static inline extern function failed<TSuccess, TFailure>(?error:TFailure):Task<TSuccess, TFailure> {
+        return cast Promise.reject(TaskError.Failure(error));
+    }
+
+    public static inline extern function abended<TSuccess, TFailure>(exception:Exception):Task<TSuccess, TFailure> {
+        return cast Promise.reject(TaskError.Exception(exception));
+    }
+
     static function toException(e:Dynamic):Exception {
         return if (Std.isOfType(e, Exception)) {
             (e : Exception);
@@ -130,18 +142,6 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         } else {
             new Exception(Std.string(e));
         }
-    }
-
-    public static inline extern function success<TSuccess, TFailure>(?value:TSuccess):Task<TSuccess, TFailure> {
-        return cast Promise.resolve(value);
-    }
-
-    public static inline extern function failure<TSuccess, TFailure>(?error:TFailure):Task<TSuccess, TFailure> {
-        return cast Promise.reject(TaskError.Failure(error));
-    }
-
-    public static inline extern function exception<TSuccess, TFailure>(exception:Exception):Task<TSuccess, TFailure> {
-        return cast Promise.reject(TaskError.Exception(exception));
     }
 }
 
