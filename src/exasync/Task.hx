@@ -66,6 +66,37 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
         });
     }
 
+    public function match<TNewSuccess, TNewFailure>(fn:Either<TFailure, TSuccess>->Either<TNewFailure, TNewSuccess>):Task<TNewSuccess, TNewFailure> {
+        function invoke(x:Either<TFailure, TSuccess>) {
+            return try {
+                switch (fn(x)) {
+                    case Right(v): Promise.resolve(v);
+                    case Left(e): Promise.reject(TaskError.Failure(e));
+                }
+            } catch (ex) {
+                Promise.reject(TaskError.Exception(ex));
+            }
+        }
+
+        return cast this.then(
+            value -> invoke(Right(value)),
+            (e:TaskError<TFailure>) -> switch (e) {
+                case Failure(error): invoke(Left(error));
+                case Exception(ex): Promise.reject(TaskError.Exception(ex));
+            }
+        );
+    }
+
+    public function flatMatch<TNewSuccess, TNewFailure>(fn:Either<TFailure, TSuccess>->Task<TNewSuccess, TNewFailure>):Task<TNewSuccess, TNewFailure> {
+        return cast this.then(
+            value -> fn(Right(value)).toRawPromise(),
+            (e:TaskError<TFailure>) -> switch (e) {
+                case Failure(error): fn(Left(error)).toRawPromise();
+                case Exception(ex): Promise.reject(TaskError.Exception(ex));
+            }
+        );
+    }
+
     public function rescue(fn:Exception->Task<TSuccess, TFailure>):Task<TSuccess, TFailure> {
         return cast this.catchError((e:TaskError<TFailure>) -> {
             switch (e) {
@@ -130,6 +161,10 @@ abstract Task<TSuccess, TFailure>(Promise<TSuccess>) {
 
     public static inline function abended<TSuccess, TFailure>(exception:Exception):Task<TSuccess, TFailure> {
         return cast Promise.reject(TaskError.Exception(exception));
+    }
+
+    inline extern function toRawPromise():Promise<TSuccess> {
+        return this;
     }
 
     static function toException(e:Dynamic):Exception {
