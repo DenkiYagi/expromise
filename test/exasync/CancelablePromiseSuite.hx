@@ -225,24 +225,6 @@ class CancelablePromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", done -> {
-                        CancelablePromise.resolve(1).then(x -> {
-                            SyncPromise.resolve("hello");
-                        }).then(x -> {
-                            x.should.be("hello");
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        CancelablePromise.resolve(1).then(x -> {
-                            SyncPromise.reject("error");
-                        }).then(null, e -> {
-                            EqualsTools.deepEqual(e, "error").should.be(true);
-                            done();
-                        });
-                    });
-
                     #if js
                     it("should chain using resolved js.lib.Promise", done -> {
                         CancelablePromise.resolve(1).then(x -> {
@@ -309,24 +291,6 @@ class CancelablePromiseSuite extends BuddySuite {
                             Promise.reject("error");
                         }).then(null, e -> {
                             EqualsTools.deepEqual(e, "error").should.be(true);
-                            done();
-                        });
-                    });
-
-                    it("should chain using resolved SyncPromise", done -> {
-                        CancelablePromise.reject("error").then(null, x -> {
-                            SyncPromise.resolve(1);
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        CancelablePromise.reject("error").then(null, x -> {
-                            SyncPromise.reject("rewrited error");
-                        }).then(null, e -> {
-                            EqualsTools.deepEqual(e, "rewrited error").should.be(true);
                             done();
                         });
                     });
@@ -471,24 +435,6 @@ class CancelablePromiseSuite extends BuddySuite {
                         CancelablePromise.reject("error").catchError(e -> {
                             Promise.reject("rewrited error");
                         }).catchError(e -> {
-                            (e : String).should.be("rewrited error");
-                            done();
-                        });
-                    });
-
-                    it("should chain using resolved SyncPromise", done -> {
-                        CancelablePromise.reject("error").catchError(e -> {
-                            SyncPromise.resolve(1);
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        CancelablePromise.reject("error").catchError(e -> {
-                            SyncPromise.reject("rewrited error");
-                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });

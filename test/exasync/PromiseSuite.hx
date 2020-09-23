@@ -245,23 +245,6 @@ class PromiseSuite extends BuddySuite {
                         });
                     });
 
-                    it("should chain using resolved SyncPromise", done -> {
-                        Promise.resolve(1).then(x -> {
-                            SyncPromise.resolve("hello");
-                        }).then(x -> {
-                            x.should.be("hello");
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        Promise.resolve(1).then(x -> {
-                            SyncPromise.reject("error");
-                        }).then(null, e -> {
-                            EqualsTools.deepEqual(e, "error").should.be(true);
-                            done();
-                        });
-                    });
 
                     #if js
                     it("should chain using resolved js.lib.Promise", done -> {
@@ -329,24 +312,6 @@ class PromiseSuite extends BuddySuite {
                             Promise.reject("error");
                         }).then(null, e -> {
                             (e : String).should.be("error");
-                            done();
-                        });
-                    });
-
-                    it("should chain using resolved SyncPromise", done -> {
-                        Promise.reject("error").then(null, x -> {
-                            SyncPromise.resolve(1);
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        Promise.reject("error").then(null, x -> {
-                            SyncPromise.reject("rewrited error");
-                        }).then(null, e -> {
-                            (e : String).should.be("rewrited error");
                             done();
                         });
                     });
@@ -458,24 +423,6 @@ class PromiseSuite extends BuddySuite {
                         Promise.reject("error").catchError(e -> {
                             Promise.reject("rewrited error");
                         }).catchError(e -> {
-                            (e : String).should.be("rewrited error");
-                            done();
-                        });
-                    });
-
-                    it("should chain using resolved SyncPromise", done -> {
-                        Promise.reject("error").catchError(e -> {
-                            SyncPromise.resolve(1);
-                        }).then(x -> {
-                            x.should.be(1);
-                            done();
-                        });
-                    });
-
-                    it("should chain using rejected SyncPromise", done -> {
-                        Promise.reject("error").catchError(e -> {
-                            SyncPromise.reject("rewrited error");
-                        }).then(null, e -> {
                             (e : String).should.be("rewrited error");
                             done();
                         });
