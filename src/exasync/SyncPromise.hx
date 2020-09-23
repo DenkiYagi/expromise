@@ -60,7 +60,7 @@ class SyncPromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<U>(fulfilled:Null<PromiseCallback<T, U>>, ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):SyncPromise<U> {
+    public function then<U>(fulfilled:Null<PromiseCallback<T, U>>, ?rejected:PromiseCallback<Dynamic, U>):SyncPromise<U> {
         return new SyncPromise<U>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
@@ -120,7 +120,7 @@ class SyncPromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<U>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):SyncPromise<U> {
+    public function catchError<U>(rejected:PromiseCallback<Dynamic, U>):SyncPromise<U> {
         return then(null, rejected);
     }
 
@@ -139,7 +139,9 @@ class SyncPromise<T> implements IPromise<T> {
             try {
                 fulfilled(x);
             } catch (ex) {
+                #if debug
                 trace(ex);
+                #end
             }
             x;
         });
@@ -150,9 +152,11 @@ class SyncPromise<T> implements IPromise<T> {
             try {
                 rejected(e);
             } catch (ex) {
+                #if debug
                 trace(ex);
+                #end
             }
-            SyncPromise.reject(e);
+            cast SyncPromise.reject(e);
         });
     }
 

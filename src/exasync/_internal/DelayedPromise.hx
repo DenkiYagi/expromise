@@ -1,6 +1,5 @@
 package exasync._internal;
 
-import haxe.CallStack;
 import extype.Maybe;
 import extype.Result;
 import extype.extern.Mixed;
@@ -45,8 +44,7 @@ class DelayedPromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
-            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):DelayedPromise<TOut> {
+    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:PromiseCallback<Dynamic, TOut>):DelayedPromise<TOut> {
         return new DelayedPromise<TOut>((_fulfill, _reject) -> {
             final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
@@ -106,7 +104,7 @@ class DelayedPromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):DelayedPromise<TOut> {
+    public function catchError<TOut>(rejected:PromiseCallback<Dynamic, TOut>):DelayedPromise<TOut> {
         return then(null, rejected);
     }
 

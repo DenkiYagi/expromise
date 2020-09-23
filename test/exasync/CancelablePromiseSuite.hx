@@ -630,6 +630,73 @@ class CancelablePromiseSuite extends BuddySuite {
             });
         });
 
+
+        describe("CancelablePromise.tap()", {
+            it("should chain from fulfilled", done -> {
+                CancelablePromise.resolve(100).tap(x -> {
+                    x.should.be(100);
+                })
+                .then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should chain from fulfilled if tap func throws error", done -> {
+                CancelablePromise.resolve(100).tap(x -> {
+                    x.should.be(100);
+                    throw "error";
+                })
+                .then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should never call from rejected", done -> {
+                CancelablePromise.reject("error").tap(x -> {
+                    fail();
+                })
+                .catchError(e -> {
+                    (e:String).should.be("error");
+                    done();
+                });
+            });
+        });
+
+        describe("CancelablePromise.tapError()", {
+            it("should chain from rejected", done -> {
+                CancelablePromise.reject("error").tapError(e -> {
+                    (e:String).should.be("error");
+                })
+                .catchError(e -> {
+                    (e:String).should.be("error");
+                    done();
+                });
+            });
+
+            it("should chain from rejected if tapError func throws error", done -> {
+                CancelablePromise.reject("error").tapError(e -> {
+                    (e:String).should.be("error");
+                    throw "error inner";
+                })
+                .catchError(e -> {
+                    (e:String).should.be("error");
+                    done();
+                });
+            });
+
+            it("should never call from fulfilled", done -> {
+                CancelablePromise.resolve(100).tapError(x -> {
+                    fail();
+                })
+                .then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+        });
+
         describe("Cancelablepromise.cancel()", {
             describe("before execution", {
                 it("should call rejected that is set before abort()", done -> {

@@ -15,12 +15,11 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
         #end
     }
 
-    public inline extern function then<U>(fulfilled:Null<PromiseCallback<T, U>>,
-            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):Promise<U> {
+    public inline extern function then<U>(fulfilled:Null<PromiseCallback<T, U>>, ?rejected:PromiseCallback<Dynamic, U>):Promise<U> {
         return this.then(fulfilled, rejected);
     }
 
-    public inline extern function catchError<U>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):Promise<U> {
+    public inline extern function catchError<U>(rejected:PromiseCallback<Dynamic, U>):Promise<U> {
         #if js
         return js.Syntax.code("{0}.catch({1})", this, rejected);
         #else
@@ -47,20 +46,28 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
             try {
                 fulfilled(x);
             } catch (ex) {
+                #if debug
                 trace(ex);
+                #end
             }
             x;
         });
     }
 
     public inline extern function tapError(rejected:Dynamic->Void):Promise<T> {
+        #if js
+        return js.Syntax.code("{0}.catch({1})", this, e -> {
+        #else
         return this.catchError(e -> {
+        #end
             try {
                 rejected(e);
             } catch (ex) {
+                #if debug
                 trace(ex);
+                #end
             }
-            Promise.reject(e);
+            cast Promise.reject(e);
         });
     }
 
@@ -121,11 +128,6 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
         }
     }
     #end
-
-    @:to
-    public inline extern function toTask<T, TFailure>():Task<T, TFailure> {
-        return Task.fromPromise(cast this);
-    }
 
     #if js
     @:from

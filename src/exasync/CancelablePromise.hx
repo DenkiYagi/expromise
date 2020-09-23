@@ -65,8 +65,7 @@ class CancelablePromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
-            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):CancelablePromise<TOut> {
+    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:PromiseCallback<Dynamic, TOut>):CancelablePromise<TOut> {
         return new CancelablePromise<TOut>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
                 function chain(value:T) {
@@ -127,7 +126,7 @@ class CancelablePromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):CancelablePromise<TOut> {
+    public function catchError<TOut>(rejected:PromiseCallback<Dynamic, TOut>):CancelablePromise<TOut> {
         return then(null, rejected);
     }
 
@@ -141,8 +140,38 @@ class CancelablePromise<T> implements IPromise<T> {
         });
     }
 
+    public inline extern function tap(fulfilled:T->Void):CancelablePromise<T> {
+        return this.then(x -> {
+            try {
+                fulfilled(x);
+            } catch (ex) {
+                #if debug
+                trace(ex);
+                #end
+            }
+            x;
+        });
+    }
+
+    public inline extern function tapError(rejected:Dynamic->Void):CancelablePromise<T> {
+        #if js
+        return js.Syntax.code("{0}.catch({1})", this, e -> {
+        #else
+        return this.catchError(e -> {
+        #end
+            try {
+                rejected(e);
+            } catch (ex) {
+                #if debug
+                trace(ex);
+                #end
+            }
+            cast CancelablePromise.reject(e);
+        });
+    }
+
     /**
-     * Abort this promise.
+     * Camce; this promise.
      */
     public function cancel():Void {
         if (result.isEmpty()) {
