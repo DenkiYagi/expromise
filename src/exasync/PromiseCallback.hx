@@ -1,25 +1,25 @@
 package exasync;
 
-import extype.extern.Mixed;
 import exasync._internal.IPromise;
+import extype.extern.Mixed;
 
-abstract PromiseCallback<T, TOut>(T -> Dynamic)
+abstract PromiseCallback<T, U>(T -> Dynamic)
     #if js
     from Mixed6<
-        T -> js.lib.Promise<TOut>,
-        T -> SyncPromise<TOut>,
-        T -> CancelablePromise<TOut>,
-        T -> Promise<TOut>,
-        T -> IPromise<TOut>,
-        T -> TOut
+        T -> js.lib.Promise<U>,
+        T -> SyncPromise<U>,
+        T -> CancelablePromise<U>,
+        T -> Promise<U>,
+        T -> IPromise<U>,
+        T -> U
     >
     #else
     from Mixed5<
-        T -> SyncPromise<TOut>,
-        T -> CancelablePromise<TOut>,
-        T -> Promise<TOut>,
-        T -> IPromise<TOut>,
-        T -> TOut
+        T -> SyncPromise<U>,
+        T -> CancelablePromise<U>,
+        T -> Promise<U>,
+        T -> IPromise<U>,
+        T -> U
     >
     #end
     to T -> Dynamic

@@ -1,0 +1,11 @@
+{
+    "codedox": {
+        "commentbegin": "/**",
+        "commentprefix": "    ",
+        "commentend": "**/",
+        "autoPrefixOnEnter": false
+    },
+    "editor.codeActionsOnSave": {
+        "source.sortImports": true
+    }
+}

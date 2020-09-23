@@ -1,7 +1,7 @@
 package exasync;
 
-import extype.extern.Mixed;
 import exasync._internal.IPromise;
+import extype.extern.Mixed;
 #if !js
 import exasync._internal.DelayedPromise;
 #end
@@ -15,12 +15,12 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
         #end
     }
 
-    public inline extern function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>,
-            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
+    public inline extern function then<U>(fulfilled:Null<PromiseCallback<T, U>>,
+            ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):Promise<U> {
         return this.then(fulfilled, rejected);
     }
 
-    public inline extern function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):Promise<TOut> {
+    public inline extern function catchError<U>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):Promise<U> {
         #if js
         return js.Syntax.code("{0}.catch({1})", this, rejected);
         #else
@@ -40,6 +40,28 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
         #else
         return this.finally(onFinally);
         #end
+    }
+
+    public inline extern function tap(fulfilled:T->Void):Promise<T> {
+        return this.then(x -> {
+            try {
+                fulfilled(x);
+            } catch (ex) {
+                trace(ex);
+            }
+            x;
+        });
+    }
+
+    public inline extern function tapError(rejected:Dynamic->Void):Promise<T> {
+        return this.catchError(e -> {
+            try {
+                rejected(e);
+            } catch (ex) {
+                trace(ex);
+            }
+            Promise.reject(e);
+        });
     }
 
     public static inline function resolve<T>(?value:T):Promise<T> {

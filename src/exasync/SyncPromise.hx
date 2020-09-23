@@ -1,10 +1,10 @@
 package exasync;
 
+import exasync._internal.Delegate;
+import exasync._internal.IPromise;
 import extype.Maybe;
 import extype.Result;
 import extype.extern.Mixed;
-import exasync._internal.IPromise;
-import exasync._internal.Delegate;
 
 using extools.EqualsTools;
 
@@ -60,14 +60,14 @@ class SyncPromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):SyncPromise<TOut> {
-        return new SyncPromise<TOut>(function(_fulfill, _reject) {
+    public function then<U>(fulfilled:Null<PromiseCallback<T, U>>, ?rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):SyncPromise<U> {
+        return new SyncPromise<U>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
                     try {
                         final next = (fulfilled : T->Dynamic)(value);
                         if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
-                            final p:Promise<TOut> = cast next;
+                            final p:Promise<U> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
                             _fulfill(next);
@@ -87,7 +87,7 @@ class SyncPromise<T> implements IPromise<T> {
                     try {
                         final next = (rejected : Dynamic->Dynamic)(error);
                         if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
-                            final p:Promise<TOut> = cast next;
+                            final p:Promise<U> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
                             _fulfill(next);
@@ -120,7 +120,7 @@ class SyncPromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<TOut>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, TOut>>):SyncPromise<TOut> {
+    public function catchError<U>(rejected:Mixed2<Dynamic->Void, PromiseCallback<Dynamic, U>>):SyncPromise<U> {
         return then(null, rejected);
     }
 
@@ -131,6 +131,28 @@ class SyncPromise<T> implements IPromise<T> {
         }, e -> {
             onFinally();
             reject(e);
+        });
+    }
+
+    public inline extern function tap(fulfilled:T->Void):SyncPromise<T> {
+        return this.then(x -> {
+            try {
+                fulfilled(x);
+            } catch (ex) {
+                trace(ex);
+            }
+            x;
+        });
+    }
+
+    public inline extern function tapError(rejected:Dynamic->Void):SyncPromise<T> {
+        return this.catchError(e -> {
+            try {
+                rejected(e);
+            } catch (ex) {
+                trace(ex);
+            }
+            SyncPromise.reject(e);
         });
     }
 
