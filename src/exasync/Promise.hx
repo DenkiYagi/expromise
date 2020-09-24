@@ -29,13 +29,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
 
     public inline extern function finally(onFinally:Void->Void):Promise<T> {
         #if js
-        return then(x -> {
-            onFinally();
-            return x;
-        }, e -> {
-            onFinally();
-            return reject(e);
-        });
+        return js.Syntax.code("{0}.finally({1})", this, onFinally);
         #else
         return this.finally(onFinally);
         #end
