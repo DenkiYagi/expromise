@@ -1,7 +1,5 @@
 package exasync;
 
-import exasync._internal.IPromise;
-import extype.extern.Mixed;
 #if !js
 import exasync._internal.DelayedPromise;
 #end

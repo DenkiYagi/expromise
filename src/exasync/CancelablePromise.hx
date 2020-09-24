@@ -1,11 +1,10 @@
 package exasync;
 
+import exasync.IPromise;
 import exasync._internal.Delegate;
 import exasync._internal.Dispatcher;
-import exasync._internal.IPromise;
 import extype.Maybe;
 import extype.Result;
-import extype.extern.Mixed;
 
 using extools.EqualsTools;
 
