@@ -4,4 +4,4 @@
 -D no-opt
 -L hxnodejs
 --js dummy.js
-# --neko dummy.n
+#--neko dummy.n
