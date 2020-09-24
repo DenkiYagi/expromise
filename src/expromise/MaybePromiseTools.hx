@@ -32,4 +32,12 @@ class MaybePromiseTools {
     public static inline function foldThen<T, U>(promise:Promise<Maybe<T>>, ifEmpty:PromiseHandler0<T, U>, fn:PromiseHandler<T, U>):Promise<U> {
         return promise.then(x -> x.fold(ifEmpty, cast fn));
     }
+
+    public static function of<T>(x:T):Promise<Maybe<T>> {
+        return Promise.resolve(Maybe.of(x));
+    }
+
+    public static function empty<T>():Promise<Maybe<T>> {
+        return Promise.resolve(Maybe.empty());
+    }
 }

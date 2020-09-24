@@ -47,4 +47,12 @@ class EitherPromiseTools {
     public static inline function flatMapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, Either<AA, B>>):Promise<Either<AA, B>> {
         return promise.then(x -> x.flatMapLeft(cast fn));
     }
+
+    public static inline function right<A, B>(x:B):Promise<Either<A, B>> {
+        return Promise.resolve(Right(x));
+    }
+
+    public static inline function left<A, B>(x:A):Promise<Either<A, B>> {
+        return Promise.resolve(Left(x));
+    }
 }

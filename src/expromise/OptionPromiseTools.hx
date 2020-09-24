@@ -45,4 +45,12 @@ class OptionPromiseTools {
     public static inline function foldThen<T, U>(promise:Promise<Option<T>>, ifEmpty:PromiseHandler0<T, U>, fn:PromiseHandler<T, U>):Promise<U> {
         return promise.then(x -> x.fold(ifEmpty, cast fn));
     }
+
+    public static function some<T>(x:T):Promise<Option<T>> {
+        return Promise.resolve(Some(x));
+    }
+
+    public static function none<T>():Promise<Option<T>> {
+        return Promise.resolve(None);
+    }
 }
