@@ -43,8 +43,6 @@ jobs:
       run: haxe test-eval.hxml
     - name: Run test - Neko
       run: haxe test-neko.hxml
-    - name: Run test - C++
-      run: haxe test-cpp.hxml
     - name: Run test - Java
       run: haxe test-java.hxml
     - name: Run test - JVM
