@@ -28,25 +28,19 @@ class CancelablePromiseSuite extends BuddySuite {
             });
 
             describe("result: fulfilled", {
-                it("should pass", {
+                it("should pass with sync executor", done -> {
                     new CancelablePromise((fulfill, _) -> {
-                        fulfill();
+                        fulfill(1);
                         () -> {};
-                    });
-                });
-
-                it("should pass when it is taken none fulfilled value", done -> {
-                    new CancelablePromise((fulfill, _) -> {
-                        wait(5, fulfill.bind());
-                        () -> {};
-                    }).then(_ -> {
+                    }).then(x -> {
+                        x.should.be(1);
                         done();
                     }, _ -> {
                         fail();
                     });
                 });
 
-                it("should pass when it is taken some fulfilled value", done -> {
+                it("should pass with async executor", done -> {
                     new CancelablePromise((fulfill, _) -> {
                         wait(5, fulfill.bind(1));
                         () -> {};
@@ -60,26 +54,19 @@ class CancelablePromiseSuite extends BuddySuite {
             });
 
             describe("result: rejected", {
-                it("should pass", {
+                it("should pass with sync executor", done -> {
                     new CancelablePromise((_, reject) -> {
-                        reject();
-                        () -> {};
-                    });
-                });
-
-                it("should pass when it is taken none rejected value", done -> {
-                    new CancelablePromise((_, reject) -> {
-                        wait(5, reject.bind());
+                        reject("error");
                         () -> {};
                     }).then(_ -> {
                         fail();
                     }, e -> {
-                        (e == null).should.be(true);
+                        (e:String).should.be("error");
                         done();
                     });
                 });
 
-                it("should pass when it is taken some rejected value", done -> {
+                it("should pass with async executor", done -> {
                     new CancelablePromise((_, reject) -> {
                         wait(5, reject.bind("error"));
                         () -> {};

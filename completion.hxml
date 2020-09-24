@@ -3,4 +3,5 @@
 --no-output
 -D no-opt
 -L hxnodejs
--js dummy.js
+--js dummy.js
+# --neko dummy.n

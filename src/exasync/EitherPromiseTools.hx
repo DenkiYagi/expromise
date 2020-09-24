@@ -1,5 +1,6 @@
 package exasync;
 
+import exasync.PromiseHandler;
 import haxe.ds.Either;
 
 using extools.EitherTools;
@@ -9,11 +10,11 @@ class EitherPromiseTools {
         return promise.then(EitherTools.swap);
     }
 
-    public static inline function mapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseCallback<B, BB>):Promise<Either<A, BB>> {
+    public static inline function mapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, BB>):Promise<Either<A, BB>> {
         return promise.then((x -> switch (x) {
             case Right(b):
                 final ret = fn.call(b);
-                if (#if js Std.isOfType(ret, js.lib.Promise) || #end Std.isOfType(ret, IPromise)) {
+                if (Std.isOfType(ret, #if js js.lib.Promise #else IPromise #end)) {
                     final p:Promise<BB> = cast ret;
                     p.then(bb -> Right(bb));
                 } else {
@@ -21,18 +22,18 @@ class EitherPromiseTools {
                 }
             case Left(a):
                 Promise.resolve(Left(a));
-        } : PromiseCallback<Either<A, B>, Either<A, BB>>));
+        } : PromiseHandler<Either<A, B>, Either<A, BB>>));
     }
 
-    public static inline function flatMapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseCallback<B, Either<A, BB>>):Promise<Either<A, BB>> {
-        return promise.then(x -> x.flatMap(fn));
+    public static inline function flatMapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, Either<A, BB>>):Promise<Either<A, BB>> {
+        return promise.then(x -> x.flatMap(cast fn));
     }
 
-    public static inline function mapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseCallback<A, AA>):Promise<Either<AA, B>> {
+    public static inline function mapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, AA>):Promise<Either<AA, B>> {
         return promise.then((x -> switch (x) {
             case Left(a):
                 final ret = fn.call(a);
-                if (#if js Std.isOfType(ret, js.lib.Promise) || #end Std.isOfType(ret, IPromise)) {
+                if (Std.isOfType(ret, #if js js.lib.Promise #else IPromise #end)) {
                     final p:Promise<AA> = cast ret;
                     p.then(bb -> Left(bb));
                 } else {
@@ -40,10 +41,10 @@ class EitherPromiseTools {
                 }
             case Right(b):
                 Promise.resolve(Right(b));
-        } : PromiseCallback<Either<A, B>, Either<AA, B>>));
+        } : PromiseHandler<Either<A, B>, Either<AA, B>>));
     }
 
-    public static inline function flatMapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseCallback<A, Either<AA, B>>):Promise<Either<AA, B>> {
-        return promise.then(x -> x.flatMapLeft(fn));
+    public static inline function flatMapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, Either<AA, B>>):Promise<Either<AA, B>> {
+        return promise.then(x -> x.flatMapLeft(cast fn));
     }
 }

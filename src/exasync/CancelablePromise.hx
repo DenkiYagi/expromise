@@ -1,6 +1,6 @@
 package exasync;
 
-import exasync.IPromise;
+import exasync.Promise;
 import exasync._internal.Delegate;
 import exasync._internal.Dispatcher;
 import extype.Maybe;
@@ -8,7 +8,7 @@ import extype.Result;
 
 using extools.EqualsTools;
 
-class CancelablePromise<T> implements IPromise<T> {
+class CancelablePromise<T> #if !js implements IPromise<T> #end {
     var result:Maybe<Result<T>>;
     var onFulfilledHanlders:Delegate<T>;
     var onRejectedHanlders:Delegate<Dynamic>;
@@ -28,7 +28,7 @@ class CancelablePromise<T> implements IPromise<T> {
     }
     #end
 
-    public function new(executor:(?T->Void)->(?Dynamic->Void)->(Void->Void)) {
+    public function new(executor:(T->Void)->(Dynamic->Void)->(Void->Void)) {
         result = Maybe.empty();
         onFulfilledHanlders = new Delegate();
         onRejectedHanlders = new Delegate();
@@ -64,13 +64,13 @@ class CancelablePromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:PromiseCallback<Dynamic, TOut>):CancelablePromise<TOut> {
+    public function then<TOut>(fulfilled:Null<PromiseHandler<T, TOut>>, ?rejected:PromiseHandler<Dynamic, TOut>):CancelablePromise<TOut> {
         return new CancelablePromise<TOut>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
                 function chain(value:T) {
                     try {
-                        final next = (fulfilled : T->Dynamic)(value);
-                        if (#if js Std.isOfType(next, js.lib.Promise) || #end Std.isOfType(next, IPromise)) {
+                        final next = fulfilled.call(value);
+                        if (Std.isOfType(next, #if js js.lib.Promise #else IPromise #end)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
@@ -86,11 +86,11 @@ class CancelablePromise<T> implements IPromise<T> {
                 }
             }
 
-            var handleRejected = if (rejected != null) {
+            final handleRejected = if (rejected != null) {
                 function rescue(error:Dynamic) {
                     try {
-                        var next = (rejected : Dynamic->Dynamic)(error);
-                        if (#if js Std.isOfType(next, js.lib.Promise) || #end Std.isOfType(next, IPromise)) {
+                        final next = rejected.call(error);
+                        if (Std.isOfType(next, #if js js.lib.Promise #else IPromise #end)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
@@ -125,7 +125,7 @@ class CancelablePromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<TOut>(rejected:PromiseCallback<Dynamic, TOut>):CancelablePromise<TOut> {
+    public function catchError<TOut>(rejected:PromiseHandler<Dynamic, TOut>):CancelablePromise<TOut> {
         return then(null, rejected);
     }
 
@@ -135,7 +135,7 @@ class CancelablePromise<T> implements IPromise<T> {
             x;
         }, e -> {
             onFinally();
-            reject(e);
+            (CancelablePromise.reject(e) : Promise<T>);
         });
     }
 

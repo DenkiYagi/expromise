@@ -1,8 +1,10 @@
+#if !js
 package exasync._internal;
 
+import exasync.Promise;
+import exasync.PromiseHandler;
 import extype.Maybe;
 import extype.Result;
-import extype.extern.Mixed;
 
 using extools.EqualsTools;
 
@@ -44,12 +46,12 @@ class DelayedPromise<T> implements IPromise<T> {
         onRejectedHanlders.removeAll();
     }
 
-    public function then<TOut>(fulfilled:Null<PromiseCallback<T, TOut>>, ?rejected:PromiseCallback<Dynamic, TOut>):DelayedPromise<TOut> {
+    public function then<TOut>(fulfilled:Null<PromiseHandler<T, TOut>>, ?rejected:PromiseHandler<Dynamic, TOut>):DelayedPromise<TOut> {
         return new DelayedPromise<TOut>((_fulfill, _reject) -> {
             final handleFulfilled = if (fulfilled != null) {
                 function transformValue(value:T) {
                     try {
-                        final next = (fulfilled : T->Dynamic)(value);
+                        final next = fulfilled.call(value);
                         if (Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
@@ -69,7 +71,7 @@ class DelayedPromise<T> implements IPromise<T> {
             final handleRejected = if (rejected != null) {
                 function transformError(error:Dynamic) {
                     try {
-                        final next = (rejected : Dynamic->Dynamic)(error);
+                        final next = rejected.call(error);
                         if (Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
@@ -104,7 +106,7 @@ class DelayedPromise<T> implements IPromise<T> {
         });
     }
 
-    public function catchError<TOut>(rejected:PromiseCallback<Dynamic, TOut>):DelayedPromise<TOut> {
+    public function catchError<TOut>(rejected:PromiseHandler<Dynamic, TOut>):DelayedPromise<TOut> {
         return then(null, rejected);
     }
 
@@ -126,3 +128,4 @@ class DelayedPromise<T> implements IPromise<T> {
         return new DelayedPromise((_, r) -> r(error));
     }
 }
+#end

@@ -36,15 +36,9 @@ class PromiseSuite extends BuddySuite {
             });
 
             describe("result: fulfilled", {
-                it("should pass", {
+                it("should pass with sync executor", done -> {
                     new Promise((fulfill, _) -> {
-                        fulfill();
-                    });
-                });
-
-                it("should pass when it is taken no fulfilled value", done -> {
-                    new Promise((fulfill, _) -> {
-                        wait(5, fulfill.bind());
+                        fulfill(5);
                     }).then(_ -> {
                         done();
                     }, _ -> {
@@ -52,7 +46,7 @@ class PromiseSuite extends BuddySuite {
                     });
                 });
 
-                it("should pass when it is taken some fulfilled value", done -> {
+                it("should pass with async executor", done -> {
                     new Promise((fulfill, _) -> {
                         wait(5, fulfill.bind(1));
                     }).then(x -> {
@@ -65,24 +59,18 @@ class PromiseSuite extends BuddySuite {
             });
 
             describe("result: rejected", {
-                it("should pass", {
+                it("should pass with sync executor", done -> {
                     new Promise((_, reject) -> {
-                        reject();
-                    });
-                });
-
-                it("should pass when it is taken no rejected value", done -> {
-                    new Promise((_, reject) -> {
-                        wait(5, reject.bind());
+                        reject("error");
                     }).then(_ -> {
                         fail();
                     }, e -> {
-                        (e == null).should.be(true);
+                        (e : String).should.be("error");
                         done();
                     });
                 });
 
-                it("should pass when it is taken some rejected value", done -> {
+                it("should pass with async executor", done -> {
                     new Promise((_, reject) -> {
                         wait(5, reject.bind("error"));
                     }).then(_ -> {

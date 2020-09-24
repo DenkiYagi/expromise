@@ -1,29 +1,31 @@
 package exasync;
 
-import extype.extern.Mixed;
-#if !js
+#if js
+import js.lib.Promise in JsPromise;
+#else
 import exasync._internal.DelayedPromise;
 #end
 
-abstract Promise<T>(IPromise<T>) from IPromise<T> {
-    public inline extern function new(executor:(?T->Void)->(?Dynamic->Void)->Void) {
+#if js
+abstract Promise<T>(JsPromise<T>) from JsPromise<T> to JsPromise<T>
+#else
+abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
+#end
+{
+    public inline extern function new(executor:(T->Void)->(Dynamic->Void)->Void) {
         #if js
-        this = cast new js.lib.Promise(cast executor);
+        this = cast new JsPromise(cast executor);
         #else
         this = new DelayedPromise(executor);
         #end
     }
 
-    public inline extern function then<U>(fulfilled:Null<PromiseCallback<T, U>>, ?rejected:PromiseCallback<Dynamic, U>):Promise<U> {
-        return this.then(fulfilled, rejected);
+    public inline extern function then<U>(fulfilled:Null<PromiseHandler<T, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<U> {
+        return cast this.then(fulfilled, rejected);
     }
 
-    public inline extern function catchError<U>(rejected:PromiseCallback<Dynamic, U>):Promise<U> {
-        #if js
-        return js.Syntax.code("{0}.catch({1})", this, rejected);
-        #else
-        return this.catchError(rejected);
-        #end
+    public inline extern function catchError<U>(rejected:PromiseHandler<Dynamic, U>):Promise<U> {
+        return cast this.catchError(rejected);
     }
 
     public inline extern function finally(onFinally:Void->Void):Promise<T> {
@@ -60,11 +62,11 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
                 trace(ex);
                 #end
             }
-            cast Promise.reject(e);
+            Promise.reject(e);
         });
     }
 
-    // incompatible with js.lib.Promise.resolve()
+    // incompatible with JsPromise.resolve()
     public static inline function resolve<T>(?value:T):Promise<T> {
         #if js
         return js.Syntax.code("Promise.resolve({0})", value);
@@ -87,7 +89,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
     }
     #else
     public static function all<T>(iterable:Array<Promise<T>>):Promise<Array<T>> {
-        var length = iterable.length;
+        final length = iterable.length;
         return if (length <= 0) {
             DelayedPromise.resolve([]);
         } else {
@@ -125,13 +127,8 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
 
     #if js
     @:from
-    public static inline extern function fromJsPromise<T>(promise:js.lib.Promise<T>):Promise<T> {
+    public static inline extern function fromCancelablePromise<T>(promise:CancelablePromise<T>):Promise<T> {
         return cast promise;
-    }
-
-    @:to
-    public inline extern function toJsPromise():js.lib.Promise<T> {
-        return cast this;
     }
     #end
 }
