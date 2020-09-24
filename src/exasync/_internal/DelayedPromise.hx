@@ -50,7 +50,7 @@ class DelayedPromise<T> implements IPromise<T> {
                 function transformValue(value:T) {
                     try {
                         final next = (fulfilled : T->Dynamic)(value);
-                        if (Std.is(next, IPromise)) {
+                        if (Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
@@ -70,7 +70,7 @@ class DelayedPromise<T> implements IPromise<T> {
                 function transformError(error:Dynamic) {
                     try {
                         final next = (rejected : Dynamic->Dynamic)(error);
-                        if (Std.is(next, IPromise)) {
+                        if (Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {

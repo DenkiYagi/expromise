@@ -70,7 +70,7 @@ class CancelablePromise<T> implements IPromise<T> {
                 function chain(value:T) {
                     try {
                         final next = (fulfilled : T->Dynamic)(value);
-                        if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
+                        if (#if js Std.isOfType(next, js.lib.Promise) || #end Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {
@@ -90,7 +90,7 @@ class CancelablePromise<T> implements IPromise<T> {
                 function rescue(error:Dynamic) {
                     try {
                         var next = (rejected : Dynamic->Dynamic)(error);
-                        if (#if js Std.is(next, js.lib.Promise) || #end Std.is(next, IPromise)) {
+                        if (#if js Std.isOfType(next, js.lib.Promise) || #end Std.isOfType(next, IPromise)) {
                             final p:Promise<TOut> = cast next;
                             p.then(_fulfill, _reject);
                         } else {

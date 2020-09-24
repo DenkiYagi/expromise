@@ -1,5 +1,6 @@
 package exasync;
 
+import extype.extern.Mixed;
 #if !js
 import exasync._internal.DelayedPromise;
 #end
@@ -63,6 +64,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> {
         });
     }
 
+    // incompatible with js.lib.Promise.resolve()
     public static inline function resolve<T>(?value:T):Promise<T> {
         #if js
         return js.Syntax.code("Promise.resolve({0})", value);
