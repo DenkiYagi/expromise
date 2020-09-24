@@ -24,28 +24,28 @@ class MaybePromiseToolsSuite extends BuddySuite {
 
         describe("MaybePromiseTools.flatMapThen()", {
             it("should flatMap to Some(U)", done -> {
-                Promise.resolve(Maybe.of(100)).mapThen(x -> Maybe.of(x * 2)).then(x -> {
+                Promise.resolve(Maybe.of(100)).flatMapThen(x -> Maybe.of(x * 2)).then(x -> {
                     x.getUnsafe().should.be(200);
                     done();
                 });
             });
 
             it("should flatMap to Empty", done -> {
-                Promise.resolve(Maybe.of(100)).mapThen(x -> Maybe.empty()).then(x -> {
+                Promise.resolve(Maybe.of(100)).flatMapThen(x -> Maybe.empty()).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
             });
 
             it("should flatMap to Promise<Some(U)>", done -> {
-                Promise.resolve(Maybe.of(100)).mapThen(x -> Promise.resolve(Maybe.of(x * 2))).then(x -> {
+                Promise.resolve(Maybe.of(100)).flatMapThen(x -> Promise.resolve(Maybe.of(x * 2))).then(x -> {
                     x.getUnsafe().should.be(200);
                     done();
                 });
             });
 
             it("should flatMap to Promise<Empty>", done -> {
-                Promise.resolve(Maybe.of(100)).mapThen(x -> Promise.resolve(Maybe.empty())).then(x -> {
+                Promise.resolve(Maybe.of(100)).flatMapThen(x -> Promise.resolve(Maybe.empty())).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
