@@ -10,14 +10,14 @@ class OptionPromiseToolsSuite extends BuddySuite {
         describe("OptionPromiseTools.mapThen()", {
             it("should map to U", done -> {
                 Promise.resolve(Some(100)).mapThen(x -> x * 2).then(x -> {
-                    x.getUnsafe().should.be(200);
+                    x.should.equal(Some(200));
                     done();
                 });
             });
 
             it("should map to Promise<U>", done -> {
                 Promise.resolve(Some(100)).mapThen(x -> Promise.resolve(x * 2)).then(x -> {
-                    x.getUnsafe().should.be(200);
+                    x.should.equal(Some(200));
                     done();
                 });
             });
@@ -26,7 +26,7 @@ class OptionPromiseToolsSuite extends BuddySuite {
         describe("OptionPromiseTools.flatMapThen()", {
             it("should flatMap to Some(U)", done -> {
                 Promise.resolve(Some(100)).flatMapThen(x -> Some(x * 2)).then(x -> {
-                    x.getUnsafe().should.be(200);
+                    x.should.equal(Some(200));
                     done();
                 });
             });
@@ -40,7 +40,7 @@ class OptionPromiseToolsSuite extends BuddySuite {
 
             it("should flatMap to Promise<Some(U)>", done -> {
                 Promise.resolve(Some(100)).flatMapThen(x -> Promise.resolve(Some(x * 2))).then(x -> {
-                    x.getUnsafe().should.be(200);
+                    x.should.equal(Some(200));
                     done();
                 });
             });
@@ -56,7 +56,7 @@ class OptionPromiseToolsSuite extends BuddySuite {
         describe("OptionPromiseTools.filterThen()", {
             it("should pass when callback returns true", done -> {
                 Promise.resolve(Some(100)).filterThen(x -> true).then(x -> {
-                    x.getUnsafe().should.be(100);
+                    x.should.equal(Some(100));
                     done();
                 });
             });
@@ -70,7 +70,7 @@ class OptionPromiseToolsSuite extends BuddySuite {
 
             it("should pass when callback returns Promise<true>", done -> {
                 Promise.resolve(Some(100)).filterThen(x -> Promise.resolve(true)).then(x -> {
-                    x.getUnsafe().should.be(100);
+                    x.should.equal(Some(100));
                     done();
                 });
             });
