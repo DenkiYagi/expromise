@@ -83,7 +83,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
         });
 
         describe("MaybePromiseTools.foldThen()", {
-            it("should pass `empty -> ifEmpty -> value`", done -> {
+            it("should pass `empty -> ifEmpty -> T`", done -> {
                 Promise.resolve(Maybe.empty()).foldThen(
                     () -> 100,
                     _ -> { fail(); -1; }
@@ -93,7 +93,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
                 });
             });
 
-            it("should pass `value -> fn -> value`", done -> {
+            it("should pass `T -> fn -> T`", done -> {
                 Promise.resolve(Maybe.of(100)).foldThen(
                     () -> { fail(); -1; },
                     x -> x * 2
@@ -103,7 +103,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
                 });
             });
 
-            it("should pass `empty -> ifEmpty -> Promise<value>`", done -> {
+            it("should pass `empty -> ifEmpty -> Promise<T>`", done -> {
                 Promise.resolve(Maybe.empty()).foldThen(
                     () -> Promise.resolve(100),
                     _ -> { fail(); Promise.resolve(-1); }
@@ -113,7 +113,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
                 });
             });
 
-            it("should pass `value -> fn -> Promise<value>`", done -> {
+            it("should pass `T -> fn -> Promise<T>`", done -> {
                 Promise.resolve(Maybe.of(100)).foldThen(
                     () -> { fail(); Promise.resolve(-1); },
                     x -> Promise.resolve(x * 2)
