@@ -8,7 +8,18 @@ using extools.OptionTools;
 
 class OptionPromiseTools {
     public static inline function mapThen<T, U>(promise:Promise<Option<T>>, fn:PromiseCallback<T, U>):Promise<Option<U>> {
-        return promise.then(x -> x.map(fn));
+        return promise.then((x -> switch (x) {
+            case Some(t):
+                final ret = fn.call(t);
+                if (#if js Std.isOfType(ret, js.lib.Promise) || #end Std.isOfType(ret, IPromise)) {
+                    final p:Promise<U> = cast ret;
+                    p.then(u -> Some(u));
+                } else {
+                    Promise.resolve(Some(ret));
+                }
+            case None:
+                Promise.resolve(None);
+            } : PromiseCallback<Option<T>, Option<U>>));
     }
 
     public static inline function flatMapThen<T, U>(promise:Promise<Option<T>>, fn:PromiseCallback<T, Option<U>>):Promise<Option<U>> {
