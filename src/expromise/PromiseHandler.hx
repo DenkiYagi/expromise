@@ -1,6 +1,6 @@
-package exasync;
+package expromise;
 
-import exasync.CancelablePromise;
+import expromise.CancelablePromise;
 #if js
 import js.lib.Promise.PromiseHandler in JsPromiseHandler;
 

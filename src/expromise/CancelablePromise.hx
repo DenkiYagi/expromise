@@ -1,8 +1,8 @@
-package exasync;
+package expromise;
 
-import exasync.Promise;
-import exasync._internal.Delegate;
-import exasync._internal.Dispatcher;
+import expromise.Promise;
+import expromise._internal.Delegate;
+import expromise._internal.Dispatcher;
 import extype.Maybe;
 import extype.Result;
 

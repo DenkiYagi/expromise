@@ -1,4 +1,4 @@
-package exasync;
+package expromise;
 
 import extype.Error;
 

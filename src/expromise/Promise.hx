@@ -1,9 +1,9 @@
-package exasync;
+package expromise;
 
 #if js
 import js.lib.Promise in JsPromise;
 #else
-import exasync._internal.DelayedPromise;
+import expromise._internal.DelayedPromise;
 #end
 
 #if js

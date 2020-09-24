@@ -1,8 +1,8 @@
-package exasync;
+package expromise;
 
 import haxe.ds.Option;
 
-using exasync.OptionPromiseTools;
+using expromise.OptionPromiseTools;
 using extools.OptionTools;
 
 class OptionPromiseToolsSuite extends BuddySuite {

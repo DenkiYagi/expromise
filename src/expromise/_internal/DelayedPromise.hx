@@ -1,8 +1,8 @@
 #if !js
-package exasync._internal;
+package expromise._internal;
 
-import exasync.Promise;
-import exasync.PromiseHandler;
+import expromise.Promise;
+import expromise.PromiseHandler;
 import extype.Maybe;
 import extype.Result;
 

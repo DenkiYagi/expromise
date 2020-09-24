@@ -1,8 +1,8 @@
-package exasync;
+package expromise;
 
 import haxe.ds.Either;
 
-using exasync.EitherPromiseTools;
+using expromise.EitherPromiseTools;
 
 class EitherPromiseToolsSuite extends BuddySuite {
     public function new() {

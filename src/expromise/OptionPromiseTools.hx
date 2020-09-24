@@ -1,6 +1,6 @@
-package exasync;
+package expromise;
 
-import exasync.PromiseHandler;
+import expromise.PromiseHandler;
 import extools.EqualsTools;
 import haxe.ds.Option;
 

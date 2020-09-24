@@ -1,6 +1,6 @@
-package exasync;
+package expromise;
 
-import exasync.PromiseHandler;
+import expromise.PromiseHandler;
 import haxe.ds.Either;
 
 using extools.EitherTools;

@@ -1,7 +1,7 @@
 #if !js
-package exasync;
+package expromise;
 
-import exasync.Promise;
+import expromise.Promise;
 
 interface IPromise<T> {
     function then<TOut>(fulfilled:Null<PromiseHandler<T, TOut>>, ?rejected:PromiseHandler<Dynamic, TOut>):IPromise<TOut>;

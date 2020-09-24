@@ -1,4 +1,4 @@
-package exasync._internal;
+package expromise._internal;
 
 import extype.Unit;
 

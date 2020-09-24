@@ -1,8 +1,8 @@
-package exasync;
+package expromise;
 
 import extype.Maybe;
 
-using exasync.MaybePromiseTools;
+using expromise.MaybePromiseTools;
 
 class MaybePromiseToolsSuite extends BuddySuite {
     public function new() {

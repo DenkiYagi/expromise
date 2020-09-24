@@ -1,4 +1,4 @@
-package exasync;
+package expromise;
 
 class CancelablePromiseSuite extends BuddySuite {
     public function new() {

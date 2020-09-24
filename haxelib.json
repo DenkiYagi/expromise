@@ -1,8 +1,8 @@
 {
-    "name": "exasync",
-    "url": "https://github.com/DenkiYagi/haxe-exasync",
+    "name": "expromise",
+    "url": "https://github.com/DenkiYagi/expromise",
     "license": "Apache",
-    "tags": ["haxe"],
+    "tags": ["haxe", "promise", "async"],
     "description": "",
     "version": "0.0.1",
     "classPath": "src/",

@@ -1,5 +1,5 @@
 .base-test.hxml
---macro include("exasync", true)
+--macro include("expromise", true)
 --no-output
 -D no-opt
 -L hxnodejs

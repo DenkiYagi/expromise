@@ -1,4 +1,4 @@
-package exasync;
+package expromise;
 
 class PromiseSuite extends BuddySuite {
     public function new() {
