@@ -1,26 +1,42 @@
 package exasync;
 
-abstract PromiseCallback<T, U>(T->Dynamic)
+import extype.extern.Mixed;
+
+abstract PromiseCallback<T, U>(T -> Dynamic)
     #if js
-    from T->js.lib.Promise<U>
-    from T->Promise<U>
+    from Mixed4<
+        T -> js.lib.Promise<U>,
+        T -> CancelablePromise<U>,
+        T -> Promise<U>,
+        T -> U
+    >
+    #else
+    from Mixed3<
+        T -> CancelablePromise<U>,
+        T -> Promise<U>,
+        T -> U
+    >
     #end
-    from T->Promise<U>
-    from T->IPromise<U>
-    from T->U
-    to T->Dynamic
+    to T -> Dynamic
 {
     public inline extern function call(x:T):Dynamic return this(x);
 }
 
 abstract PromiseCallback0<U>(()->Dynamic)
     #if js
-    from ()->js.lib.Promise<U>
-    from ()->Promise<U>
+    from Mixed4<
+        () -> js.lib.Promise<U>,
+        () -> CancelablePromise<U>,
+        () -> Promise<U>,
+        () -> U
+    >
+    #else
+    from Mixed3<
+        () -> CancelablePromise<U>,
+        () -> Promise<U>,
+        () -> U
+    >
     #end
-    from ()->Promise<U>
-    from ()->IPromise<U>
-    from ()->U
     to ()->Dynamic
 {
     public inline extern function call():Dynamic return this();
