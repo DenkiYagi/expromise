@@ -33,11 +33,11 @@ class MaybePromiseTools {
         return promise.then(x -> x.fold(ifEmpty, cast fn));
     }
 
-    public static function of<T>(x:T):Promise<Maybe<T>> {
+    public static function resolveOf<T>(x:T):Promise<Maybe<T>> {
         return Promise.resolve(Maybe.of(x));
     }
 
-    public static function empty<T>():Promise<Maybe<T>> {
+    public static function resolveEmpty<T>():Promise<Maybe<T>> {
         return Promise.resolve(Maybe.empty());
     }
 }

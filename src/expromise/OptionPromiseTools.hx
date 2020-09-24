@@ -46,11 +46,11 @@ class OptionPromiseTools {
         return promise.then(x -> x.fold(ifEmpty, cast fn));
     }
 
-    public static function some<T>(x:T):Promise<Option<T>> {
+    public static function resolveSome<T>(x:T):Promise<Option<T>> {
         return Promise.resolve(Some(x));
     }
 
-    public static function none<T>():Promise<Option<T>> {
+    public static function resolveNone<T>():Promise<Option<T>> {
         return Promise.resolve(None);
     }
 }

@@ -48,11 +48,11 @@ class EitherPromiseTools {
         return promise.then(x -> x.flatMapLeft(cast fn));
     }
 
-    public static inline function right<A, B>(x:B):Promise<Either<A, B>> {
+    public static inline function resolveRight<A, B>(x:B):Promise<Either<A, B>> {
         return Promise.resolve(Right(x));
     }
 
-    public static inline function left<A, B>(x:A):Promise<Either<A, B>> {
+    public static inline function resolveLeft<A, B>(x:A):Promise<Either<A, B>> {
         return Promise.resolve(Left(x));
     }
 }
