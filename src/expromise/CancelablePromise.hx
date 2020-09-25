@@ -179,7 +179,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
                 cancelCallback = Maybe.empty();
                 fn();
             }
-            onRejected(new CanceledError("canceled"));
+            onRejected(new CanceledException());
         }
     }
 

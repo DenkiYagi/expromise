@@ -637,7 +637,7 @@ class CancelablePromiseSuite extends BuddySuite {
                         () -> {};
                     });
                     promise.catchError(e -> {
-                        Std.is(e, CanceledError).should.be(true);
+                        Std.is(e, CanceledException).should.be(true);
                         done();
                     });
                     promise.cancel();
@@ -649,7 +649,7 @@ class CancelablePromiseSuite extends BuddySuite {
                     });
                     promise.cancel();
                     promise.catchError(e -> {
-                        Std.is(e, CanceledError).should.be(true);
+                        Std.is(e, CanceledException).should.be(true);
                         done();
                     });
                 });
@@ -670,7 +670,7 @@ class CancelablePromiseSuite extends BuddySuite {
                     promise.cancel();
                     wait(10, () -> {
                         promise.catchError(e -> {
-                            Std.is(e, CanceledError).should.be(true);
+                            Std.is(e, CanceledException).should.be(true);
                             done();
                         });
                     });
@@ -684,7 +684,7 @@ class CancelablePromiseSuite extends BuddySuite {
                     promise.cancel();
                     wait(10, () -> {
                         promise.catchError(e -> {
-                            Std.is(e, CanceledError).should.be(true);
+                            Std.is(e, CanceledException).should.be(true);
                             done();
                         });
                     });
@@ -708,7 +708,7 @@ class CancelablePromiseSuite extends BuddySuite {
                         () -> {};
                     });
                     promise.catchError(e -> {
-                        Std.is(e, CanceledError).should.be(true);
+                        Std.is(e, CanceledException).should.be(true);
                         done();
                     });
                     wait(5, () -> {
@@ -723,7 +723,7 @@ class CancelablePromiseSuite extends BuddySuite {
                     wait(5, () -> {
                         promise.cancel();
                         promise.catchError(e -> {
-                            Std.is(e, CanceledError).should.be(true);
+                            Std.is(e, CanceledException).should.be(true);
                             done();
                         });
                     });
@@ -827,7 +827,7 @@ class CancelablePromiseSuite extends BuddySuite {
                         () -> {};
                     });
                     promise.catchError(e -> {
-                        Std.is(e, CanceledError).should.be(false);
+                        Std.is(e, CanceledException).should.be(false);
                         (e : String).should.be("error");
                         done();
                     });
@@ -844,7 +844,7 @@ class CancelablePromiseSuite extends BuddySuite {
                     wait(5, () -> {
                         promise.cancel();
                         promise.catchError(e -> {
-                            Std.is(e, CanceledError).should.be(false);
+                            Std.is(e, CanceledException).should.be(false);
                             (e : String).should.be("error");
                             done();
                         });

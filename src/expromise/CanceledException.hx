@@ -1,10 +1,9 @@
 package expromise;
 
-import extype.Error;
+import extype.Exception;
 
-class CanceledError extends Error {
+class CanceledException extends Exception {
     public function new(message:String = "canceled") {
         super(message);
-        this.name = "CanceledError";
     }
 }
