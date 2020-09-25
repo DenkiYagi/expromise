@@ -2,11 +2,44 @@ package expromise;
 
 import expromise.PromiseHandler;
 import extools.EqualsTools;
+import extype.Maybe;
 import haxe.ds.Option;
 
 using extools.OptionTools;
 
 class OptionPromiseTools {
+    public static inline function thenToMaybe<T>(promise:Promise<Option<T>>):Promise<Maybe<T>> {
+        return promise.then(x -> x.toMaybe());
+    }
+
+    public static inline function thenGet<T>(promise:Promise<Option<T>>):Promise<Null<T>> {
+        return promise.then(x -> x.get());
+    }
+
+    public static inline function thenGetUnsafe<T>(promise:Promise<Option<T>>):Promise<T> {
+        return promise.then(x -> x.getUnsafe());
+    }
+
+    public static inline function thenGetOrThrow<T>(promise:Promise<Option<T>>, ?errorFn:() -> Dynamic):Promise<T> {
+        return promise.then(x -> x.getOrThrow(errorFn));
+    }
+
+    public static inline function thenGetOrElse<T>(promise:Promise<Option<T>>, value:T):Promise<T> {
+        return promise.then(x -> x.getOrElse(value));
+    }
+
+    public static inline function thenOrElse<T>(promise:Promise<Option<T>>, value:Option<T>):Promise<Option<T>> {
+        return promise.then(x -> x.orElse(value));
+    }
+
+    public static inline function thenIsEmpty<T>(promise:Promise<Option<T>>):Promise<Bool> {
+        return promise.then(x -> x.isEmpty());
+    }
+
+    public static inline function thenNonEmpty<T>(promise:Promise<Option<T>>):Promise<Bool> {
+        return promise.then(x -> x.nonEmpty());
+    }
+
     public static inline function thenMap<T, U>(promise:Promise<Option<T>>, fn:PromiseHandler<T, U>):Promise<Option<U>> {
         return promise.then((x -> switch (x) {
             case Some(t):
@@ -44,6 +77,10 @@ class OptionPromiseTools {
 
     public static inline function thenFold<T, U>(promise:Promise<Option<T>>, ifEmpty:PromiseHandler0<T, U>, fn:PromiseHandler<T, U>):Promise<U> {
         return promise.then(x -> x.fold(ifEmpty, cast fn));
+    }
+
+    public static inline function thenIter<T>(promise:Promise<Option<T>>, fn:(value:T) -> Void):Promise<Void> {
+        return promise.then(x -> x.iter(fn));
     }
 
     public static function resolveSome<T>(x:T):Promise<Option<T>> {
