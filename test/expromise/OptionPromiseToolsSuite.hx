@@ -261,5 +261,24 @@ class OptionPromiseToolsSuite extends BuddySuite {
                 });
             });
         });
+
+        describe("OptionPromiseTools.resolveJust()", {
+            it("should pass", done -> {
+                OptionPromiseTools.resolveSome(10).thenIter(x -> {
+                    x.should.be(10);
+                    done();
+                });
+            });
+        });
+
+        describe("OptionPromiseTools.resolveEmpty()", {
+            it("should pass", done -> {
+                OptionPromiseTools.resolveNone().then(x -> {
+                    x.isEmpty().should.be(true);
+                    done();
+                });
+
+            });
+        });
     }
 }

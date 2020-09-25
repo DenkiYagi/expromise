@@ -297,5 +297,24 @@ class MaybePromiseToolsSuite extends BuddySuite {
                 );
             });
         });
+
+        describe("MaybePromiseTools.resolveJust()", {
+            it("should pass", done -> {
+                MaybePromiseTools.resolveJust(10).thenIter(x -> {
+                    x.should.be(10);
+                    done();
+                });
+            });
+        });
+
+        describe("MaybePromiseTools.resolveEmpty()", {
+            it("should pass", done -> {
+                MaybePromiseTools.resolveEmpty().then(x -> {
+                    x.isEmpty().should.be(true);
+                    done();
+                });
+
+            });
+        });
     }
 }
