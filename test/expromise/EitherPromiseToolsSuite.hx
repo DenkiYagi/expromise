@@ -6,6 +6,36 @@ using expromise.EitherPromiseTools;
 
 class EitherPromiseToolsSuite extends BuddySuite {
     public function new() {
+        describe("EitherPromiseTools.thenIsRight()", {
+            it("should be true", done -> {
+                Promise.resolve(Right(100)).thenIsRight().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Left(100)).thenIsRight().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("EitherPromiseTools.thenIsLeft()", {
+            it("should be true", done -> {
+                Promise.resolve(Left(100)).thenIsLeft().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Right(100)).thenIsLeft().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
         describe("EitherPromiseTools.swap()", {
             it("should pass `Right<T> -> Left<T>`", done -> {
                 Promise.resolve(Right(100)).swap().then(x -> {
@@ -13,7 +43,6 @@ class EitherPromiseToolsSuite extends BuddySuite {
                     done();
                 });
             });
-
             it("should pass `Left<T> -> Right<T>`", done -> {
                 Promise.resolve(Left(10)).swap().then(x -> {
                     x.should.equal(Right(10));

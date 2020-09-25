@@ -6,6 +6,14 @@ import haxe.ds.Either;
 using extools.EitherTools;
 
 class EitherPromiseTools {
+    public static inline function thenIsRight<A, B>(promise:Promise<Either<A, B>>):Promise<Bool> {
+        return promise.then(EitherTools.isRight);
+    }
+
+    public static inline function thenIsLeft<A, B>(promise:Promise<Either<A, B>>):Promise<Bool> {
+        return promise.then(EitherTools.isLeft);
+    }
+
     public static inline function swap<A, B>(promise:Promise<Either<A, B>>):Promise<Either<B, A>> {
         return promise.then(EitherTools.swap);
     }
