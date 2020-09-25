@@ -10,7 +10,7 @@ class EitherPromiseTools {
         return promise.then(EitherTools.swap);
     }
 
-    public static inline function mapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, BB>):Promise<Either<A, BB>> {
+    public static inline function thenMap<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, BB>):Promise<Either<A, BB>> {
         return promise.then((x -> switch (x) {
             case Right(b):
                 final ret = fn.call(b);
@@ -25,11 +25,11 @@ class EitherPromiseTools {
         } : PromiseHandler<Either<A, B>, Either<A, BB>>));
     }
 
-    public static inline function flatMapThen<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, Either<A, BB>>):Promise<Either<A, BB>> {
+    public static inline function thenFlatMap<A, B, BB>(promise:Promise<Either<A, B>>, fn:PromiseHandler<B, Either<A, BB>>):Promise<Either<A, BB>> {
         return promise.then(x -> x.flatMap(cast fn));
     }
 
-    public static inline function mapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, AA>):Promise<Either<AA, B>> {
+    public static inline function thenMapLeft<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, AA>):Promise<Either<AA, B>> {
         return promise.then((x -> switch (x) {
             case Left(a):
                 final ret = fn.call(a);
@@ -44,7 +44,7 @@ class EitherPromiseTools {
         } : PromiseHandler<Either<A, B>, Either<AA, B>>));
     }
 
-    public static inline function flatMapLeftThen<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, Either<AA, B>>):Promise<Either<AA, B>> {
+    public static inline function thenFlatMapLeft<A, B, AA>(promise:Promise<Either<A, B>>, fn:PromiseHandler<A, Either<AA, B>>):Promise<Either<AA, B>> {
         return promise.then(x -> x.flatMapLeft(cast fn));
     }
 
