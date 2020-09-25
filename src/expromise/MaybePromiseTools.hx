@@ -73,8 +73,8 @@ class MaybePromiseTools {
         return promise.then(x -> x.match(cast fn, ifEmpty));
     }
 
-    public static function resolveOf<T>(x:T):Promise<Maybe<T>> {
-        return Promise.resolve(Maybe.of(x));
+    public static function resolveJust<T>(x:T):Promise<Maybe<T>> {
+        return Promise.resolve(Maybe.just(x));
     }
 
     public static function resolveEmpty<T>():Promise<Maybe<T>> {
