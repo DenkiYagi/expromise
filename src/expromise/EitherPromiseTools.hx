@@ -14,7 +14,7 @@ class EitherPromiseTools {
         return promise.then(EitherTools.isLeft);
     }
 
-    public static inline function swap<A, B>(promise:Promise<Either<A, B>>):Promise<Either<B, A>> {
+    public static inline function thenSwap<A, B>(promise:Promise<Either<A, B>>):Promise<Either<B, A>> {
         return promise.then(EitherTools.swap);
     }
 

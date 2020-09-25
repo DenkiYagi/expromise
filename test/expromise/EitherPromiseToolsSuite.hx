@@ -36,15 +36,15 @@ class EitherPromiseToolsSuite extends BuddySuite {
             });
         });
 
-        describe("EitherPromiseTools.swap()", {
+        describe("EitherPromiseTools.thenSwap()", {
             it("should pass `Right<T> -> Left<T>`", done -> {
-                Promise.resolve(Right(100)).swap().then(x -> {
+                Promise.resolve(Right(100)).thenSwap().then(x -> {
                     x.should.equal(Left(100));
                     done();
                 });
             });
             it("should pass `Left<T> -> Right<T>`", done -> {
-                Promise.resolve(Left(10)).swap().then(x -> {
+                Promise.resolve(Left(10)).thenSwap().then(x -> {
                     x.should.equal(Right(10));
                     done();
                 });
