@@ -9,6 +9,7 @@
     "releasenote": "0.0.1",
     "contributors": ["denkiyagi"],
     "dependencies": {
-        "extype": ""
+        "extype": "",
+        "extools": "git:https://github.com/DenkiYagi/extools"
     }
 }
