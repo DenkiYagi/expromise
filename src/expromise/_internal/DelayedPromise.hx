@@ -3,18 +3,18 @@ package expromise._internal;
 
 import expromise.Promise;
 import expromise.PromiseHandler;
-import extype.Maybe;
+import extype.Nullable;
 import extype.Result;
 
 using extools.EqualsTools;
 
 class DelayedPromise<T> implements IPromise<T> {
-    var result:Maybe<Result<T>>;
+    var result:Nullable<Result<T, Dynamic>>;
     final onFulfilledHanlders:Delegate<T>;
     final onRejectedHanlders:Delegate<Dynamic>;
 
     public function new(executor:(fulfill:?T->Void, reject:?Dynamic->Void)->Void) {
-        result = Maybe.empty();
+        result = Nullable.empty();
         onFulfilledHanlders = new Delegate();
         onRejectedHanlders = new Delegate();
 
@@ -27,7 +27,7 @@ class DelayedPromise<T> implements IPromise<T> {
 
     function onFulfilled(?value:T):Void {
         if (result.isEmpty()) {
-            result = Maybe.of(Success(value));
+            result = Nullable.of(Success(value));
             onFulfilledHanlders.invokeAsync(value);
             removeAllHandlers();
         }
@@ -35,7 +35,7 @@ class DelayedPromise<T> implements IPromise<T> {
 
     function onRejected(?error:Dynamic):Void {
         if (result.isEmpty()) {
-            result = Maybe.of(Failure(error));
+            result = Nullable.of(Failure(error));
             onRejectedHanlders.invokeAsync(error);
             removeAllHandlers();
         }

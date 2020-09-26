@@ -3,16 +3,16 @@ package expromise;
 import expromise.Promise;
 import expromise._internal.Delegate;
 import expromise._internal.Dispatcher;
-import extype.Maybe;
+import extype.Nullable;
 import extype.Result;
 
 using extools.EqualsTools;
 
 class CancelablePromise<T> #if !js implements IPromise<T> #end {
-    var result:Maybe<Result<T>>;
+    var result:Nullable<Result<T, Dynamic>>;
     var onFulfilledHanlders:Delegate<T>;
     var onRejectedHanlders:Delegate<Dynamic>;
-    var cancelCallback:Maybe<Void->Void>;
+    var cancelCallback:Nullable<Void->Void>;
 
     #if js
     static function __init__() {
@@ -29,14 +29,14 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
     #end
 
     public function new(executor:(T->Void)->(Dynamic->Void)->(Void->Void)) {
-        result = Maybe.empty();
+        result = Nullable.empty();
         onFulfilledHanlders = new Delegate();
         onRejectedHanlders = new Delegate();
-        cancelCallback = Maybe.empty();
+        cancelCallback = Nullable.empty();
 
         if (result.isEmpty()) {
             try {
-                cancelCallback = Maybe.of(executor(onFulfilled, onRejected));
+                cancelCallback = Nullable.of(executor(onFulfilled, onRejected));
             } catch (e) {
                 onRejected(e);
             }
@@ -45,7 +45,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
 
     function onFulfilled(?value:T):Void {
         if (result.isEmpty()) {
-            result = Maybe.of(Result.Success(value));
+            result = Nullable.of(Result.Success(value));
             onFulfilledHanlders.invokeAsync(value);
             removeAllHandlers();
         }
@@ -53,7 +53,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
 
     function onRejected(?error:Dynamic):Void {
         if (result.isEmpty()) {
-            result = Maybe.of(Result.Failure(error));
+            result = Nullable.of(Result.Failure(error));
             onRejectedHanlders.invokeAsync(error);
             removeAllHandlers();
         }
@@ -176,7 +176,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
         if (result.isEmpty()) {
             if (cancelCallback.nonEmpty()) {
                 final fn = cancelCallback.get();
-                cancelCallback = Maybe.empty();
+                cancelCallback = Nullable.empty();
                 fn();
             }
             onRejected(new CanceledException());
