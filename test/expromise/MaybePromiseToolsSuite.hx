@@ -159,6 +159,27 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        describe("MaybePromiseTools.thenFlatten()", {
+            it("should transform Some(Some(value))", done -> {
+                Promise.resolve(Some(Some(1))).thenFlatten().then(x -> {
+                    x.should.equal(Some(1));
+                    done();
+                });
+            });
+            it("should transform Some(None)", done -> {
+                Promise.resolve(Some(None)).thenFlatten().then(x -> {
+                    x.should.equal(None);
+                    done();
+                });
+            });
+            it("should transform None", done -> {
+                Promise.resolve(None).thenFlatten().then(x -> {
+                    x.should.equal(None);
+                    done();
+                });
+            });
+        });
+
         describe("MaybePromiseTools.thenFlatMap()", {
             it("should flatMap to Some(U)", done -> {
                 Promise.resolve(Some(100)).thenFlatMap(x -> Some(x * 2)).then(x -> {
@@ -261,7 +282,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
-        describe("MaybePromiseTools.resolveJust()", {
+        describe("MaybePromiseTools.resolveSome()", {
             it("should pass", done -> {
                 MaybePromiseTools.resolveSome(10).thenIter(x -> {
                     x.should.be(10);
@@ -270,7 +291,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
-        describe("MaybePromiseTools.resolveEmpty()", {
+        describe("MaybePromiseTools.resolveNone()", {
             it("should pass", done -> {
                 MaybePromiseTools.resolveNone().then(x -> {
                     x.isEmpty().should.be(true);

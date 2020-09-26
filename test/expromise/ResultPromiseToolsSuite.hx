@@ -1,5 +1,6 @@
 package expromise;
 
+import extype.NoDataException;
 import extype.Result;
 
 using expromise.ResultPromiseTools;
@@ -31,6 +32,93 @@ class ResultPromiseToolsSuite extends BuddySuite {
             it("should be false", done -> {
                 Promise.resolve(Failure(100)).thenIsFailure().then(x -> {
                     x.should.be(true);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenGet()", {
+            it("should convert to value", done -> {
+                Promise.resolve(Success("hello")).thenGet().then(x -> {
+                    x.should.be("hello");
+                    done();
+                });
+            });
+
+            it("should convert to null", done -> {
+                Promise.resolve(Failure("error")).thenGet().then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenGetUnsafe()", {
+            it("should convert to value", done -> {
+                Promise.resolve(Success(100)).thenGetUnsafe().then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenGetOrThrow()", {
+            it("should convert to value", done -> {
+                Promise.resolve(Success(100)).thenGetOrThrow().then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should be rejected", done -> {
+                Promise.resolve(Failure("error")).thenGetOrThrow().catchError(e -> {
+                    (e : Exception).message.should.be("error");
+                    done();
+                });
+            });
+
+            it("should be rejected", done -> {
+                Promise.resolve(Failure("error")).thenGetOrThrow(() -> "error2").catchError(e -> {
+                    (e : Exception).message.should.be("error2");
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenGetOrElse()", {
+            it("should return value", done -> {
+                Promise.resolve(Success(100)).thenGetOrElse(-1).then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should return alt value", done -> {
+                Promise.resolve(Failure("error")).thenGetOrElse(-1).then(x -> {
+                    x.should.be(-1);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenOrElse()", {
+            it("should return value", done -> {
+                Promise.resolve(Success(100)).thenOrElse(Success(-1)).thenIter(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+
+            it("should return alt value", done -> {
+                Promise.resolve(Failure("error")).thenOrElse(Success(-1)).thenIter(x -> {
+                    x.should.be(-1);
+                    done();
+                });
+            });
+
+            it("should return failure", done -> {
+                Promise.resolve(Failure("error")).thenOrElse(Failure("error2")).then(x -> {
+                    x.isFailure().should.be(true);
                     done();
                 });
             });
@@ -153,6 +241,160 @@ class ResultPromiseToolsSuite extends BuddySuite {
                     x.should.equal(Success(100));
                     done();
                 });
+            });
+        });
+
+        describe("ResultPromiseTools.thenFlatten()", {
+            it("should transform Success(Success(value))", done -> {
+                Promise.resolve(Success(Success(1))).thenFlatten().then(x -> {
+                    x.should.equal(Success(1));
+                    done();
+                });
+            });
+            it("should transform Success(Failure(e))", done -> {
+                Promise.resolve(Success(Failure("error"))).thenFlatten().then(x -> {
+                    x.should.equal(Failure("error"));
+                    done();
+                });
+            });
+            it("should transform Failure(e)", done -> {
+                Promise.resolve(Failure("error")).thenFlatten().then(x -> {
+                    x.should.equal(Failure("error"));
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenExists()", {
+            it("should be true", done -> {
+                Promise.resolve(Success(1)).thenExists(1).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Success(2)).thenExists(1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Failure("error")).thenExists(1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenNotExists()", {
+            it("should be false", done -> {
+                Promise.resolve(Success(1)).thenNotExists(1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be true", done -> {
+                Promise.resolve(Success(2)).thenNotExists(1).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be true", done -> {
+                Promise.resolve(Failure("error")).thenNotExists(1).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenFind()", {
+            it("should be true", done -> {
+                Promise.resolve(Success(1)).thenFind(x -> x == 1).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Success(2)).thenFind(x -> x == 1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Failure("error")).thenFind(x -> x == 1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenFilterOrElse()", {
+            it("should be Success(x)", done -> {
+                Promise.resolve(Success(1)).thenFilterOrElse(x -> x == 1, "notfound").then(x -> {
+                    x.should.equal(Success(1));
+                    done();
+                });
+            });
+            it("should be Failure(arg-error)", done -> {
+                Promise.resolve(Success(2)).thenFilterOrElse(x -> x == 1, "notfound").then(x -> {
+                    x.should.equal(Failure("notfound"));
+                    done();
+                });
+            });
+            it("should be Failure(orig-error)", done -> {
+                Promise.resolve(Failure("error")).thenFilterOrElse(x -> x == 1, "notfound").then(x -> {
+                    x.should.equal(Failure("error"));
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenFold()", {
+            it("should transform Success", done -> {
+                Promise.resolve(Success(1)).thenFold(x -> x + 100, e -> -1).then(x -> {
+                    x.should.be(101);
+                    done();
+                });
+            });
+            it("should transform Failure", done -> {
+                Promise.resolve(Failure("error")).thenFold(x -> x + 100, e -> -1).then(x -> {
+                    x.should.be(-1);
+                    done();
+                });
+            });
+        });
+
+        describe("ResultPromiseTools.thenIter()", {
+            it("should call callback", done -> {
+                Promise.resolve(Success(1)).thenIter(x -> {
+                    x.should.be(1);
+                    done();
+                });
+            });
+            it("should never call callback", done -> {
+                Promise.resolve(Failure(1)).thenIter(x -> fail());
+                wait(5, done);
+            });
+        });
+
+        describe("ResultPromiseTools.thenMatch()", {
+            it("should call ifSuccess", done -> {
+                Promise.resolve(Success(1)).thenMatch(
+                    x -> {
+                        x.should.be(1);
+                        done();
+                    },
+                    x -> fail()
+                );
+            });
+            it("should call ifSuccess", done -> {
+                Promise.resolve(Failure(1)).thenMatch(
+                    x -> fail(),
+                    x -> {
+                        x.should.be(1);
+                        done();
+                    }
+                );
             });
         });
     }

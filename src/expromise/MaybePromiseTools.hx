@@ -57,6 +57,10 @@ class MaybePromiseTools {
         return promise.then(x -> x.flatMap(cast fn));
     }
 
+    public static inline function thenFlatten<T>(promise:Promise<Maybe<Maybe<T>>>):Promise<Maybe<T>> {
+        return promise.then(x -> x.flatten());
+    }
+
     public static inline function thenFilter<T>(promise:Promise<Maybe<T>>, fn:PromiseHandler<T, Bool>):Promise<Maybe<T>> {
         return promise.then((value -> {
             value.fold(() -> Promise.resolve(None), x -> {

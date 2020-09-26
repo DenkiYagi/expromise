@@ -12,6 +12,26 @@ class ResultPromiseTools {
         return promise.then(x -> x.isFailure());
     }
 
+    public static inline function thenGet<T, E>(promise:Promise<Result<T, E>>):Promise<Null<T>> {
+        return promise.then(x -> x.get());
+    }
+
+    public static inline function thenGetUnsafe<T, E>(promise:Promise<Result<T, E>>):Promise<T> {
+        return promise.then(x -> x.getUnsafe());
+    }
+
+    public static inline function thenGetOrThrow<T, E>(promise:Promise<Result<T, E>>, ?errorFn:() -> Dynamic):Promise<T> {
+        return promise.then(x -> x.getOrThrow(errorFn));
+    }
+
+    public static inline function thenGetOrElse<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<T> {
+        return promise.then(x -> x.getOrElse(value));
+    }
+
+    public static inline function thenOrElse<T, E>(promise:Promise<Result<T, E>>, value:Result<T, E>):Promise<Result<T, E>> {
+        return promise.then(x -> x.orElse(value));
+    }
+
     public static inline function thenMap<T, E, U>(promise:Promise<Result<T, E>>, fn:PromiseHandler<T, U>):Promise<Result<U, E>> {
         return promise.then((x -> switch (x) {
             case Success(v):
@@ -49,6 +69,38 @@ class ResultPromiseTools {
 
     public static inline function thenFlatMapFailure<T, E, EE>(promise:Promise<Result<T, E>>, fn:PromiseHandler<E, Result<T, EE>>):Promise<Result<T, EE>> {
         return promise.then(x -> x.flatMapFailure(cast fn));
+    }
+
+    public static inline function thenFlatten<T, E>(promise:Promise<Result<Result<T, E>, E>>):Promise<Result<T, E>> {
+        return promise.then(x -> x.flatten());
+    }
+
+    public static inline function thenExists<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<Bool> {
+        return promise.then(x -> x.exists(value));
+    }
+
+    public static inline function thenNotExists<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<Bool> {
+        return promise.then(x -> x.notExists(value));
+    }
+
+    public static inline function thenFind<T, E>(promise:Promise<Result<T, E>>, fn:T->Bool):Promise<Bool> {
+        return promise.then(x -> x.find(fn));
+    }
+
+    public static inline function thenFilterOrElse<T, E>(promise:Promise<Result<T, E>>, fn:T->Bool, error:E):Promise<Result<T, E>> {
+        return promise.then(x -> x.filterOrElse(fn, error));
+    }
+
+    public static inline function thenFold<T, E, U>(promise:Promise<Result<T, E>>, fn:PromiseHandler<T, U>, ifFailure:PromiseHandler<E, U>):Promise<U> {
+        return promise.then(x -> x.fold(cast fn, cast ifFailure));
+    }
+
+    public static inline function thenIter<T, E>(promise:Promise<Result<T, E>>, fn:(value:T) -> Void):Promise<Void> {
+        return promise.then(x -> x.iter(fn));
+    }
+
+    public static inline function thenMatch<T, E>(promise:Promise<Result<T, E>>, fn:(value:T)->Void, ifFailure:(e:E)->Void):Promise<Void> {
+        return promise.then(x -> x.match(fn, ifFailure));
     }
 
     public static inline function resolveSuccess<T, E>(x:T):Promise<Result<T, E>> {
