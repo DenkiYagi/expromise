@@ -10,6 +10,14 @@ class MaybePromiseTools {
         return promise.then(x -> x.toNullable());
     }
 
+    public static inline function thenIsEmpty<T>(promise:Promise<Maybe<T>>):Promise<Bool> {
+        return promise.then(x -> x.isEmpty());
+    }
+
+    public static inline function thenNonEmpty<T>(promise:Promise<Maybe<T>>):Promise<Bool> {
+        return promise.then(x -> x.nonEmpty());
+    }
+
     public static inline function thenGet<T>(promise:Promise<Maybe<T>>):Promise<Null<T>> {
         return promise.then(x -> x.get());
     }
@@ -28,14 +36,6 @@ class MaybePromiseTools {
 
     public static inline function thenOrElse<T>(promise:Promise<Maybe<T>>, value:Maybe<T>):Promise<Maybe<T>> {
         return promise.then(x -> x.orElse(value));
-    }
-
-    public static inline function thenIsEmpty<T>(promise:Promise<Maybe<T>>):Promise<Bool> {
-        return promise.then(x -> x.isEmpty());
-    }
-
-    public static inline function thenNonEmpty<T>(promise:Promise<Maybe<T>>):Promise<Bool> {
-        return promise.then(x -> x.nonEmpty());
     }
 
     public static inline function thenMap<T, U>(promise:Promise<Maybe<T>>, fn:PromiseHandler<T, U>):Promise<Maybe<U>> {

@@ -28,6 +28,38 @@ class NullablePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        describe("NullablePromiseTools.thenIsEmpty()", {
+            it("should return false", done -> {
+                Promise.resolve(Nullable.of(100)).thenIsEmpty().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+
+            it("should return true", done -> {
+                Promise.resolve(Nullable.empty()).thenIsEmpty().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+        });
+
+        describe("NullablePromiseTools.thenNonEmpty()", {
+            it("should return false", done -> {
+                Promise.resolve(Nullable.of(100)).thenNonEmpty().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+
+            it("should return true", done -> {
+                Promise.resolve(Nullable.empty()).thenNonEmpty().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
         describe("NullablePromiseTools.thenGet()", {
             it("should convert to value", done -> {
                 Promise.resolve(Nullable.of("hello")).thenGet().then(x -> {
@@ -110,38 +142,6 @@ class NullablePromiseToolsSuite extends BuddySuite {
             it("should return empty", done -> {
                 Promise.resolve(Nullable.empty()).thenOrElse(Nullable.empty()).then(x -> {
                     x.isEmpty().should.be(true);
-                    done();
-                });
-            });
-        });
-
-        describe("NullablePromiseTools.thenIsEmpty()", {
-            it("should return false", done -> {
-                Promise.resolve(Nullable.of(100)).thenIsEmpty().then(x -> {
-                    x.should.be(false);
-                    done();
-                });
-            });
-
-            it("should return true", done -> {
-                Promise.resolve(Nullable.empty()).thenIsEmpty().then(x -> {
-                    x.should.be(true);
-                    done();
-                });
-            });
-        });
-
-        describe("NullablePromiseTools.thenNonEmpty()", {
-            it("should return false", done -> {
-                Promise.resolve(Nullable.of(100)).thenNonEmpty().then(x -> {
-                    x.should.be(true);
-                    done();
-                });
-            });
-
-            it("should return true", done -> {
-                Promise.resolve(Nullable.empty()).thenNonEmpty().then(x -> {
-                    x.should.be(false);
                     done();
                 });
             });

@@ -24,6 +24,38 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        describe("MaybePromiseTools.thenIsEmpty()", {
+            it("should return false", done -> {
+                Promise.resolve(Some(100)).thenIsEmpty().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+
+            it("should return true", done -> {
+                Promise.resolve(None).thenIsEmpty().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+        });
+
+        describe("MaybePromiseTools.thenNonEmpty()", {
+            it("should return false", done -> {
+                Promise.resolve(Some(100)).thenNonEmpty().then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+
+            it("should return true", done -> {
+                Promise.resolve(None).thenNonEmpty().then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
         describe("MaybePromiseTools.thenGet()", {
             it("should convert to value", done -> {
                 Promise.resolve(Some("hello")).thenGet().then(x -> {
@@ -106,38 +138,6 @@ class MaybePromiseToolsSuite extends BuddySuite {
             it("should return empty", done -> {
                 Promise.resolve(None).thenOrElse(None).then(x -> {
                     x.isEmpty().should.be(true);
-                    done();
-                });
-            });
-        });
-
-        describe("MaybePromiseTools.thenIsEmpty()", {
-            it("should return false", done -> {
-                Promise.resolve(Some(100)).thenIsEmpty().then(x -> {
-                    x.should.be(false);
-                    done();
-                });
-            });
-
-            it("should return true", done -> {
-                Promise.resolve(None).thenIsEmpty().then(x -> {
-                    x.should.be(true);
-                    done();
-                });
-            });
-        });
-
-        describe("MaybePromiseTools.thenNonEmpty()", {
-            it("should return false", done -> {
-                Promise.resolve(Some(100)).thenNonEmpty().then(x -> {
-                    x.should.be(true);
-                    done();
-                });
-            });
-
-            it("should return true", done -> {
-                Promise.resolve(None).thenNonEmpty().then(x -> {
-                    x.should.be(false);
                     done();
                 });
             });
