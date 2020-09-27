@@ -61,6 +61,18 @@ class MaybePromiseTools {
         return promise.then(x -> x.flatten());
     }
 
+    public static inline function thenHas<T>(promise:Promise<Maybe<T>>, value:T):Promise<Bool> {
+        return promise.then(x -> x.has(value));
+    }
+
+    public static inline function thenExists<T>(promise:Promise<Maybe<T>>, fn:T->Bool):Promise<Bool> {
+        return promise.then(x -> x.exists(fn));
+    }
+
+    public static inline function thenFind<T>(promise:Promise<Maybe<T>>, fn:T->Bool):Promise<Null<T>> {
+        return promise.then(x -> x.find(fn));
+    }
+
     public static inline function thenFilter<T>(promise:Promise<Maybe<T>>, fn:PromiseHandler<T, Bool>):Promise<Maybe<T>> {
         return promise.then((value -> {
             value.fold(() -> Promise.resolve(None), x -> {

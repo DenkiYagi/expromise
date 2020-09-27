@@ -265,64 +265,76 @@ class ResultPromiseToolsSuite extends BuddySuite {
             });
         });
 
-        describe("ResultPromiseTools.thenExists()", {
+        describe("ResultPromiseTools.thenHas()", {
             it("should be true", done -> {
-                Promise.resolve(Success(1)).thenExists(1).then(x -> {
+                Promise.resolve(Success(100)).thenHas(100).then(x -> {
                     x.should.be(true);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Success(2)).thenExists(1).then(x -> {
+                Promise.resolve(Success(100)).thenHas(-1).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Failure("error")).thenExists(1).then(x -> {
+                Promise.resolve(Failure("error")).thenHas(100).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
         });
 
-        describe("ResultPromiseTools.thenNotExists()", {
+        describe("ResultPromiseTools.thenExists()", {
+            it("should be true", done -> {
+                Promise.resolve(Success(100)).thenExists(x -> x == 100).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
             it("should be false", done -> {
-                Promise.resolve(Success(1)).thenNotExists(1).then(x -> {
+                Promise.resolve(Success(100)).thenExists(x -> x == -1).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
-            it("should be true", done -> {
-                Promise.resolve(Success(2)).thenNotExists(1).then(x -> {
-                    x.should.be(true);
+            it("should be false", done -> {
+                Promise.resolve(Failure("error")).thenExists(x -> true).then(x -> {
+                    x.should.be(false);
                     done();
                 });
             });
-            it("should be true", done -> {
-                Promise.resolve(Failure("error")).thenNotExists(1).then(x -> {
-                    x.should.be(true);
+            it("should be false", done -> {
+                Promise.resolve(Failure("error")).thenExists(x -> false).then(x -> {
+                    x.should.be(false);
                     done();
                 });
             });
         });
 
         describe("ResultPromiseTools.thenFind()", {
-            it("should be true", done -> {
-                Promise.resolve(Success(1)).thenFind(x -> x == 1).then(x -> {
-                    x.should.be(true);
+            it("should be some", done -> {
+                Promise.resolve(Success(100)).thenFind(x -> x == 100).then(x -> {
+                    x.should.be(100);
                     done();
                 });
             });
-            it("should be false", done -> {
-                Promise.resolve(Success(2)).thenFind(x -> x == 1).then(x -> {
-                    x.should.be(false);
+            it("should be null", done -> {
+                Promise.resolve(Success(100)).thenFind(x -> x == -1).then(x -> {
+                    x.should.be(null);
                     done();
                 });
             });
-            it("should be false", done -> {
-                Promise.resolve(Failure("error")).thenFind(x -> x == 1).then(x -> {
-                    x.should.be(false);
+            it("should be null", done -> {
+                Promise.resolve(Failure("error")).thenFind(x -> true).then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(Failure("error")).thenFind(x -> false).then(x -> {
+                    (x:Null<Any>).should.be(null);
                     done();
                 });
             });

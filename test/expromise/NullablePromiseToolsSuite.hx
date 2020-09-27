@@ -193,6 +193,81 @@ class NullablePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        describe("NullablePromiseTools.thenHas()", {
+            it("should be true", done -> {
+                Promise.resolve(Nullable.of(100)).thenHas(100).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Nullable.of(100)).thenHas(-1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Nullable.empty()).thenHas(100).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("NullablePromiseTools.thenExists()", {
+            it("should be true", done -> {
+                Promise.resolve(Nullable.of(100)).thenExists(x -> x == 100).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Nullable.of(100)).thenExists(x -> x == -1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Nullable.empty()).thenExists(x -> true).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Nullable.empty()).thenExists(x -> false).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("NullablePromiseTools.thenFind()", {
+            it("should be some", done -> {
+                Promise.resolve(Nullable.of(100)).thenFind(x -> x == 100).then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(Nullable.of(100)).thenFind(x -> x == -1).then(x -> {
+                    x.should.be(null);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(Nullable.empty()).thenFind(x -> true).then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(Nullable.empty()).thenFind(x -> false).then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+        });
+
         describe("NullablePromiseTools.thenFilter()", {
             it("should pass when callback returns true", done -> {
                 Promise.resolve(Nullable.of(100)).thenFilter(x -> true).then(x -> {

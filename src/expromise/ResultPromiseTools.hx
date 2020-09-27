@@ -75,15 +75,15 @@ class ResultPromiseTools {
         return promise.then(x -> x.flatten());
     }
 
-    public static inline function thenExists<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<Bool> {
-        return promise.then(x -> x.exists(value));
+    public static inline function thenHas<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<Bool> {
+        return promise.then(x -> x.has(value));
     }
 
-    public static inline function thenNotExists<T, E>(promise:Promise<Result<T, E>>, value:T):Promise<Bool> {
-        return promise.then(x -> x.notExists(value));
+    public static inline function thenExists<T, E>(promise:Promise<Result<T, E>>, fn:T->Bool):Promise<Bool> {
+        return promise.then(x -> x.exists(fn));
     }
 
-    public static inline function thenFind<T, E>(promise:Promise<Result<T, E>>, fn:T->Bool):Promise<Bool> {
+    public static inline function thenFind<T, E>(promise:Promise<Result<T, E>>, fn:T->Bool):Promise<Null<T>> {
         return promise.then(x -> x.find(fn));
     }
 

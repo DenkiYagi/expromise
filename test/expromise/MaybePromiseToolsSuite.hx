@@ -210,6 +210,81 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        describe("MaybePromiseTools.thenHas()", {
+            it("should be true", done -> {
+                Promise.resolve(Some(100)).thenHas(100).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Some(100)).thenHas(-1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(None).thenHas(100).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("MaybePromiseTools.thenExists()", {
+            it("should be true", done -> {
+                Promise.resolve(Some(100)).thenExists(x -> x == 100).then(x -> {
+                    x.should.be(true);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(Some(100)).thenExists(x -> x == -1).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(None).thenExists(x -> true).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+            it("should be false", done -> {
+                Promise.resolve(None).thenExists(x -> false).then(x -> {
+                    x.should.be(false);
+                    done();
+                });
+            });
+        });
+
+        describe("MaybePromiseTools.thenFind()", {
+            it("should be some", done -> {
+                Promise.resolve(Some(100)).thenFind(x -> x == 100).then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(Some(100)).thenFind(x -> x == -1).then(x -> {
+                    x.should.be(null);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(None).thenFind(x -> true).then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+            it("should be null", done -> {
+                Promise.resolve(None).thenFind(x -> false).then(x -> {
+                    (x:Null<Any>).should.be(null);
+                    done();
+                });
+            });
+        });
+
         describe("MaybePromiseTools.thenFilter()", {
             it("should pass when callback returns true", done -> {
                 Promise.resolve(Some(100)).thenFilter(x -> true).then(x -> {
