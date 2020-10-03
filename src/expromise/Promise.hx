@@ -7,11 +7,21 @@ import expromise._internal.DelayedPromise;
 #end
 
 #if js
-abstract Promise<T>(JsPromise<T>) from JsPromise<T> to JsPromise<T>
+abstract Promise<T>(JsPromise<T>)
 #else
 abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
 #end
 {
+    #if js
+    @:from public static inline extern function fromJsPromise<T>(promise:js.lib.Promise<T>):Promise<T> {
+        return cast promise;
+    }
+
+    @:to public inline extern function toJsPromise<T>():js.lib.Promise<T> {
+        return this;
+    }
+    #end
+
     public inline extern function new(executor:(T->Void)->(Dynamic->Void)->Void) {
         #if js
         this = cast new JsPromise(cast executor);
