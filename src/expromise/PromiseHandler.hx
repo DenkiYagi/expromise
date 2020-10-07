@@ -8,6 +8,7 @@ abstract PromiseHandler<T, U>(T->Dynamic)
     from T->U
     from T->Promise<U>
     from T->CancelablePromise<U>
+    from T->js.lib.Promise<U>
     to JsPromiseHandler<T, U>
 {
     public inline extern function call(x:T):Dynamic {
