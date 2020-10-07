@@ -2,7 +2,7 @@ package expromise;
 
 class PromiseSuite extends BuddySuite {
     public function new() {
-        timeoutMs = 100;
+        timeoutMs = 1000;
 
         #if js
         function suppress(error:Dynamic) {}
@@ -584,6 +584,18 @@ class PromiseSuite extends BuddySuite {
                     fail();
                 })
                 .then(x -> {
+                    x.should.be(100);
+                    done();
+                });
+            });
+        });
+
+        describe("Promise.delay()", {
+            it("should delay the next callback", done -> {
+                final start = Date.now().getTime();
+                Promise.resolve(100).delay(500).then(x -> {
+                    final time = (Date.now().getTime() - start);
+                    (time >= 500).should.be(true);
                     x.should.be(100);
                     done();
                 });

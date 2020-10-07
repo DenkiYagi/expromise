@@ -2,7 +2,7 @@ package expromise;
 
 class CancelablePromiseSuite extends BuddySuite {
     public function new() {
-        timeoutMs = 100;
+        timeoutMs = 1000;
 
         describe("CancelablePromise.new()", {
             describe("executor", {

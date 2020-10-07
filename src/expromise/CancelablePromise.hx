@@ -5,6 +5,7 @@ import expromise._internal.Delegate;
 import expromise._internal.Dispatcher;
 import extype.Nullable;
 import extype.Result;
+import haxe.display.Protocol.Timer;
 
 using extools.EqualsTools;
 

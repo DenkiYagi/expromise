@@ -1,5 +1,6 @@
 package expromise;
 
+import haxe.Timer;
 #if js
 import js.lib.Promise in JsPromise;
 #else
@@ -74,6 +75,12 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
             }
             Promise.reject(e);
         });
+    }
+
+    public inline extern function delay(milliseconds:Int):Promise<T> {
+        return (this : Promise<T>).then(x -> new Promise((f, _) -> {
+            Timer.delay(() -> f(x), milliseconds);
+        }));
     }
 
     // incompatible with JsPromise.resolve()
