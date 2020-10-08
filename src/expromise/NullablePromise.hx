@@ -10,6 +10,10 @@ abstract NullablePromise<T>(Promise<Nullable<T>>) from Promise<Nullable<T>> to P
         this = new Promise(executor);
     }
 
+    public inline function then<T, U>(fulfilled:Null<PromiseHandler<Nullable<T>, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<Nullable<T>> {
+        return cast this.then(fulfilled, rejected);
+    }
+
     public inline function thenToMaybe<T>():Promise<Maybe<T>> {
         return this.then(x -> x.toMaybe());
     }
