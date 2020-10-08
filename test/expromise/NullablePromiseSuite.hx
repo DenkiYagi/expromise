@@ -9,7 +9,7 @@ class NullablePromiseSuite extends BuddySuite {
     public function new() {
         describe("NullablePromise.thenToMaybe()", {
             it("should convert to Some(value)", done -> {
-                Promise.resolve(Nullable.of(100)).thenToMaybe().then(x -> switch (x) {
+                NullablePromise.resolveOf(100).thenToMaybe().then(x -> switch (x) {
                     case Some(v):
                         v.should.be(100);
                         done();
@@ -19,7 +19,7 @@ class NullablePromiseSuite extends BuddySuite {
             });
 
             it("should convert to None", done -> {
-                Promise.resolve(Nullable.empty()).thenToMaybe().then(x -> switch (x) {
+                NullablePromise.resolveEmpty().thenToMaybe().then(x -> switch (x) {
                     case Some(v):
                         fail();
                     case None:
@@ -30,14 +30,14 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenIsEmpty()", {
             it("should return false", done -> {
-                Promise.resolve(Nullable.of(100)).thenIsEmpty().then(x -> {
+                NullablePromise.resolveOf(100).thenIsEmpty().then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
 
             it("should return true", done -> {
-                Promise.resolve(Nullable.empty()).thenIsEmpty().then(x -> {
+                NullablePromise.resolveEmpty().thenIsEmpty().then(x -> {
                     x.should.be(true);
                     done();
                 });
@@ -46,14 +46,14 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenNonEmpty()", {
             it("should return false", done -> {
-                Promise.resolve(Nullable.of(100)).thenNonEmpty().then(x -> {
+                NullablePromise.resolveOf(100).thenNonEmpty().then(x -> {
                     x.should.be(true);
                     done();
                 });
             });
 
             it("should return true", done -> {
-                Promise.resolve(Nullable.empty()).thenNonEmpty().then(x -> {
+                NullablePromise.resolveEmpty().thenNonEmpty().then(x -> {
                     x.should.be(false);
                     done();
                 });
@@ -62,14 +62,14 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenGet()", {
             it("should convert to value", done -> {
-                Promise.resolve(Nullable.of("hello")).thenGet().then(x -> {
+                NullablePromise.resolveOf("hello").thenGet().then(x -> {
                     x.should.be("hello");
                     done();
                 });
             });
 
             it("should convert to null", done -> {
-                Promise.resolve(Nullable.empty()).thenGet().then(x -> {
+                NullablePromise.resolveEmpty().thenGet().then(x -> {
                     (x:Null<Any>).should.be(null);
                     done();
                 });
@@ -78,7 +78,7 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenGetUnsafe()", {
             it("should convert to value", done -> {
-                Promise.resolve(Nullable.of(100)).thenGetUnsafe().then(x -> {
+                NullablePromise.resolveOf(100).thenGetUnsafe().then(x -> {
                     x.should.be(100);
                     done();
                 });
@@ -87,21 +87,21 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenGetOrThrow()", {
             it("should convert to value", done -> {
-                Promise.resolve(Nullable.of(100)).thenGetOrThrow().then(x -> {
+                NullablePromise.resolveOf(100).thenGetOrThrow().then(x -> {
                     x.should.be(100);
                     done();
                 });
             });
 
             it("should be rejected", done -> {
-                Promise.resolve(Nullable.empty()).thenGetOrThrow().catchError(e -> {
+                NullablePromise.resolveEmpty().thenGetOrThrow().catchError(e -> {
                     Std.isOfType(e, NoDataException).should.be(true);
                     done();
                 });
             });
 
             it("should be rejected", done -> {
-                Promise.resolve(Nullable.empty()).thenGetOrThrow(() -> "error").catchError(e -> {
+                NullablePromise.resolveEmpty().thenGetOrThrow(() -> "error").catchError(e -> {
                     (e : Exception).message.should.be("error");
                     done();
                 });
@@ -110,14 +110,14 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenGetOrElse()", {
             it("should return value", done -> {
-                Promise.resolve(Nullable.of(100)).thenGetOrElse(-1).then(x -> {
+                NullablePromise.resolveOf(100).thenGetOrElse(-1).then(x -> {
                     x.should.be(100);
                     done();
                 });
             });
 
             it("should return alt value", done -> {
-                Promise.resolve(Nullable.empty()).thenGetOrElse(-1).then(x -> {
+                NullablePromise.resolveEmpty().thenGetOrElse(-1).then(x -> {
                     x.should.be(-1);
                     done();
                 });
@@ -126,21 +126,21 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenOrElse()", {
             it("should return value", done -> {
-                Promise.resolve(Nullable.of(100)).thenOrElse(Nullable.of(-1)).thenIter(x -> {
+                NullablePromise.resolveOf(100).thenOrElse(Nullable.of(-1)).thenIter(x -> {
                     x.should.be(100);
                     done();
                 });
             });
 
             it("should return alt value", done -> {
-                Promise.resolve(Nullable.empty()).thenOrElse(Nullable.of(-1)).thenIter(x -> {
+                NullablePromise.resolveEmpty().thenOrElse(Nullable.of(-1)).thenIter(x -> {
                     x.should.be(-1);
                     done();
                 });
             });
 
             it("should return empty", done -> {
-                Promise.resolve(Nullable.empty()).thenOrElse(Nullable.empty()).then(x -> {
+                NullablePromise.resolveEmpty().thenOrElse(Nullable.empty()).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
@@ -149,14 +149,14 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenMap()", {
             it("should map to U", done -> {
-                Promise.resolve(Nullable.of(100)).thenMap(x -> x * 2).then(x -> {
+                NullablePromise.resolveOf(100).thenMap(x -> x * 2).then(x -> {
                     x.get().should.be(200);
                     done();
                 });
             });
 
             it("should map to Promise<U>", done -> {
-                Promise.resolve(Nullable.of(100)).thenMap(x -> Promise.resolve(x * 2)).then(x -> {
+                NullablePromise.resolveOf(100).thenMap(x -> Promise.resolve(x * 2)).then(x -> {
                     x.get().should.be(200);
                     done();
                 });
@@ -165,28 +165,28 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenFlatMap()", {
             it("should flatMap to Some(U)", done -> {
-                Promise.resolve(Nullable.of(100)).thenFlatMap(x -> Nullable.of(x * 2)).then(x -> {
+                NullablePromise.resolveOf(100).thenFlatMap(x -> Nullable.of(x * 2)).then(x -> {
                     x.get().should.be(200);
                     done();
                 });
             });
 
             it("should flatMap to Empty", done -> {
-                Promise.resolve(Nullable.of(100)).thenFlatMap(x -> Nullable.empty()).then(x -> {
+                NullablePromise.resolveOf(100).thenFlatMap(x -> Nullable.empty()).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
             });
 
             it("should flatMap to Promise<Some(U)>", done -> {
-                Promise.resolve(Nullable.of(100)).thenFlatMap(x -> Promise.resolve(Nullable.of(x * 2))).then(x -> {
+                NullablePromise.resolveOf(100).thenFlatMap(x -> Promise.resolve(Nullable.of(x * 2))).then(x -> {
                     x.get().should.be(200);
                     done();
                 });
             });
 
             it("should flatMap to Promise<Empty>", done -> {
-                Promise.resolve(Nullable.of(100)).thenFlatMap(x -> Promise.resolve(Nullable.empty())).then(x -> {
+                NullablePromise.resolveOf(100).thenFlatMap(x -> Promise.resolve(Nullable.empty())).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
@@ -195,19 +195,19 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenHas()", {
             it("should be true", done -> {
-                Promise.resolve(Nullable.of(100)).thenHas(100).then(x -> {
+                NullablePromise.resolveOf(100).thenHas(100).then(x -> {
                     x.should.be(true);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Nullable.of(100)).thenHas(-1).then(x -> {
+                NullablePromise.resolveOf(100).thenHas(-1).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Nullable.empty()).thenHas(100).then(x -> {
+                NullablePromise.resolveEmpty().thenHas(100).then(x -> {
                     x.should.be(false);
                     done();
                 });
@@ -216,25 +216,25 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenExists()", {
             it("should be true", done -> {
-                Promise.resolve(Nullable.of(100)).thenExists(x -> x == 100).then(x -> {
+                NullablePromise.resolveOf(100).thenExists(x -> x == 100).then(x -> {
                     x.should.be(true);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Nullable.of(100)).thenExists(x -> x == -1).then(x -> {
+                NullablePromise.resolveOf(100).thenExists(x -> x == -1).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Nullable.empty()).thenExists(x -> true).then(x -> {
+                NullablePromise.resolveEmpty().thenExists(x -> true).then(x -> {
                     x.should.be(false);
                     done();
                 });
             });
             it("should be false", done -> {
-                Promise.resolve(Nullable.empty()).thenExists(x -> false).then(x -> {
+                NullablePromise.resolveEmpty().thenExists(x -> false).then(x -> {
                     x.should.be(false);
                     done();
                 });
@@ -243,25 +243,25 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenFind()", {
             it("should be some", done -> {
-                Promise.resolve(Nullable.of(100)).thenFind(x -> x == 100).then(x -> {
+                NullablePromise.resolveOf(100).thenFind(x -> x == 100).then(x -> {
                     x.should.be(100);
                     done();
                 });
             });
             it("should be null", done -> {
-                Promise.resolve(Nullable.of(100)).thenFind(x -> x == -1).then(x -> {
+                NullablePromise.resolveOf(100).thenFind(x -> x == -1).then(x -> {
                     x.should.be(null);
                     done();
                 });
             });
             it("should be null", done -> {
-                Promise.resolve(Nullable.empty()).thenFind(x -> true).then(x -> {
+                NullablePromise.resolveEmpty().thenFind(x -> true).then(x -> {
                     (x:Null<Any>).should.be(null);
                     done();
                 });
             });
             it("should be null", done -> {
-                Promise.resolve(Nullable.empty()).thenFind(x -> false).then(x -> {
+                NullablePromise.resolveEmpty().thenFind(x -> false).then(x -> {
                     (x:Null<Any>).should.be(null);
                     done();
                 });
@@ -270,28 +270,28 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenFilter()", {
             it("should pass when callback returns true", done -> {
-                Promise.resolve(Nullable.of(100)).thenFilter(x -> true).then(x -> {
+                NullablePromise.resolveOf(100).thenFilter(x -> true).then(x -> {
                     x.get().should.be(100);
                     done();
                 });
             });
 
             it("should block when callback returns true", done -> {
-                Promise.resolve(Nullable.of(100)).thenFilter(x -> false).then(x -> {
+                NullablePromise.resolveOf(100).thenFilter(x -> false).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
             });
 
             it("should pass when callback returns Promise<true>", done -> {
-                Promise.resolve(Nullable.of(100)).thenFilter(x -> Promise.resolve(true)).then(x -> {
+                NullablePromise.resolveOf(100).thenFilter(x -> Promise.resolve(true)).then(x -> {
                     x.get().should.be(100);
                     done();
                 });
             });
 
             it("should block when callback returns Promise<false>", done -> {
-                Promise.resolve(Nullable.of(100)).thenFilter(x -> Promise.resolve(false)).then(x -> {
+                NullablePromise.resolveOf(100).thenFilter(x -> Promise.resolve(false)).then(x -> {
                     x.isEmpty().should.be(true);
                     done();
                 });
@@ -300,7 +300,7 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenFold()", {
             it("should pass `empty -> ifEmpty -> T`", done -> {
-                Promise.resolve(Nullable.empty()).thenFold(
+                NullablePromise.resolveEmpty().thenFold(
                     () -> 100,
                     _ -> { fail(); -1; }
                 ).then(x -> {
@@ -310,7 +310,7 @@ class NullablePromiseSuite extends BuddySuite {
             });
 
             it("should pass `T -> fn -> T`", done -> {
-                Promise.resolve(Nullable.of(100)).thenFold(
+                NullablePromise.resolveOf(100).thenFold(
                     () -> { fail(); -1; },
                     x -> x * 2
                 ).then(x -> {
@@ -320,7 +320,7 @@ class NullablePromiseSuite extends BuddySuite {
             });
 
             it("should pass `empty -> ifEmpty -> Promise<T>`", done -> {
-                Promise.resolve(Nullable.empty()).thenFold(
+                NullablePromise.resolveEmpty().thenFold(
                     () -> Promise.resolve(100),
                     _ -> { fail(); Promise.resolve(-1); }
                 ).then(x -> {
@@ -330,7 +330,7 @@ class NullablePromiseSuite extends BuddySuite {
             });
 
             it("should pass `T -> fn -> Promise<T>`", done -> {
-                Promise.resolve(Nullable.of(100)).thenFold(
+                NullablePromise.resolveOf(100).thenFold(
                     () -> { fail(); Promise.resolve(-1); },
                     x -> Promise.resolve(x * 2)
                 ).then(x -> {
@@ -342,21 +342,21 @@ class NullablePromiseSuite extends BuddySuite {
 
         describe("NullablePromise.thenIter()", {
             it("should call", done -> {
-                Promise.resolve(Nullable.of(100)).thenIter(x -> {
+                NullablePromise.resolveOf(100).thenIter(x -> {
                     x.should.be(100);
                     done();
                 });
             });
 
             it("should never call", done -> {
-                Promise.resolve(Nullable.empty()).thenIter(_ -> fail());
+                NullablePromise.resolveEmpty().thenIter(_ -> fail());
                 wait(5, done);
             });
         });
 
         describe("NullablePromise.thenMatch()", {
             it("should call fn", done -> {
-                Promise.resolve(Nullable.of(100)).thenMatch(
+                NullablePromise.resolveOf(100).thenMatch(
                     x -> {
                         x.should.be(100);
                         done();
@@ -366,7 +366,7 @@ class NullablePromiseSuite extends BuddySuite {
             });
 
             it("should call ifEmpty", done -> {
-                Promise.resolve(Nullable.empty()).thenMatch(
+                NullablePromise.resolveEmpty().thenMatch(
                     x -> fail(),
                     () -> done()
                 );
