@@ -18,7 +18,7 @@ abstract NullablePromise<T>(Promise<Nullable<T>>) from Promise<Nullable<T>> to P
         return cast this.catchError(rejected);
     }
 
-    public inline extern function finally(onFinally:Void->Void):Promise<T> {
+    public inline extern function finally(onFinally:Void->Void):NullablePromise<T> {
         return cast this.finally(onFinally);
     }
 
