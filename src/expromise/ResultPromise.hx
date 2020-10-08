@@ -16,7 +16,7 @@ abstract ResultPromise<T, E>(Promise<Result<T, E>>) from Promise<Result<T, E>> t
         return cast this.catchError(rejected);
     }
 
-    public inline extern function finally(onFinally:Void->Void):Promise<T> {
+    public inline extern function finally(onFinally:Void->Void):ResultPromise<T, E> {
         return cast this.finally(onFinally);
     }
 
