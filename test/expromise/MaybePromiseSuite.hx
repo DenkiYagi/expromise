@@ -159,26 +159,26 @@ class MaybePromiseSuite extends BuddySuite {
             });
         });
 
-        describe("MaybePromise.thenFlatten()", {
-            it("should transform Some(Some(value))", done -> {
-                Promise.resolve(Some(Some(1))).thenFlatten().then(x -> {
-                    x.should.equal(Some(1));
-                    done();
-                });
-            });
-            it("should transform Some(None)", done -> {
-                Promise.resolve(Some(None)).thenFlatten().then(x -> {
-                    x.should.equal(None);
-                    done();
-                });
-            });
-            it("should transform None", done -> {
-                MaybePromise.resolveNone().thenFlatten().then(x -> {
-                    x.should.equal(None);
-                    done();
-                });
-            });
-        });
+        // describe("MaybePromise.thenFlatten()", {
+        //     it("should transform Some(Some(value))", done -> {
+        //         Promise.resolve(Some(Some(1))).thenFlatten().then(x -> {
+        //             x.should.equal(Some(1));
+        //             done();
+        //         });
+        //     });
+        //     it("should transform Some(None)", done -> {
+        //         Promise.resolve(Some(None)).thenFlatten().then(x -> {
+        //             x.should.equal(None);
+        //             done();
+        //         });
+        //     });
+        //     it("should transform None", done -> {
+        //         MaybePromise.resolveNone().thenFlatten().then(x -> {
+        //             x.should.equal(None);
+        //             done();
+        //         });
+        //     });
+        // });
 
         describe("MaybePromise.thenFlatMap()", {
             it("should flatMap to Some(U)", done -> {
