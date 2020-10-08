@@ -18,7 +18,7 @@ abstract MaybePromise<T>(Promise<Maybe<T>>) from Promise<Maybe<T>> to Promise<Ma
         return cast this.catchError(rejected);
     }
 
-    public inline extern function finally(onFinally:Void->Void):Promise<T> {
+    public inline extern function finally(onFinally:Void->Void):MaybePromise<T> {
         return cast this.finally(onFinally);
     }
 
