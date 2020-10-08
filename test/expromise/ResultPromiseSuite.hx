@@ -244,26 +244,26 @@ class ResultPromiseSuite extends BuddySuite {
             });
         });
 
-        describe("ResultPromise.thenFlatten()", {
-            it("should transform Success(Success(value))", done -> {
-                ResultPromise.resolveSuccess(Success(1)).thenFlatten().then(x -> {
-                    x.should.equal(Success(1));
-                    done();
-                });
-            });
-            it("should transform Success(Failure(e))", done -> {
-                ResultPromise.resolveSuccess(Failure("error")).thenFlatten().then(x -> {
-                    x.should.equal(Failure("error"));
-                    done();
-                });
-            });
-            it("should transform Failure(e)", done -> {
-                ResultPromise.resolveFailure("error").thenFlatten().then(x -> {
-                    x.should.equal(Failure("error"));
-                    done();
-                });
-            });
-        });
+        // describe("ResultPromise.thenFlatten()", {
+        //     it("should transform Success(Success(value))", done -> {
+        //         ResultPromise.resolveSuccess(Success(1)).thenFlatten().then(x -> {
+        //             x.should.equal(Success(1));
+        //             done();
+        //         });
+        //     });
+        //     it("should transform Success(Failure(e))", done -> {
+        //         ResultPromise.resolveSuccess(Failure("error")).thenFlatten().then(x -> {
+        //             x.should.equal(Failure("error"));
+        //             done();
+        //         });
+        //     });
+        //     it("should transform Failure(e)", done -> {
+        //         ResultPromise.resolveFailure("error").thenFlatten().then(x -> {
+        //             x.should.equal(Failure("error"));
+        //             done();
+        //         });
+        //     });
+        // });
 
         describe("ResultPromise.thenHas()", {
             it("should be true", done -> {
