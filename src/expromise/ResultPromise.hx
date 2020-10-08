@@ -89,10 +89,6 @@ abstract ResultPromise<T, E>(Promise<Result<T, E>>) from Promise<Result<T, E>> t
         return this.then(x -> x.flatMapFailure(cast fn));
     }
 
-    public inline function thenFlatten<T, E>():ResultPromise<T, E> {
-        return this.then(x -> x.flatten());
-    }
-
     public inline function thenHas<T, E>(value:T):Promise<Bool> {
         return this.then(x -> x.has(value));
     }
