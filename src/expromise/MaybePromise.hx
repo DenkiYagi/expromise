@@ -75,10 +75,6 @@ abstract MaybePromise<T>(Promise<Maybe<T>>) from Promise<Maybe<T>> to Promise<Ma
         return this.then(x -> x.flatMap(cast fn));
     }
 
-    public inline function thenFlatten<T>():MaybePromise<T> {
-        return this.then(x -> x.flatten());
-    }
-
     public inline function thenHas<T>(value:T):Promise<Bool> {
         return this.then(x -> x.has(value));
     }
