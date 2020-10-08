@@ -10,8 +10,16 @@ abstract MaybePromise<T>(Promise<Maybe<T>>) from Promise<Maybe<T>> to Promise<Ma
         this = new Promise(executor);
     }
 
-    public inline function then<T, U>(fulfilled:Null<PromiseHandler<Maybe<T>, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<Maybe<T>> {
+    public inline function then<T, U>(fulfilled:Null<PromiseHandler<Maybe<T>, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<U> {
         return cast this.then(fulfilled, rejected);
+    }
+
+    public inline extern function catchError<U>(rejected:PromiseHandler<Dynamic, U>):Promise<U> {
+        return cast this.catchError(rejected);
+    }
+
+    public inline extern function finally(onFinally:Void->Void):Promise<T> {
+        return cast this.finally(onFinally);
     }
 
     public inline function thenToNullable<T>():Promise<Nullable<T>> {
