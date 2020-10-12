@@ -1,4 +1,3 @@
-#if js
 package expromise.js;
 
 class JsPromiseTools {
@@ -6,4 +5,3 @@ class JsPromiseTools {
         return Promise.fromJsPromise(promise);
     }
 }
-#end
