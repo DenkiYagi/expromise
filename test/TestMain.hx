@@ -6,5 +6,5 @@ class TestMain implements Buddy<[
     expromise.CancelablePromiseSuite,
     expromise.NullablePromiseSuite,
     expromise.MaybePromiseToolsSuite,
-    expromise.ResultPromiseToolsSuite,
+    expromise.ResultPromiseSuite,
 ]> {}
