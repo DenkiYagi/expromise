@@ -4,7 +4,7 @@ import buddy.SuitesRunner;
 class TestMain implements Buddy<[
     expromise.PromiseSuite,
     expromise.CancelablePromiseSuite,
-    expromise.NullablePromiseToolsSuite,
+    expromise.NullablePromiseSuite,
     expromise.MaybePromiseSuite,
-    expromise.ResultPromiseToolsSuite,
+    expromise.ResultPromiseSuite,
 ]> {}
