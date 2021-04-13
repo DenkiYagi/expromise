@@ -18,7 +18,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
         return cast promise;
     }
 
-    @:to public inline extern function toJsPromise<T>():js.lib.Promise<T> {
+    @:to public inline extern function toJsPromise():js.lib.Promise<T> {
         return this;
     }
     #end
