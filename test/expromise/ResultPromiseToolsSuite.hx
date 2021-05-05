@@ -53,6 +53,7 @@ class ResultPromiseToolsSuite extends BuddySuite {
             });
         });
 
+        #if !target.static
         describe("ResultPromiseTools.thenGetUnsafe()", {
             it("should convert to value", done -> {
                 Promise.resolve(Success(100)).thenGetUnsafe().then(x -> {
@@ -61,6 +62,7 @@ class ResultPromiseToolsSuite extends BuddySuite {
                 });
             });
         });
+        #end
 
         describe("ResultPromiseTools.thenGetOrThrow()", {
             it("should convert to value", done -> {

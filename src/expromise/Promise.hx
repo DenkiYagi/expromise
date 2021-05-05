@@ -32,11 +32,11 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
     }
 
     public inline extern function then<U>(fulfilled:Null<PromiseHandler<T, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<U> {
-        return cast this.then(fulfilled, rejected);
+        return this.then(fulfilled, rejected);
     }
 
     public inline extern function catchError<U>(rejected:PromiseHandler<Dynamic, U>):Promise<U> {
-        return cast this.catchError(rejected);
+        return this.catchError(rejected);
     }
 
     public inline extern function finally(onFinally:Void->Void):Promise<T> {
@@ -64,7 +64,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
         #if js
         return js.Syntax.code("{0}.catch({1})", this, e -> {
         #else
-        return this.catchError(e -> {
+        return (this : Promise<T>).catchError(e -> {
         #end
             try {
                 rejected(e);
@@ -84,21 +84,25 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
     }
 
     // incompatible with JsPromise.resolve()
+    #if js
     public static inline function resolve<T>(?value:T):Promise<T> {
-        #if js
         return js.Syntax.code("Promise.resolve({0})", value);
-        #else
-        return DelayedPromise.resolve(value);
-        #end
     }
+    #else
+    public static function resolve<T>(?value:T):Promise<T> {
+        return (DelayedPromise.resolve(value) : Promise<T>);
+    }
+    #end
 
+    #if js
     public static inline function reject<T>(?error:Dynamic):Promise<T> {
-        #if js
         return js.Syntax.code("Promise.reject({0})", error);
-        #else
-        return DelayedPromise.reject(error);
-        #end
     }
+    #else
+    public static function reject<T>(?error:Dynamic):Promise<T> {
+        return (DelayedPromise.reject(error) : Promise<T>);
+    }
+    #end
 
     #if js
     public static inline function all<T>(iterable:Array<Promise<T>>):Promise<Array<T>> {
@@ -108,9 +112,9 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
     public static function all<T>(iterable:Array<Promise<T>>):Promise<Array<T>> {
         final length = iterable.length;
         return if (length <= 0) {
-            DelayedPromise.resolve([]);
+            Promise.resolve([]);
         } else {
-            new DelayedPromise((fulfill, reject) -> {
+            (new DelayedPromise((fulfill, reject) -> {
                 final values = [for (i in 0...length) null];
                 var count = 0;
                 for (i in 0...length) {
@@ -119,7 +123,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
                         if (++count >= length) fulfill(values);
                     }, reject);
                 }
-            });
+            }) : Promise<Array<T>>);
         }
     }
     #end

@@ -22,9 +22,11 @@ class MaybePromiseTools {
         return promise.then(x -> x.get());
     }
 
+    #if !target.static
     public static inline function thenGetUnsafe<T>(promise:Promise<Maybe<T>>):Promise<T> {
         return promise.then(x -> x.getUnsafe());
     }
+    #end
 
     public static inline function thenGetOrThrow<T>(promise:Promise<Maybe<T>>, ?errorFn:() -> Dynamic):Promise<T> {
         return promise.then(x -> x.getOrThrow(errorFn));

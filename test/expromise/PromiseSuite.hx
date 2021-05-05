@@ -2,7 +2,7 @@ package expromise;
 
 class PromiseSuite extends BuddySuite {
     public function new() {
-        timeoutMs = 1000;
+        timeoutMs = 3000;
 
         #if js
         function suppress(error:Dynamic) {}
@@ -48,7 +48,7 @@ class PromiseSuite extends BuddySuite {
 
                 it("should pass with async executor", done -> {
                     new Promise((fulfill, _) -> {
-                        wait(5, fulfill.bind(1));
+                        wait(5, () -> fulfill(1));
                     }).then(x -> {
                         x.should.be(1);
                         done();
@@ -593,9 +593,9 @@ class PromiseSuite extends BuddySuite {
         describe("Promise.delay()", {
             it("should delay the next callback", done -> {
                 final start = Date.now().getTime();
-                Promise.resolve(100).delay(500).then(x -> {
+                Promise.resolve(100).delay(1000).then(x -> {
                     final time = (Date.now().getTime() - start);
-                    (time >= 500).should.be(true);
+                    time.should.beGreaterThanOrEqualTo(1000);
                     x.should.be(100);
                     done();
                 });
@@ -626,7 +626,8 @@ class PromiseSuite extends BuddySuite {
 
         describe("Promise.all()", {
             it("should resolve empty array", done -> {
-                Promise.all([]).then(values -> {
+                final promises:Array<Promise<Int>> = [];
+                Promise.all(promises).then(values -> {
                     EqualsTools.deepEqual(values, []).should.be(true);
                     done();
                 }, _ -> {
@@ -635,7 +636,10 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should resolve", done -> {
-                Promise.all([Promise.resolve(1)]).then(values -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1)
+                ];
+                Promise.all(promises).then(values -> {
                     EqualsTools.deepEqual(values, [1]).should.be(true);
                     done();
                 }, _ -> {
@@ -644,7 +648,10 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should reject", done -> {
-                Promise.all([Promise.reject("error")]).then(values -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.reject("error")
+                ];
+                Promise.all(promises).then(values -> {
                     fail();
                 }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
@@ -653,13 +660,15 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should resolve ordered values", done -> {
-                Promise.all([
+                final promises:Array<Promise<Int>> = [
                     new Promise((f, _) -> {
                         wait(5, f.bind(1));
                     }),
                     Promise.resolve(2),
                     Promise.resolve(3)
-                ]).then(values -> {
+                ];
+
+                Promise.all(promises).then(values -> {
                     EqualsTools.deepEqual(values, [1, 2, 3]).should.be(true);
                     done();
                 }, _ -> {
@@ -668,7 +677,7 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should reject by 2nd promise", done -> {
-                Promise.all([
+                final promises:Array<Promise<Int>> = [
                     new Promise((_, r) -> {
                         wait(5, r.bind("error1"));
                     }),
@@ -676,7 +685,8 @@ class PromiseSuite extends BuddySuite {
                     new Promise((_, r) -> {
                         wait(5, r.bind("error3"));
                     })
-                ]).then(values -> {
+                ];
+                Promise.all(promises).then(values -> {
                     fail();
                 }, e -> {
                     EqualsTools.deepEqual(e, "error2").should.be(true);
@@ -685,7 +695,12 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should reject by 3rd promise", done -> {
-                Promise.all([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(values -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1),
+                    Promise.resolve(2),
+                    Promise.reject("error3")
+                ];
+                Promise.all(promises).then(values -> {
                     fail();
                 }, e -> {
                     EqualsTools.deepEqual(e, "error3").should.be(true);
@@ -694,7 +709,11 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should process when it is mixed by Promise and Promise", done -> {
-                Promise.all([Promise.resolve(1), Promise.resolve(2)]).then(values -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1),
+                    Promise.resolve(2)
+                ];
+                Promise.all(promises).then(values -> {
                     EqualsTools.deepEqual(values, [1, 2]).should.be(true);
                     done();
                 }, _ -> {
@@ -705,7 +724,8 @@ class PromiseSuite extends BuddySuite {
 
         describe("Promise.race()", {
             it("should be pending", done -> {
-                Promise.race([]).then(value -> {
+                final promises:Array<Promise<Int>> = [];
+                Promise.race(promises).then(value -> {
                     fail();
                 }, _ -> {
                     fail();
@@ -714,7 +734,10 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should resolve", done -> {
-                Promise.race([Promise.resolve(1)]).then(value -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1)
+                ];
+                Promise.race(promises).then(value -> {
                     EqualsTools.deepEqual(value, 1).should.be(true);
                     done();
                 }, _ -> {
@@ -723,7 +746,10 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should reject", done -> {
-                Promise.race([Promise.reject("error")]).then(value -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.reject("error")
+                ];
+                Promise.race(promises).then(value -> {
                     fail();
                 }, e -> {
                     EqualsTools.deepEqual(e, "error").should.be(true);
@@ -732,13 +758,14 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should resolve by 2nd promise", done -> {
-                Promise.race([
+                final promises:Array<Promise<Int>> = [
                     new Promise((f, _) -> {
                         wait(5, f.bind(1));
                     }),
                     Promise.resolve(2),
                     Promise.resolve(3)
-                ]).then(value -> {
+                ];
+                Promise.race(promises).then(value -> {
                     value.should.be(2);
                     done();
                 }, _ -> {
@@ -747,7 +774,7 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should reject by 2nd promise", done -> {
-                Promise.race([
+                final promises:Array<Promise<Int>> = [
                     new Promise((_, r) -> {
                         wait(5, r.bind("error1"));
                     }),
@@ -755,7 +782,8 @@ class PromiseSuite extends BuddySuite {
                     new Promise((_, r) -> {
                         wait(5, r.bind("error3"));
                     })
-                ]).then(value -> {
+                ];
+                Promise.race(promises).then(value -> {
                     fail();
                 }, e -> {
                     EqualsTools.deepEqual(e, "error2").should.be(true);
@@ -764,7 +792,12 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should resolve by 1st promise", done -> {
-                Promise.race([Promise.resolve(1), Promise.resolve(2), Promise.reject("error3")]).then(value -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1),
+                    Promise.resolve(2),
+                    Promise.reject("error3")
+                ];
+                Promise.race(promises).then(value -> {
                     EqualsTools.deepEqual(value, 1).should.be(true);
                     done();
                 }, e -> {
@@ -773,7 +806,11 @@ class PromiseSuite extends BuddySuite {
             });
 
             it("should process when it is mixed by Promise and Promise", done -> {
-                Promise.race([Promise.resolve(1), Promise.resolve(2)]).then(values -> {
+                final promises:Array<Promise<Int>> = [
+                    Promise.resolve(1),
+                    Promise.resolve(2),
+                ];
+                Promise.race(promises).then(values -> {
                     EqualsTools.deepEqual(values, 1).should.be(true);
                     done();
                 }, _ -> {

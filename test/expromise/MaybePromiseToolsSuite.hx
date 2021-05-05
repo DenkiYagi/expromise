@@ -72,6 +72,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
             });
         });
 
+        #if !target.static
         describe("MaybePromiseTools.thenGetUnsafe()", {
             it("should convert to value", done -> {
                 Promise.resolve(Some(100)).thenGetUnsafe().then(x -> {
@@ -80,6 +81,7 @@ class MaybePromiseToolsSuite extends BuddySuite {
                 });
             });
         });
+        #end
 
         describe("MaybePromiseTools.thenGetOrThrow()", {
             it("should convert to value", done -> {

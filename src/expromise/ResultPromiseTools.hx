@@ -16,9 +16,11 @@ class ResultPromiseTools {
         return promise.then(x -> x.get());
     }
 
+    #if !target.static
     public static inline function thenGetUnsafe<T, E>(promise:Promise<Result<T, E>>):Promise<T> {
         return promise.then(x -> x.getUnsafe());
     }
+    #end
 
     public static inline function thenGetOrThrow<T, E>(promise:Promise<Result<T, E>>, ?errorFn:() -> Dynamic):Promise<T> {
         return promise.then(x -> x.getOrThrow(errorFn));

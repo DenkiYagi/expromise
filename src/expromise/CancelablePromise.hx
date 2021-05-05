@@ -5,7 +5,6 @@ import expromise._internal.Delegate;
 import expromise._internal.Dispatcher;
 import extype.Nullable;
 import extype.Result;
-import haxe.display.Protocol.Timer;
 
 using extools.EqualsTools;
 
@@ -16,6 +15,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
     var cancelCallback:Nullable<Void->Void>;
 
     #if js
+    @:keep
     static function __init__() {
         // Make this class compatible with js.lib.Promise
         final prototype = js.lib.Object.create(untyped js.lib.Promise.prototype);
@@ -65,6 +65,7 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
         onRejectedHanlders.removeAll();
     }
 
+    #if js @:keep #end
     public function then<TOut>(fulfilled:Null<PromiseHandler<T, TOut>>, ?rejected:PromiseHandler<Dynamic, TOut>):CancelablePromise<TOut> {
         return new CancelablePromise<TOut>(function(_fulfill, _reject) {
             final handleFulfilled = if (fulfilled != null) {
@@ -126,10 +127,12 @@ class CancelablePromise<T> #if !js implements IPromise<T> #end {
         });
     }
 
+    #if js @:keep #end
     public function catchError<TOut>(rejected:PromiseHandler<Dynamic, TOut>):CancelablePromise<TOut> {
         return then(null, rejected);
     }
 
+    #if js @:keep #end
     public function finally(onFinally:Void->Void):CancelablePromise<T> {
         return then(x -> {
             onFinally();
