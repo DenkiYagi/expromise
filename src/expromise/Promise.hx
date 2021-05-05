@@ -71,9 +71,17 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
     public inline extern function tapError(rejected:Dynamic->Void):Promise<T> {
         #if js
         return js.Syntax.code("{0}.catch({1})", this, e -> {
+            try {
+                rejected(e);
+            } catch (ex) {
+                #if debug
+                trace(ex);
+                #end
+            }
+            JsPromise.reject(e);
+        });
         #else
-        return this.catchError(e -> {
-        #end
+        return (this : Promise<T>).catchError((e -> {
             try {
                 rejected(e);
             } catch (ex) {
@@ -82,13 +90,14 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
                 #end
             }
             Promise.reject(e);
-        });
+        } : PromiseHandler<T, T>));
+        #end
     }
 
     public inline extern function delay(milliseconds:Int):Promise<T> {
-        return (this : Promise<T>).then(x -> new Promise((f, _) -> {
+        return (this : Promise<T>).then((x -> new Promise((f, _) -> {
             Timer.delay(() -> f(x), milliseconds);
-        }));
+        }) : PromiseHandler<T, T>));
     }
 
     // incompatible with JsPromise.resolve()
