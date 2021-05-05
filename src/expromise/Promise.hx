@@ -43,7 +43,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
         #if (haxe >= version("4.2.0"))
         return this.catchError(rejected);
         #else
-        return cast this.then(fulfilled, rejected);
+        return cast this.catchError(rejected);
         #end
     }
 
@@ -72,7 +72,7 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
         #if js
         return js.Syntax.code("{0}.catch({1})", this, e -> {
         #else
-        return (this : Promise<T>).catchError(e -> {
+        return this.catchError(e -> {
         #end
             try {
                 rejected(e);
