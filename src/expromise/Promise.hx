@@ -32,11 +32,19 @@ abstract Promise<T>(IPromise<T>) from IPromise<T> to IPromise<T>
     }
 
     public inline extern function then<U>(fulfilled:Null<PromiseHandler<T, U>>, ?rejected:PromiseHandler<Dynamic, U>):Promise<U> {
+        #if (haxe >= version("4.2.0"))
         return this.then(fulfilled, rejected);
+        #else
+        return cast this.then(fulfilled, rejected);
+        #end
     }
 
     public inline extern function catchError<U>(rejected:PromiseHandler<Dynamic, U>):Promise<U> {
+        #if (haxe >= version("4.2.0"))
         return this.catchError(rejected);
+        #else
+        return cast this.then(fulfilled, rejected);
+        #end
     }
 
     public inline extern function finally(onFinally:Void->Void):Promise<T> {
