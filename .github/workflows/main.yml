@@ -12,7 +12,9 @@ jobs:
       with:
         haxe-version: 4.2.1
     - run: |
-        haxelib install --always .base-test.hxml
+        haxelib install extype
+        haxelib git extools https://github.com/DenkiYagi/extools
+        haxelib install buddy
         haxelib install hxnodejs
         haxelib install hxcpp
         haxelib install hxjava
@@ -38,7 +40,9 @@ jobs:
       with:
         haxe-version: 4.1.5
     - run: |
-        haxelib install --always .base-test.hxml
+        haxelib install extype
+        haxelib git extools https://github.com/DenkiYagi/extools
+        haxelib install buddy
         haxelib install hxnodejs
         haxelib install hxcpp
         haxelib install hxjava
