@@ -16,7 +16,7 @@ abstract Delegate<T>(Array<T->Void>) to extype.ReadOnlyArray<T->Void> {
     }
 
     public inline function removeAll():Void {
-        this = [];
+        this.splice(0, this.length);
     }
 
     public inline function isEmpty():Bool {

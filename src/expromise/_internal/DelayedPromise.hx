@@ -41,7 +41,7 @@ class DelayedPromise<T> implements IPromise<T> {
         }
     }
 
-    inline function removeAllHandlers():Void {
+    function removeAllHandlers():Void {
         onFulfilledHanlders.removeAll();
         onRejectedHanlders.removeAll();
     }
